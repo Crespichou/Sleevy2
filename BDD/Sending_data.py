@@ -9,8 +9,8 @@ valeurs = df[colonne_valeurs].dropna().tolist()
 def afficher_donnees():
     """Affiche les données d'une table."""
     try:
-        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
-        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\BDD\Sleevy.db") Attention au lien
+        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Attention au lien
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
@@ -35,7 +35,7 @@ def afficher_donnees():
 def modifier_donnees():
     """Envoie une requête d'insertion dans une table."""
     try:
-        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\BDD\Sleevy.db")
+        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
         connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Attention au lien
         print("Connexion réussie.")
         
@@ -64,7 +64,7 @@ def afficher_valeurs_en_une_ligne():
     """Affiche les valeurs de la colonne 'valeurppg' sous forme de liste dans une seule ligne."""
     try:
         connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
-        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\BDD\Sleevy.db") Attention au lien
+        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") Attention au lien
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
@@ -88,5 +88,5 @@ def afficher_valeurs_en_une_ligne():
 
 
 #afficher_valeurs_en_une_ligne()
-modifier_donnees()  
+#modifier_donnees()  
 afficher_donnees() 
