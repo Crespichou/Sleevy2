@@ -35,19 +35,19 @@ def afficher_donnees():
 def modifier_donnees():
     """Envoie une requête d'insertion dans une table."""
     try:
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\BDD\Sleevy.db")
-        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\BDD\Sleevy.db") Attention au lien
+        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\BDD\Sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Attention au lien
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
         
         #Mettre bonne requête
         requete = """
-        INSERT INTO sleevyppg (sessionid, valeurppg, dateppg, heureppg, idjoueur)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO coach (idcoach, ndccoach, mdpcoach)
+        VALUES (2, 'Coach2','Coach2')
         """
-        curseur.executemany(requete, [(1, valeur, '03/10', 15, 1) for valeur in valeurs])
-        #curseur.execute(requete)
+        #curseur.executemany(requete, [(1, valeur, '03/10', 15, 1) for valeur in valeurs])
+        curseur.execute(requete)
         
 
         connexion.commit()
@@ -87,6 +87,6 @@ def afficher_valeurs_en_une_ligne():
         print("Problème avec le fichier :", e)
 
 
-afficher_valeurs_en_une_ligne()
-#modifier_donnees()  
-#afficher_donnees() 
+#afficher_valeurs_en_une_ligne()
+modifier_donnees()  
+afficher_donnees() 
