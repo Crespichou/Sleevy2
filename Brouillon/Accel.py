@@ -6,3 +6,4 @@ def simulate_accel(stop_event):
         accel = random.choice([0, 1])
         yield accel  # Retourne la valeur via un générateur
         time.sleep(1)  # Simule un délai entre deux mesures
+#YEAH
