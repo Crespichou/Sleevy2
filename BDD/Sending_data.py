@@ -3,7 +3,7 @@ import pandas as pd
 
 file_path = 'PPG_data_combined.xlsx'
 df = pd.read_excel(file_path)
-colonne_valeurs = 'Valeur Série RankedRivals5'
+colonne_valeurs = 'Valeur Série rankedrivals1'
 valeurs = df[colonne_valeurs].dropna().tolist()
 
 def afficher_donnees():
@@ -43,13 +43,13 @@ def modifier_donnees():
         
         #Mettre bonne requête
         requete = """
-        INSERT INTO sleevyppg (sessionid, valeurppg, dateppg, heureppg, idjoueur)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO sleevyppg (idjoueur, session_id, valeurppg, dateppg)
+        VALUES (?, ?, ?, ?)
         """
         #Requete pour insérer les données excel
         #INSERT INTO sleevyppg (sessionid, valeurppg, dateppg, heureppg, idjoueur)
         #VALUES (?, ?, ?, ?, ?)
-        curseur.executemany(requete, [(5, valeur, '03/10', '16:17' , 1) for valeur in valeurs])
+        curseur.executemany(requete, [(1, 1,  valeur, '03/01') for valeur in valeurs])
         #curseur.execute(requete)
         
 
