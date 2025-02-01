@@ -3,14 +3,14 @@ import pandas as pd
 
 file_path = 'PPG_data_combined.xlsx'
 df = pd.read_excel(file_path)
-colonne_valeurs = 'Valeur Série rankedrivals1'
+colonne_valeurs = 'Valeur Série RankedRivals5'
 valeurs = df[colonne_valeurs].dropna().tolist()
 
 def afficher_donnees():
     """Affiche les données d'une table."""
     try:
-        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Attention au lien
+        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien PC Antoine
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
@@ -35,19 +35,22 @@ def afficher_donnees():
 def modifier_donnees():
     """Envoie une requête d'insertion dans une table."""
     try:
-        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
-        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Attention au lien
+        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien PC Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
         
         #Mettre bonne requête
         requete = """
-        INSERT INTO coach (idcoach, ndccoach, mdpcoach)
-        VALUES (2, 'Coach2','Coach2')
+        INSERT INTO sleevyppg (sessionid, valeurppg, dateppg, heureppg, idjoueur)
+        VALUES (?, ?, ?, ?, ?)
         """
-        #curseur.executemany(requete, [(1, valeur, '03/10', 15, 1) for valeur in valeurs])
-        curseur.execute(requete)
+        #Requete pour insérer les données excel
+        #INSERT INTO sleevyppg (sessionid, valeurppg, dateppg, heureppg, idjoueur)
+        #VALUES (?, ?, ?, ?, ?)
+        curseur.executemany(requete, [(5, valeur, '03/10', '16:17' , 1) for valeur in valeurs])
+        #curseur.execute(requete)
         
 
         connexion.commit()
@@ -63,14 +66,14 @@ import sqlite3
 def afficher_valeurs_en_une_ligne():
     """Affiche les valeurs de la colonne 'valeurppg' sous forme de liste dans une seule ligne."""
     try:
-        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
-        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") Attention au lien
+        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
+        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien PC Antoine
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
         
         # Exécution de la requête pour récupérer les valeurs sous forme de liste
-        requete = "SELECT GROUP_CONCAT(valeurppg) FROM sleevyppg"
+        requete = "SELECT GROUP_CONCAT(valeurppg) FROM sleevyppg WHERE sessionid=2"
         curseur.execute(requete)
         resultat = curseur.fetchone()
         
@@ -88,5 +91,5 @@ def afficher_valeurs_en_une_ligne():
 
 
 #afficher_valeurs_en_une_ligne()
-#modifier_donnees()  
-afficher_donnees() 
+modifier_donnees()  
+#afficher_donnees() 
