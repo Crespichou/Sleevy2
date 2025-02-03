@@ -7,3 +7,4 @@ def simulate_accel(stop_event):
         yield accel  # Retourne la valeur via un générateur
         time.sleep(1)  # Simule un délai entre deux mesures
 #YEAH KC>VIT
+#KC>FNC
