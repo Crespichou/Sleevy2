@@ -130,24 +130,25 @@ def plot_grouped_ranked_series(datasets, reference_mean, last_session_id, last_s
 def plot_grouped_cumulative_variability(groups, cumulative_variabilities, variabilities, last_session_group):
     """Trace la variabilité cumulée pour les sessions dans le même groupe que la dernière."""
     fig, ax = plt.subplots(figsize=(12, 6))
-    colors = plt.cm.tab10(np.linspace(0, 1, len(last_session_group)))
 
-    for i, label in enumerate(last_session_group):
+    # Boucle pour tracer les courbes
+    for label in last_session_group:
         group_cumulative_variability = cumulative_variabilities[label]
-        
-        if label == last_session_group[0]:  # Dernière session en couleur
+
+        # On vérifie si la session est la dernière du groupe (et non pas la première session)
+        if label == last_session_group[-1]:  # Dernière session en couleur (rouge)
             ax.plot(
                 range(len(group_cumulative_variability)),
                 group_cumulative_variability,
                 label=f"{label} (Var: {variabilities[label]:.2f})",
-                color='red'
+                color='red'  # Courbe en rouge pour la dernière session
             )
         else:
             ax.plot(
                 range(len(group_cumulative_variability)),
                 group_cumulative_variability,
                 label=f"{label} (Var: {variabilities[label]:.2f})",
-                color='black'
+                color='black'  # Autres courbes en noir
             )
 
     ax.set_title("Variabilité Cumulée pour les Sessions du Même Groupe")
@@ -158,6 +159,7 @@ def plot_grouped_cumulative_variability(groups, cumulative_variabilities, variab
 
     plt.tight_layout()
     plt.show()
+
 
 # Fonction principale
 def main():
