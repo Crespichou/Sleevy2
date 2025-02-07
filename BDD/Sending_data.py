@@ -3,7 +3,7 @@ import pandas as pd
 
 file_path = 'PPG_data_fortnite.xlsx'
 df = pd.read_excel(file_path)
-colonne_valeurs = 'Valeur Série classée 6'
+colonne_valeurs = 'Valeur Série classée 7'
 valeurs = df[colonne_valeurs].dropna().tolist()
 
 def afficher_donnees():
@@ -49,7 +49,7 @@ def modifier_donnees():
         #Requete pour insérer les données excel
         #INSERT INTO sleevyppg (sessionid, valeurppg, dateppg, heureppg, idjoueur)
         #VALUES (?, ?, ?, ?, ?)
-        curseur.executemany(requete, [(2, 6,  valeur, '07/01') for valeur in valeurs])
+        curseur.executemany(requete, [(2, 7,  valeur, '07/01') for valeur in valeurs])
         #curseur.execute(requete)
         
 
@@ -121,6 +121,6 @@ def afficher_valeurs_en_une_ligne():
 
 
 
-afficher_valeurs_en_une_ligne()
+#afficher_valeurs_en_une_ligne()
 #modifier_donnees()  
 #afficher_donnees() 
