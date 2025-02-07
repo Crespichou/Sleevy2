@@ -122,5 +122,5 @@ def afficher_valeurs_en_une_ligne():
 
 
 #afficher_valeurs_en_une_ligne()
-#modifier_donnees()  
+modifier_donnees()  
 #afficher_donnees() 
