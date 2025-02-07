@@ -1,9 +1,9 @@
 import sqlite3
 import pandas as pd
 
-file_path = 'PPG_data_combined.xlsx'
+file_path = 'PPG_data_fortnite.xlsx'
 df = pd.read_excel(file_path)
-colonne_valeurs = 'Valeur Série RankedRivals6'
+colonne_valeurs = 'Valeur Série game 3'
 valeurs = df[colonne_valeurs].dropna().tolist()
 
 def afficher_donnees():
@@ -49,7 +49,7 @@ def modifier_donnees():
         #Requete pour insérer les données excel
         #INSERT INTO sleevyppg (sessionid, valeurppg, dateppg, heureppg, idjoueur)
         #VALUES (?, ?, ?, ?, ?)
-        curseur.executemany(requete, [(1, 10,  valeur, '03/01') for valeur in valeurs])
+        curseur.executemany(requete, [(2, 11,  valeur, '07/01') for valeur in valeurs])
         #curseur.execute(requete)
         
 
