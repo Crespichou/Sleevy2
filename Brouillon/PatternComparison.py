@@ -1,7 +1,7 @@
 import openpyxl
 import numpy as np
 
-from Projet.BPM_Pattern_Creation2 import (
+from Brouillon.BPM_Pattern_Creation2 import (
     load_data,
     calculate_reference_mean,
     calculate_variabilities,

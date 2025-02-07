@@ -1,29 +1,58 @@
-import openpyxl
+import sqlite3
 import matplotlib.pyplot as plt
 import numpy as np
 
-# Fonction de chargement des données
-def load_data(file_path, sheet_names, columns_per_sheet):
-    """Charge les données d'un fichier Excel pour des colonnes spécifiques."""
-    wb = openpyxl.load_workbook(file_path)
-    data = {}
-    for sheet_name, columns in zip(sheet_names, columns_per_sheet):
-        sheet = wb[sheet_name]
-        data[sheet_name] = extract_data(sheet, columns)
-    return data
+# Fonction d'extraction des données depuis la base de données
+def PPG_game_extraction():
+    try:
+        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")  # Lien tablette Antoine
+        print("Connexion réussie.")
+        
+        curseur = connexion.cursor()
+        
+        # Requête pour récupérer tous les session_id distincts associés à idjoueur = 1, triés par ordre croissant
+        requete_session_ids = """
+        SELECT DISTINCT session_id
+        FROM sleevyppg
+        WHERE idjoueur = 1
+        ORDER BY session_id ASC;
+        """
 
-# Fonction d'extraction des données
-def extract_data(sheet, columns, start_row=2):
-    """Extrait les données d'une feuille pour des colonnes spécifiques."""
-    return [
-        [sheet.cell(row=i, column=col).value for i in range(start_row, sheet.max_row + 1)]
-        for col in columns
-    ]
+        curseur.execute(requete_session_ids)
+        session_ids = [row[0] for row in curseur.fetchall()]
+        
+        if not session_ids:
+            print("Aucune session trouvée.")
+            connexion.close()
+            return {}
 
-# Calcul de la moyenne de référence
-def calculate_reference_mean(reference_data):
-    """Calcule la moyenne des données de référence en ignorant les valeurs None."""
-    return np.mean([x for x in reference_data if x is not None])
+        last_session_id = session_ids[-1]  # Récupération du dernier session_id
+        session_ids.pop()  # Suppression du dernier session_id de la liste
+
+        session_data = {}  # Dictionnaire pour stocker les données
+
+        for session_id in session_ids:
+            # Récupération des valeurs PPG pour ce session_id
+            requete_valeurs = """
+            SELECT valeurppg
+            FROM sleevyppg 
+            WHERE idjoueur = 1 AND session_id = ?;
+            """
+    
+            curseur.execute(requete_valeurs, (session_id,))
+            result = curseur.fetchall()  # Récupère toutes les valeurs sous forme de liste de tuples
+
+            valeurs_ppg = [row[0] for row in result]  # Convertit en liste simple
+            session_data[session_id] = valeurs_ppg  # Stocke dans le dictionnaire
+
+            print(f"Session {session_id}: {', '.join(map(str, valeurs_ppg))}")
+        
+        connexion.close()
+        return session_data  # Retourne le dictionnaire contenant les données
+    
+    except sqlite3.Error as e:
+        print("Problème avec le fichier :", e)
+        return None
 
 # Calcul de la variabilité cumulée
 def compute_cumulative_variability(data, fixed_mean):
@@ -79,8 +108,7 @@ def plot_ranked_series(datasets, reference_mean, ranked_labels):
         axs[i].grid(True)
 
     plt.tight_layout()
-    # Commenter la ligne suivante pour éviter d'afficher le graphique
-    #plt.show()
+    plt.show()
 
 # Tracé des variabilités cumulées pour chaque groupe
 def plot_grouped_cumulative_variability(groups, cumulative_variabilities, reference_cumulative_variability, variabilities):
@@ -99,13 +127,6 @@ def plot_grouped_cumulative_variability(groups, cumulative_variabilities, refere
                 color=colors[i],
             )
 
-        ax.plot(
-            range(len(reference_cumulative_variability)),
-            reference_cumulative_variability,
-            label="Référence (Cumulative)",
-            color='black',
-            linestyle='--'
-        )
 
         ax.set_title(f"Groupe {i + 1} (Variabilité ~ {group_variability:.2f})")
         ax.set_xlabel("Temps")
@@ -114,25 +135,22 @@ def plot_grouped_cumulative_variability(groups, cumulative_variabilities, refere
         ax.grid(True)
 
     plt.tight_layout()
-    # Commenter la ligne suivante pour éviter d'afficher le graphique
-    #plt.show()
+    plt.show()
 
 # Fonction principale
 def main():
-    file_path = 'PPG_data_combined.xlsx'
-    sheet_names = ['Sheet1', 'Sheet2']
-    columns_per_sheet = [[2, 4, 6, 8, 10, 12, 14, 16], [10, 11, 12, 13]]
+    session_data = PPG_game_extraction()  # Extraire les données de la base de données
 
-    data = load_data(file_path, sheet_names, columns_per_sheet)
-    datasets = {
-        'Ranked1': data['Sheet1'][0], 'Ranked2': data['Sheet1'][1], 'Ranked3': data['Sheet1'][2],
-        'Ranked4': data['Sheet1'][3], 'Ranked5': data['Sheet1'][4], 'Ranked6': data['Sheet1'][5],
-        'Ranked7': data['Sheet1'][6], 'Reference': data['Sheet1'][7],
-        'Ranked8': data['Sheet2'][0], 'Ranked9': data['Sheet2'][1],
-        'Ranked10': data['Sheet2'][2], 'Ranked11': data['Sheet2'][3]
-    }
+    if not session_data:
+        print("Aucune donnée à traiter.")
+        return
 
-    reference_mean = calculate_reference_mean(datasets['Reference'])
+    # Utilisation des données de la base pour l'analyse
+    datasets = {}
+    for session_id, values in session_data.items():
+        datasets[f"Session_{session_id}"] = values
+
+    reference_mean = 69.4  # Utilisation directe de la valeur de la référence moyenne
     cumulative_variabilities = {
         label: compute_cumulative_variability(data, reference_mean) for label, data in datasets.items()
     }
@@ -140,19 +158,16 @@ def main():
     tolerance = 0.1 * np.mean(list(variabilities.values()))
     groups = group_datasets_by_variability(variabilities, tolerance)
 
-    ranked_labels = ['Ranked1', 'Ranked2', 'Ranked3', 'Ranked4', 'Ranked5',
-                     'Ranked6', 'Ranked7', 'Ranked8', 'Ranked9', 'Ranked10',
-                     'Ranked11']
+    ranked_labels = list(datasets.keys())  # Utiliser les labels des sessions comme labels rangés
 
-    # Appels de fonctions sans afficher les graphiques
+    # Appels de fonctions pour générer les graphiques
     plot_ranked_series(datasets, reference_mean, ranked_labels)
-    reference_cumulative_variability = cumulative_variabilities['Reference']
+    reference_cumulative_variability = cumulative_variabilities['Session_1']  # Référence est la première session
     plot_grouped_cumulative_variability(groups, cumulative_variabilities, reference_cumulative_variability, variabilities)
 
     # Afficher les groupes
     for i, (group_variability, labels) in enumerate(groups.items(), 1):
         print(f"Groupe {i} (Variabilité ~ {group_variability:.2f}): {', '.join(labels)}")
-
 
 # Vérifier si le script est exécuté directement (pas importé)
 if __name__ == "__main__":
