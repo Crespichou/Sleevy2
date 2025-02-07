@@ -80,7 +80,7 @@ def plot_ranked_series(datasets, reference_mean, ranked_labels):
 
     plt.tight_layout()
     # Commenter la ligne suivante pour éviter d'afficher le graphique
-    #plt.show()
+    plt.show()
 
 # Tracé des variabilités cumulées pour chaque groupe
 def plot_grouped_cumulative_variability(groups, cumulative_variabilities, reference_cumulative_variability, variabilities):
@@ -115,7 +115,7 @@ def plot_grouped_cumulative_variability(groups, cumulative_variabilities, refere
 
     plt.tight_layout()
     # Commenter la ligne suivante pour éviter d'afficher le graphique
-    #plt.show()
+    plt.show()
 
 # Fonction principale
 def main():
