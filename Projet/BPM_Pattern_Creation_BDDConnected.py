@@ -2,6 +2,8 @@ import sqlite3
 import matplotlib.pyplot as plt
 import numpy as np
 
+ID_JOUEUR = 2   
+
 # Fonction d'extraction des données depuis la base de données
 def PPG_game_extraction():
     try:
@@ -14,20 +16,17 @@ def PPG_game_extraction():
         requete_session_ids = """
         SELECT DISTINCT session_id
         FROM sleevyppg
-        WHERE idjoueur = 1
+        WHERE idjoueur = ?
         ORDER BY session_id ASC;
         """
 
-        curseur.execute(requete_session_ids)
+        curseur.execute(requete_session_ids, (ID_JOUEUR,))
         session_ids = [row[0] for row in curseur.fetchall()]
         
         if not session_ids:
             print("Aucune session trouvée.")
             connexion.close()
             return {}
-
-        last_session_id = session_ids[-1]  # Récupération du dernier session_id
-        session_ids.pop()  # Suppression du dernier session_id de la liste
 
         session_data = {}  # Dictionnaire pour stocker les données
 
@@ -36,10 +35,10 @@ def PPG_game_extraction():
             requete_valeurs = """
             SELECT valeurppg
             FROM sleevyppg 
-            WHERE idjoueur = 1 AND session_id = ?;
+            WHERE idjoueur = ? AND session_id = ?;
             """
     
-            curseur.execute(requete_valeurs, (session_id,))
+            curseur.execute(requete_valeurs, (ID_JOUEUR, session_id,))
             result = curseur.fetchall()  # Récupère toutes les valeurs sous forme de liste de tuples
 
             valeurs_ppg = [row[0] for row in result]  # Convertit en liste simple
@@ -111,7 +110,7 @@ def plot_ranked_series(datasets, reference_mean, ranked_labels):
     plt.show()
 
 # Tracé des variabilités cumulées pour chaque groupe
-def plot_grouped_cumulative_variability(groups, cumulative_variabilities, reference_cumulative_variability, variabilities):
+def plot_grouped_cumulative_variability(groups, cumulative_variabilities, variabilities):
     """Trace la variabilité cumulée pour chaque groupe."""
     fig, axs = plt.subplots(len(groups), 1, figsize=(12, len(groups) * 4), sharex=True)
     colors = plt.cm.tab10(np.linspace(0, 1, len(groups)))
@@ -126,7 +125,6 @@ def plot_grouped_cumulative_variability(groups, cumulative_variabilities, refere
                 label=f"{label} (Var: {variabilities[label]:.2f})",
                 color=colors[i],
             )
-
 
         ax.set_title(f"Groupe {i + 1} (Variabilité ~ {group_variability:.2f})")
         ax.set_xlabel("Temps")
@@ -145,30 +143,21 @@ def main():
         print("Aucune donnée à traiter.")
         return
 
-    # Utilisation des données de la base pour l'analyse
-    datasets = {}
-    for session_id, values in session_data.items():
-        datasets[f"Session_{session_id}"] = values
+    datasets = {f"Session_{session_id}": values for session_id, values in session_data.items()}
 
-    reference_mean = 69.4  # Utilisation directe de la valeur de la référence moyenne
-    cumulative_variabilities = {
-        label: compute_cumulative_variability(data, reference_mean) for label, data in datasets.items()
-    }
+    reference_mean = 69.4  # Valeur de la référence moyenne
+    cumulative_variabilities = {label: compute_cumulative_variability(data, reference_mean) for label, data in datasets.items()}
     variabilities = calculate_variabilities(datasets, reference_mean)
-    tolerance = 0.1 * np.mean(list(variabilities.values()))
+    tolerance = 0.2 * np.mean(list(variabilities.values()))
     groups = group_datasets_by_variability(variabilities, tolerance)
 
-    ranked_labels = list(datasets.keys())  # Utiliser les labels des sessions comme labels rangés
+    ranked_labels = list(datasets.keys())
 
-    # Appels de fonctions pour générer les graphiques
     plot_ranked_series(datasets, reference_mean, ranked_labels)
-    reference_cumulative_variability = cumulative_variabilities['Session_1']  # Référence est la première session
-    plot_grouped_cumulative_variability(groups, cumulative_variabilities, reference_cumulative_variability, variabilities)
+    plot_grouped_cumulative_variability(groups, cumulative_variabilities, variabilities)
 
-    # Afficher les groupes
     for i, (group_variability, labels) in enumerate(groups.items(), 1):
         print(f"Groupe {i} (Variabilité ~ {group_variability:.2f}): {', '.join(labels)}")
 
-# Vérifier si le script est exécuté directement (pas importé)
 if __name__ == "__main__":
     main()

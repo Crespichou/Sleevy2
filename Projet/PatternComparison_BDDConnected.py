@@ -2,6 +2,8 @@ import sqlite3
 import matplotlib.pyplot as plt
 import numpy as np
 
+ID_JOUEUR = 2
+
 # Fonction d'extraction des données depuis la base de données
 def PPG_game_extraction():
     try:
@@ -14,11 +16,11 @@ def PPG_game_extraction():
         requete_session_ids = """
         SELECT DISTINCT session_id
         FROM sleevyppg
-        WHERE idjoueur = 1
+        WHERE idjoueur = ?
         ORDER BY session_id ASC;
         """
 
-        curseur.execute(requete_session_ids)
+        curseur.execute(requete_session_ids, (ID_JOUEUR,))
         session_ids = [row[0] for row in curseur.fetchall()]
         
         if not session_ids:
@@ -36,10 +38,10 @@ def PPG_game_extraction():
             requete_valeurs = """
             SELECT valeurppg
             FROM sleevyppg 
-            WHERE idjoueur = 1 AND session_id = ?;
+            WHERE idjoueur = ? AND session_id = ?;
             """
     
-            curseur.execute(requete_valeurs, (session_id,))
+            curseur.execute(requete_valeurs, (ID_JOUEUR, session_id))
             result = curseur.fetchall()  # Récupère toutes les valeurs sous forme de liste de tuples
 
             valeurs_ppg = [row[0] for row in result]  # Convertit en liste simple
@@ -51,9 +53,9 @@ def PPG_game_extraction():
         requete_valeurs = """
         SELECT valeurppg
         FROM sleevyppg 
-        WHERE idjoueur = 1 AND session_id = ?;
+        WHERE idjoueur = ? AND session_id = ?;
         """
-        curseur.execute(requete_valeurs, (last_session_id,))
+        curseur.execute(requete_valeurs, (ID_JOUEUR, last_session_id))
         result = curseur.fetchall()  # Récupère toutes les valeurs sous forme de liste de tuples
 
         valeurs_ppg = [row[0] for row in result]  # Convertit en liste simple
@@ -117,7 +119,7 @@ def plot_grouped_ranked_series(datasets, reference_mean, last_session_id, last_s
         else:  # Autres sessions en noir et blanc
             ax.plot(valid_indices, valid_data, label=f'{label}', color='black')
 
-    ax.set_title("Séries Chronologiques pour les Sessions du Même Groupe")
+    ax.set_title("Groupe de parties correspondant")
     ax.set_xlabel("Temps")
     ax.set_ylabel("Valeurs PPG")
     ax.legend()
@@ -130,27 +132,28 @@ def plot_grouped_ranked_series(datasets, reference_mean, last_session_id, last_s
 def plot_grouped_cumulative_variability(groups, cumulative_variabilities, variabilities, last_session_group):
     """Trace la variabilité cumulée pour les sessions dans le même groupe que la dernière."""
     fig, ax = plt.subplots(figsize=(12, 6))
-    colors = plt.cm.tab10(np.linspace(0, 1, len(last_session_group)))
 
-    for i, label in enumerate(last_session_group):
+    # Boucle pour tracer les courbes
+    for label in last_session_group:
         group_cumulative_variability = cumulative_variabilities[label]
-        
-        if label == last_session_group[0]:  # Dernière session en couleur
+
+        # On vérifie si la session est la dernière du groupe (et non pas la première session)
+        if label == last_session_group[-1]:  # Dernière session en couleur (rouge)
             ax.plot(
                 range(len(group_cumulative_variability)),
                 group_cumulative_variability,
                 label=f"{label} (Var: {variabilities[label]:.2f})",
-                color='red'
+                color='red'  # Courbe en rouge pour la dernière session
             )
         else:
             ax.plot(
                 range(len(group_cumulative_variability)),
                 group_cumulative_variability,
                 label=f"{label} (Var: {variabilities[label]:.2f})",
-                color='black'
+                color='black'  # Autres courbes en noir
             )
 
-    ax.set_title("Variabilité Cumulée pour les Sessions du Même Groupe")
+    ax.set_title("Variabilité Cumulée pour les Sessions du Même Groupe comparée à la dernière")
     ax.set_xlabel("Temps")
     ax.set_ylabel("Variabilité cumulée")
     ax.legend()
@@ -158,6 +161,7 @@ def plot_grouped_cumulative_variability(groups, cumulative_variabilities, variab
 
     plt.tight_layout()
     plt.show()
+
 
 # Fonction principale
 def main():
@@ -177,7 +181,7 @@ def main():
         label: compute_cumulative_variability(data, reference_mean) for label, data in datasets.items()
     }
     variabilities = calculate_variabilities(datasets, reference_mean)
-    tolerance = 0.1 * np.mean(list(variabilities.values()))
+    tolerance = 0.2 * np.mean(list(variabilities.values()))
     groups = group_datasets_by_variability(variabilities, tolerance)
 
     ranked_labels = list(datasets.keys())  # Utiliser les labels des sessions comme labels rangés
