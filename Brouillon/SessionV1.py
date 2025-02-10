@@ -5,6 +5,49 @@ import serial
 from bleak import BleakClient
 from threading import Event
 from Event import monitor_stop_event
+import sqlite3
+from datetime import datetime
+
+
+ID_JOUEUR = 2   # Argument
+
+def create_session():
+    """Crée une nouvelle session dans la base de données."""
+    try:
+        # Connexion à la base de données
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")  # Lien PC Antoine
+        curseur = connexion.cursor()
+        
+        # Recherche du dernier gamenumber du joueur
+        requete_last_gamenumber = """
+        SELECT gamenumber FROM sleevy_session WHERE idjoueur = ? ORDER BY session_id DESC LIMIT 1
+        """
+        curseur.execute(requete_last_gamenumber, (ID_JOUEUR,))
+        dernier_gamenumber = curseur.fetchone()
+        
+        # Incrémentation du gamenumber
+        gamenumber = (dernier_gamenumber[0] + 1) if dernier_gamenumber else 1
+        
+        # Définition des valeurs de la session
+        starttime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        endtime = None  # La fin de session sera mise à jour plus tard
+        
+        # Requête d'insertion et création d'une session
+        requete = """
+        INSERT INTO sleevy_session (idjoueur, starttime, endtime, gamenumber)
+        VALUES (?, ?, ?, ?)
+        """
+        
+        curseur.execute(requete, (ID_JOUEUR, starttime, endtime, gamenumber))
+        session_id = curseur.lastrowid  # Récupération de l'ID de la session créée
+        
+        connexion.commit()
+        connexion.close()
+        return session_id
+        
+    except sqlite3.Error as e:
+        print("Erreur lors de la création de la session :", e)
+        return None
 
 # Paramètres pour la collecte EMG
 ser = serial.Serial('COM3', 9600) 
