@@ -54,6 +54,7 @@ def create_session():
 def save_ppg_data(session_id, ppg_values):
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
+        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
         connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
         curseur = connexion.cursor()
         
@@ -75,6 +76,7 @@ def save_ppg_data(session_id, ppg_values):
 def save_emg_data(session_id, emg_values):
     """Fonction d'enregistrement des valeurs EMG dans la base de données."""
     try:
+        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
         connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
         curseur = connexion.cursor()
         
@@ -97,6 +99,7 @@ def save_emg_data(session_id, emg_values):
 def update_endtime(session_id):
     """Met à jour l'heure de fin de la session."""
     try:
+        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
         connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
         curseur = connexion.cursor()
         
