@@ -2,13 +2,13 @@ import sqlite3
 import matplotlib.pyplot as plt
 import numpy as np
 
-ID_JOUEUR = 2 #Argument
+ID_JOUEUR = 1 #Argument
 
 # Fonction d'extraction des données depuis la base de données
 def PPG_game_extraction():
     try:
-        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")  # Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")  # Lien PC Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")  # Lien tablette Antoine
+        #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")  # Lien PC Antoine
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
