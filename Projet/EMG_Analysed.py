@@ -1,206 +1,153 @@
 import sqlite3
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.ensemble import IsolationForest
 
-# Configuration des méthodes à activer/désactiver
-ACTIVER_DETECTION_OUTLIERS_ECART_TYPE = False #Pas terrible mais peut marcher
-ACTIVER_DETECTION_OUTLIERS_IQR = False #Nulle 
-ACTIVER_DETECTION_POINTS_MORTS = False #Bien 
-ACTIVER_DETECTION_ANTOINE = True #La meilleure mais joueur avec seuil
-ACTIVER_ISOLATION_FOREST = False #Nulle
-ACTIVER_DETECTION_OUTLIERS_CUSTOM = False #Nulle
-
+# Fonction d'extraction des données EMG depuis la base de données
 def EMG_game_extraction(ID_JOUEUR):
     try:
-        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")  # Lien tablette Antoine
+        connexion = sqlite3.connect("C:\\Users\\cresp\\OneDrive\\Documents\\Sleevy\\Sleevy2\\BDD\\Sleevy.db")
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
         
-        # Requête pour récupérer tous les session_id distincts associés à idjoueur = 1, triés par ordre croissant
-        requete_session_ids = """
-        SELECT DISTINCT session_id
-        FROM sleevyemg
-        WHERE idjoueur = ?
-        ORDER BY session_id ASC;
-        """
-        
-        curseur.execute(requete_session_ids, (ID_JOUEUR,))
+        # Récupération du dernier session_id
+        curseur.execute("SELECT DISTINCT session_id FROM sleevyemg WHERE idjoueur = ? ORDER BY session_id ASC;", (ID_JOUEUR,))
         session_ids = [row[0] for row in curseur.fetchall()]
-        
         if not session_ids:
             print("Aucune session trouvée.")
             connexion.close()
             return {}
-        
-        # Prendre le dernier session_id
         dernier_session_id = session_ids[-1]
         
         # Récupération des valeurs EMG pour ce dernier session_id
-        requete_valeurs = """
-        SELECT valeuremg
-        FROM sleevyemg 
-        WHERE idjoueur = ? AND session_id = ?;
-        """
-    
-        curseur.execute(requete_valeurs, (ID_JOUEUR, dernier_session_id,))
-        result = curseur.fetchall()  # Récupère toutes les valeurs sous forme de liste de tuples
-
-        valeurs_emg = [row[0] for row in result]  # Convertit en liste simple
-        
-        outliers_ecart_type, outliers_iqr, dead_points, antoine_points, outliers_custom, outliers_if = [], [], [], [], [], []
-        
-        # Détection des outliers si activée
-        if ACTIVER_DETECTION_OUTLIERS_ECART_TYPE:
-            outliers_ecart_type, _ = detect_outliers(valeurs_emg)
-        
-        if ACTIVER_DETECTION_OUTLIERS_IQR:
-            _, outliers_iqr = detect_outliers(valeurs_emg)
-        
-        if ACTIVER_DETECTION_POINTS_MORTS:
-            dead_points = detect_dead_points(valeurs_emg, seuil=20)
-        
-        if ACTIVER_DETECTION_ANTOINE:
-            antoine_points = antoine(valeurs_emg)
-        
-        if ACTIVER_ISOLATION_FOREST:
-            outliers_if = detect_outliers_isolation_forest(valeurs_emg)
-        
-        if ACTIVER_DETECTION_OUTLIERS_CUSTOM:
-            outliers_custom = detect_outliers_custom(valeurs_emg)
-        
-        print(f"Points morts détectés : {dead_points}")
-        print(f"Points antoine détectés : {antoine_points}")
-        print(f"Outliers (écart-type) détectés : {outliers_ecart_type}")
-        print(f"Outliers (IQR) détectés : {outliers_iqr}")
-        print(f"Outliers (Isolation Forest) détectés : {outliers_if}")
-        print(f"Outliers (custom) détectés : {outliers_custom}")
-        
+        curseur.execute("SELECT valeuremg FROM sleevyemg WHERE idjoueur = ? AND session_id = ?;", (ID_JOUEUR, dernier_session_id))
+        valeurs_emg = [row[0] for row in curseur.fetchall()]
         connexion.close()
+
+        # Détection brutale des points
+        points_brutaux = detection_brutale(valeurs_emg, group_size=70, seuil_diff=0.45)
+
         return {
             dernier_session_id: {
                 "valeurs_emg": valeurs_emg,
-                "outliers_ecart_type": outliers_ecart_type,
-                "outliers_iqr": outliers_iqr,
-                "dead_points": dead_points,
-                "antoine_points": antoine_points,
-                "outliers_custom": outliers_custom,
-                "outliers_if": outliers_if
+                "points_brutaux": points_brutaux
             }
-        }  # Retourne les données avec les résultats activés
-    
+        }
     except sqlite3.Error as e:
         print("Problème avec le fichier :", e)
         return None
 
-# Méthode de détection des outliers par écart-type et IQR
-def detect_outliers(valeurs_emg):
-    """Détecte les valeurs aberrantes (outliers) dans les données EMG."""
-    valeurs_emg = np.array(valeurs_emg)
 
-    # Méthode 1 : Détection basée sur l'écart-type
-    mean = np.mean(valeurs_emg)
-    std_dev = np.std(valeurs_emg)
-    seuil_ecart_type = 1.4  # Définit un seuil à 2 écarts-types (modifiable)
+# Calcul du coefficient directeur (pente) d'une période de valeurs
+def calculer_pente(valeurs):
+    x = np.arange(len(valeurs))
+    y = np.array(valeurs)
+    pente = (y[-1] - y[0]) / (x[-1] - x[0])
+    return pente
+
+
+# Détection brutale en comparant des pentes entre deux périodes
+def detection_brutale(valeurs_emg, group_size=50, seuil_diff=0.5):
+    points = []
+    moyenne_mobile = np.convolve(valeurs_emg, np.ones(group_size) / group_size, mode="valid")
     
-    outliers_ecart_type = []
-    for i, valeur in enumerate(valeurs_emg):
-        if abs(valeur - mean) > seuil_ecart_type * std_dev:
-            outliers_ecart_type.append(i)  # Index de l'outlier
+    i = 0
+    while i < len(moyenne_mobile) - 30:
+        # Première période
+        valeurs_premiere_periode = moyenne_mobile[i:i + 20]
+        pente_premiere = calculer_pente(valeurs_premiere_periode)
+        
+        # Seconde période
+        valeurs_seconde_periode = moyenne_mobile[i + 20:i + 40]
+        pente_seconde = calculer_pente(valeurs_seconde_periode)
+        
+        # Comparaison des pentes
+        if np.abs(pente_premiere - pente_seconde) < seuil_diff:
+            i += 20
+        else:
+            points.append(i + 20)
+            i += 20
 
-    # Méthode 2 : Détection basée sur l'IQR
-    Q1 = np.percentile(valeurs_emg, 25)
-    Q3 = np.percentile(valeurs_emg, 75)
-    IQR = Q3 - Q1
-    seuil_iqr_bas = Q1 - 1.5 * IQR
-    seuil_iqr_haut = Q3 + 1.5 * IQR
+    return points
+
+
+# Fonction pour diviser la liste des valeurs EMG selon les points détectés
+def diviser_par_points(valeurs_emg, points_brutaux):
+    segments = []
     
-    outliers_iqr = []
-    for i, valeur in enumerate(valeurs_emg):
-        if valeur < seuil_iqr_bas or valeur > seuil_iqr_haut:
-            outliers_iqr.append(i)  # Index de l'outlier
+    # Ajouter la première section avant le premier point rouge
+    start_idx = 0
+    for point in points_brutaux:
+        segments.append(valeurs_emg[start_idx:point])
+        start_idx = point
+    
+    # Ajouter la dernière section après le dernier point rouge
+    segments.append(valeurs_emg[start_idx:])
+    
+    return segments
 
-    return outliers_ecart_type, outliers_iqr
 
-# Détection des points morts
-def detect_dead_points(valeurs_emg, seuil=50):
-    """Détecte les points où il y a un changement significatif dans les données EMG."""
-    differences = np.diff(valeurs_emg)
-    dead_points = np.where(np.abs(differences) > seuil)[0]  # Indices des changements brusques
-    return dead_points
-
-# Méthode Antoine
-def antoine(valeurs_emg, group_size=40, compare_size=10, seuil_diff=0.2):
-    points_antoine = []
-    for i in range(len(valeurs_emg) - group_size - compare_size):
-        moyenne_mobile = np.mean(valeurs_emg[i:i + group_size])
-        comparaison = np.mean(valeurs_emg[i + group_size:i + group_size + compare_size])
-        if abs(moyenne_mobile - comparaison) > seuil_diff * moyenne_mobile:
-            points_antoine.append(i + group_size)  # Ajouter l'indice du point
-    return points_antoine
-
-# Détection des outliers custom (exemple personnalisé)
-def detect_outliers_custom(valeurs_emg):
-    """Exemple de méthode de détection d'outliers personnalisée."""
-    # Appliquez une logique de détection personnalisée ici
-    return []
-
-# Isolation Forest
-def detect_outliers_isolation_forest(valeurs_emg):
-    """Détection des outliers à l'aide de Isolation Forest."""
-    model = IsolationForest(contamination=0.1)  # Ajustez la contamination selon vos besoins
-    valeurs_emg_array = np.array(valeurs_emg).reshape(-1, 1)
-    predictions = model.fit_predict(valeurs_emg_array)
-    outliers_if = np.where(predictions == -1)[0]  # Index des outliers
-    return outliers_if
-
-# Affichage du graphique avec les méthodes activées
-def plot_emg_with_all_outliers(valeurs_emg, dead_points, outliers_ecart_type, outliers_iqr, outliers_custom, outliers_if, antoine_points):
+# Fonction pour afficher les résultats EMG, les pentes de chaque segment et les points détectés
+def plot_emg_with_detections(valeurs_emg, points_brutaux, segments, group_size=40):
     plt.figure(figsize=(10, 6))
+    
+    # Tracer les valeurs EMG
     plt.plot(valeurs_emg, label="Valeurs EMG", color="b")
     
-    if ACTIVER_DETECTION_POINTS_MORTS:
-        plt.scatter(dead_points, [valeurs_emg[i] for i in dead_points], color="r", label="Points morts")
+    # Calcul de la moyenne mobile
+    moyenne_mobile = np.convolve(valeurs_emg, np.ones(group_size) / group_size, mode="valid")
+    plt.plot(range(group_size - 1, len(valeurs_emg)), moyenne_mobile, label="Moyenne mobile", color="orange", linestyle='--')
     
-    if ACTIVER_DETECTION_OUTLIERS_ECART_TYPE:
-        plt.scatter(outliers_ecart_type, [valeurs_emg[i] for i in outliers_ecart_type], color="g", label="Outliers (écart-type)")
+    # Tracer les points de détection brutale
+    plt.scatter(points_brutaux, [moyenne_mobile[i] for i in points_brutaux], color="red", label="Points Brutaux", zorder=5)
     
-    if ACTIVER_DETECTION_OUTLIERS_IQR:
-        plt.scatter(outliers_iqr, [valeurs_emg[i] for i in outliers_iqr], color="orange", label="Outliers (IQR)")
+    # Calcul et affichage des pentes pour chaque segment sous forme de courbes
+    start_idx = 0
+    for i, point in enumerate(points_brutaux):
+        segment = segments[i]
+        pente = calculer_pente(segment)
+        
+        # Calculer les x et y pour la ligne droite représentant la pente
+        x_vals = np.arange(start_idx, point)
+        y_vals = np.array(segment) + pente * (x_vals - start_idx)  # Equation de la droite y = mx + b
+        
+        # Tracer la courbe correspondant à la pente de ce segment
+        plt.plot(x_vals, y_vals, color="green", linestyle='--', label=f"Pente Segment {i+1}" if i == 0 else "")
+        
+        start_idx = point
     
-    if ACTIVER_DETECTION_ANTOINE:
-        plt.scatter(antoine_points, [valeurs_emg[i] for i in antoine_points], color="purple", label="Points Antoine")
+    # Afficher la courbe pour le dernier segment
+    last_segment = segments[-1]
+    pente_last = calculer_pente(last_segment)
+    last_x_vals = np.arange(start_idx, len(valeurs_emg))
+    last_y_vals = np.array(last_segment) + pente_last * (last_x_vals - start_idx)
+    plt.plot(last_x_vals, last_y_vals, color="green", linestyle='--', label=f"Pente Segment {len(segments)}")
     
-    if ACTIVER_DETECTION_OUTLIERS_CUSTOM:
-        plt.scatter(outliers_custom, [valeurs_emg[i] for i in outliers_custom], color="pink", label="Outliers (custom)")
-    
-    if ACTIVER_ISOLATION_FOREST:
-        plt.scatter(outliers_if, [valeurs_emg[i] for i in outliers_if], color="yellow", label="Outliers (Isolation Forest)")
-    
-    plt.title("Graphique des valeurs EMG avec détection des anomalies")
+    plt.title("Détection des moments de mort dans le jeu avec Pentes")
     plt.xlabel("Index")
     plt.ylabel("Valeur EMG")
     plt.legend(loc="upper right")
     plt.grid(True)
     plt.show()
 
-# Exemple d'utilisation
-ID_JOUEUR = 1  # Remplacez par l'ID du joueur que vous voulez analyser
 
-# Récupérer les données EMG et les détecter
-resultat = EMG_game_extraction(ID_JOUEUR)
-
-# Si des données ont été récupérées, afficher le graphique
-if resultat:
-    dernier_session_id = list(resultat.keys())[0]
-    valeurs_emg = resultat[dernier_session_id]["valeurs_emg"]
-    dead_points = resultat[dernier_session_id]["dead_points"]
-    outliers_ecart_type = resultat[dernier_session_id]["outliers_ecart_type"]
-    outliers_iqr = resultat[dernier_session_id]["outliers_iqr"]
-    outliers_custom = resultat[dernier_session_id]["outliers_custom"]
-    outliers_if = resultat[dernier_session_id]["outliers_if"]
-    antoine_points = resultat[dernier_session_id]["antoine_points"]
+# Fonction principale
+def main():
+    ID_JOUEUR = 1
+    resultat = EMG_game_extraction(ID_JOUEUR)
     
-    # Afficher le graphique avec les points morts, outliers et points antoine
-    plot_emg_with_all_outliers(valeurs_emg, dead_points, outliers_ecart_type, outliers_iqr, outliers_custom, outliers_if, antoine_points)
+    if resultat:
+        session_id = list(resultat.keys())[0]
+        valeurs_emg = resultat[session_id]["valeurs_emg"]
+        points_brutaux = resultat[session_id]["points_brutaux"]
+        
+        # Diviser les valeurs EMG en segments avant et après chaque point rouge
+        segments = diviser_par_points(valeurs_emg, points_brutaux)
+        print("Segments divisés : ", len(segments))  # Affichez le nombre de segments
+        
+        # Affichage du graphique avec les pentes sous forme de courbes
+        plot_emg_with_detections(valeurs_emg, points_brutaux, segments)
+
+# Exécution du programme
+if __name__ == "__main__":
+    main()
