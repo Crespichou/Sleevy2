@@ -36,7 +36,7 @@ def modifier_donnees():
     """Envoie une requête d'insertion dans une table."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien PC Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db") #Lien tablette Antoine
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
@@ -49,7 +49,7 @@ def modifier_donnees():
         #Requete pour insérer les données excel
         #INSERT INTO sleevyppg (sessionid, valeurppg, dateppg, heureppg, idjoueur)
         #VALUES (?, ?, ?, ?, ?)
-        curseur.executemany(requete, [(1, 2,  valeur, '07/01') for valeur in valeurs])
+        curseur.executemany(requete, [(1, 1,  valeur, '03/01') for valeur in valeurs])
         #curseur.execute(requete)
         
 
@@ -122,5 +122,5 @@ def afficher_valeurs_en_une_ligne():
 
 
 #afficher_valeurs_en_une_ligne()
-#modifier_donnees()  
-afficher_donnees() 
+modifier_donnees()  
+#afficher_donnees() 
