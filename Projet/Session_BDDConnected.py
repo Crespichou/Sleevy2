@@ -15,7 +15,7 @@ def create_session():
     """Crée une nouvelle session dans la base de données pour acceuillir les données."""
     try:
         # Connexion à la base de données
-        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
+        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db) #Lien tablette Antoine
         connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")  # Lien PC Antoine
         curseur = connexion.cursor()
         

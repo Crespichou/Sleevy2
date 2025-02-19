@@ -10,7 +10,7 @@ def afficher_donnees():
     """Affiche les données d'une table."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien PC Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db") #Lien PC Antoine
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
@@ -122,5 +122,5 @@ def afficher_valeurs_en_une_ligne():
 
 
 #afficher_valeurs_en_une_ligne()
-modifier_donnees()  
-#afficher_donnees() 
+#modifier_donnees()  
+afficher_donnees() 

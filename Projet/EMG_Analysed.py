@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 # Fonction d'extraction des données EMG depuis la base de données
 def EMG_game_extraction(ID_JOUEUR):
     try:
-        connexion = sqlite3.connect("C:\\Users\\cresp\\OneDrive\\Documents\\Sleevy\\Sleevy2\\BDD\\Sleevy.db")
+        connexion = sqlite3.connect("C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
