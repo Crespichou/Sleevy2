@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+   
+    <meta charset="UTF-8">
+    <title>Sleevy</title>
+</head>
+
+<body>
+    <div class="title">
+        Sleevy
+    </div>
+    <div class="container">
+        <div class="text"></div>
+        <div class="text">
+            Enregistrez-vous maintenant
+        </div>
+        <form action='/register_coaches' method="post">
+            <div class="form-row">
+                <div class="input-data">
+                    <input type="text" name="username" required>
+                    <div class="underline"></div>
+                    <label for="">Pseudonyme</label>
+                </div>
+                <div class="input-data">
+                    <input type="password" name="password" required>
+                    <div class="underline"></div>
+                    <label for="">Mot de passe</label>
+                </div>
+            </div>
+            <div class="form-row submit-btn">
+                <div class="input-data">
+                    <div class="inner"></div>
+                    <input type="submit" value="S'enregistrer">
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

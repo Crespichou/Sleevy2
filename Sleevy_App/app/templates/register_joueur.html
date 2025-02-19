@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+   
+    <meta charset="UTF-8">
+    <title>Sleevy</title>
+</head>
+
+<body>
+    <div class="title">
+        Sleevy
+    </div>
+    <div class="container">
+        <div class="text"></div>
+        <div class="text">
+            Enregistrez-vous maintenant
+        </div>
+        <form action='/register_joueurs' method="post">
+            <div class="form-row">
+                <div class="input-data">
+                    <label for="">Pseudonyme</label>
+                    <input type="text" name="username" required>
+                    
+                </div>
+                <div class="input-data">
+                    <label for="">Mot de passe</label>
+                    <input type="password" name="password" required>
+                   
+                  
+                </div>
+                <div class="input-data">
+                    <label for="">Id de votre Coach</label>
+                    <input type="number" name="idcoach" required>
+                </div>
+            </div>
+            <div class="form-row submit-btn">
+                <div class="input-data">
+                    <div class="inner"></div>
+                    <input type="submit" value="S'enregistrer">
+                </div>
+            </div>
+        </form>
+    </div>
+</body>
+
+</html>

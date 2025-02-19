@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sleevy</title>
+</head>
+<div class="title">
+    Sleevy
+</div>
+<div class="container">
+    <div class="text">
+        Bienvenue Coach
+    </div>
+    <div class="container">
+        <div class="text">Liste de joueur</div>
+        <table border="1">
+            <tr>
+                <th>Id</th>
+                <th>Pseudo</th>
+                <th>Historique</th>
+            </tr>
+            {% for player in coach_players %}
+            <tr>
+                <td>{{ player.idjoueur }}</td>
+                <td>{{ player.pseudo }}</td>
+                <td>
+                    <a href="{{ url_for('index') }}">Accès Historique</a>
+                </td>
+                
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+    
+
+<a href="{{ url_for('logout') }}"> Logout </a>
