@@ -3,7 +3,7 @@ import pandas as pd
 
 file_path = 'EMG_data.xlsx'
 df = pd.read_excel(file_path)
-colonne_valeurs = 'rivalsrapide4(mort5 méthode 2, dps fin)'
+colonne_valeurs = 'rivalsrapide1(mort1)'
 valeurs = df[colonne_valeurs].dropna().tolist()
 
 def afficher_donnees():
@@ -49,7 +49,7 @@ def modifier_donnees():
         #Requete pour insérer les données excel
         #INSERT INTO sleevyppg (sessionid, valeurppg, dateppg, heureppg, idjoueur)
         #VALUES (?, ?, ?, ?, ?)
-        curseur.executemany(requete, [(1, 1,  valeur, '03/01') for valeur in valeurs])
+        curseur.executemany(requete, [(1, 3,  valeur, '03/01') for valeur in valeurs])
         #curseur.execute(requete)
         
 
