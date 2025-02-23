@@ -2,15 +2,11 @@ import asyncio
 from bleak import BleakClient
 import matplotlib.pyplot as plt
 
-# 🛰 Adresse MAC du capteur (remplace par la tienne)
-DEVICE_ADDRESS = "00:0C:BF:18:7C:2D"
 
-# 🎯 UUID de la caractéristique d'accéléromètre en mode notify
+DEVICE_ADDRESS = "00:0C:BF:18:7C:2D"
 ACCELEROMETER_CHARACTERISTIC_UUID = "49535343-1e4d-4bd9-ba61-23c647249616"
 
-# État binaire
 state = 0
-accel = []
 max_accel_values = []
 
 # 📡 Fonction pour traiter les données reçues
@@ -23,9 +19,9 @@ def handle_notification(sender, data):
             ay = int.from_bytes(data[4:6], byteorder='little', signed=True) / 32768.0 * 16.0
             az = int.from_bytes(data[6:8], byteorder='little', signed=True) / 32768.0 * 16.0 -1
 
-            print(f"🚀 Accélération - X: {ax:.2f}g, Y: {ay:.2f}g, Z: {az:.2f}g")
+            #print(f" Accélération - X: {ax:.2f}g, Y: {ay:.2f}g, Z: {az:.2f}g")
 
-            # Calculer la valeur maximale des accélérations absolues
+            
             max_accel = abs(az)
             max_accel_values.append(max_accel)
 
@@ -35,30 +31,28 @@ def handle_notification(sender, data):
             else:
                 state = 0
 
-            print(f"📈 État: {state}")
 
     except Exception as e:
-        print(f"⚠ Erreur de décodage : {e}")
+        print(f"Erreur de décodage : {e}")
 
-# 🎯 Fonction principale pour recevoir les données en continu
 async def receive_accel_notifications():
     try:
         async with BleakClient(DEVICE_ADDRESS) as client:
             print(f"✅ Connecté à {DEVICE_ADDRESS}")
 
             await client.start_notify(ACCELEROMETER_CHARACTERISTIC_UUID, handle_notification)
-            print("📡 Abonnement aux notifications d'accélération...")
+            #print("Abonnement aux notifications d'accélération...")
 
-            # 🔄 Reste connecté et écoute pendant 120 secondes
+            # Reste connecté et écoute pendant 120 secondes
             await asyncio.sleep(120)
 
             await client.stop_notify(ACCELEROMETER_CHARACTERISTIC_UUID)
-            print("🛑 Notifications arrêtées.")
+            print(" Notifications arrêtées.")
 
     except Exception as e:
-        print(f"❌ Erreur lors de l'abonnement : {e}")
+        print(f"Erreur lors de l'abonnement : {e}")
 
-# 🚀 Lancement du programme
+# Lancement du programme
 try:
     asyncio.run(receive_accel_notifications())
 except KeyboardInterrupt:
@@ -66,7 +60,7 @@ except KeyboardInterrupt:
 except Exception as e:
     print(f"Erreur inattendue : {e}")
 
-# 📊 Tracer la courbe des valeurs maximales
+# Tracer la courbe des valeurs maximales
 plt.figure(figsize=(10, 6))
 plt.plot(max_accel_values, label='Max Accélération (g)')
 plt.xlabel('Itération')

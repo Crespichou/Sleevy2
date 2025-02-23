@@ -73,6 +73,28 @@ def save_ppg_data(session_id, ppg_values):
     except sqlite3.Error as e:
         print("Erreur lors de l'insertion des données PPG :", e)
 
+def save_accel_data(session_id, accel_values) :
+    """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
+    try:
+        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
+        curseur = connexion.cursor()
+        
+        date_actuelle = datetime.now().strftime("%Y-%m-%d")
+        heure_actuelle = datetime.now().strftime("%H:%M:%S")
+        
+        requete = """
+        INSERT INTO sleevyaccelerometre (idjoueur, session_id, valeuraccel, dateaccel, heureaccel)
+        VALUES (?, ?, ?, ?, ?)
+        """
+        
+        curseur.executemany(requete, [(ID_JOUEUR, session_id, valeur, date_actuelle, heure_actuelle) for valeur in accel_values])
+        
+        connexion.commit()
+        connexion.close()
+    except sqlite3.Error as e:
+        print("Erreur lors de l'insertion des données Accel :", e)
+
 def save_emg_data(session_id, emg_values):
     """Fonction d'enregistrement des valeurs EMG dans la base de données."""
     try:
@@ -122,9 +144,14 @@ ser = serial.Serial('COM3', 9600)
 emg_values = []
 
 # Paramètres pour la collecte PPG
-DEVICE_ADDRESS = "A0:9E:1A:E0:BC:4D"
+DEVICE_ADDRESS_PPG = "A0:9E:1A:E0:BC:4D"
 PPG_CHARACTERISTIC_UUID = "00002a37-0000-1000-8000-00805f9b34fb"
 ppg_values = []
+
+# paramètre pour la collecte Accel
+DEVICE_ADDRESS_ACCEL = "00:0C:BF:18:7C:2D"
+ACCELEROMETER_CHARACTERISTIC_UUID = "49535343-1e4d-4bd9-ba61-23c647249616"
+accel_values = []
 
 """Fonction de récolte EMG"""
 def emg(stop_event):
@@ -152,7 +179,7 @@ def handle_notification(sender, data):
         print(f"Erreur de décodage PPG : {e}")
 
 async def receive_ppg_notifications(stop_event):
-    async with BleakClient(DEVICE_ADDRESS) as client:
+    async with BleakClient(DEVICE_ADDRESS_PPG) as client:
         try:
             await client.start_notify(PPG_CHARACTERISTIC_UUID, handle_notification)
             while not stop_event.is_set():  
@@ -168,6 +195,35 @@ def main_ppg(stop_event):
     except Exception as e:
         print(f"Erreur dans la boucle asyncio PPG : {e}")
 
+    
+"""Fonction de récolte Accel"""
+def handle_notification_accel(sender, data) :
+    try :
+        if len(data) >= 8 and data[0] == 0x55 and data[1] == 0x51:
+            ax = int.from_bytes(data[2:4], byteorder='little', signed=True) / 32768.0 * 16.0
+            ay = int.from_bytes(data[4:6], byteorder='little', signed=True) / 32768.0 * 16.0
+            az = int.from_bytes(data[6:8], byteorder='little', signed=True) / 32768.0 * 16.0 -1
+            max_accel = abs(az)
+            accel_values.append(max_accel)
+    except Exception as e:
+        print(f"Erreur de décodage : {e}")
+
+async def receive_accel_notifications(stop_event) :
+    async with BleakClient(DEVICE_ADDRESS_ACCEL) as client:
+        try : 
+            await client.start_notify(ACCELEROMETER_CHARACTERISTIC_UUID, handle_notification_accel)
+            while not stop_event.is_set():
+                await asyncio.sleep(120)
+            await client.stop_notify(ACCELEROMETER_CHARACTERISTIC_UUID)
+        except Exception as e:
+            print(f"Erreur lors de l'abonnement : {e}")
+def main_accel(stop_event):
+    try:
+        asyncio.run(receive_accel_notifications(stop_event))
+    except Exception as e:
+        print(f"Erreur dans la boucle asyncio Accel : {e}")
+
+
 def main():
     session_id = create_session()
     if session_id is None:
@@ -182,18 +238,25 @@ def main():
     ppg_thread = threading.Thread(target=main_ppg, args=(stop_event,))
     ppg_thread.start()
 
+    accel_thread = threading.Thread(target=main_accel, args=(stop_event,))
+    accel_thread.start()
+
     monitor_stop_event(stop_event)
 
     emg_thread.join()
     ppg_thread.join()
+    accel_thread.join()
 
     save_ppg_data(session_id, ppg_values)
     save_emg_data(session_id, emg_values)
+    save_accel_data(session_id, accel_values)
+
     update_endtime(session_id)
 
     print(f"Simulation terminée. Session ID : {session_id}")
     print(f"Valeurs EMG collectées : {emg_values}")
     print(f"Valeurs PPG collectées : {ppg_values}")
+    print(f"Valeurs Accel collectées : {accel_values}")
 
 if __name__ == "__main__":
     main()
