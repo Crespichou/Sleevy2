@@ -9,14 +9,14 @@ import sqlite3
 from datetime import datetime
 
 
-ID_JOUEUR = 2   # Argument
+ID_JOUEUR = 1   # Argument
 
 def create_session():
     """Crée une nouvelle session dans la base de données pour acceuillir les données."""
     try:
         # Connexion à la base de données
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db) #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")  # Lien PC Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")  # Lien PC Antoine
         curseur = connexion.cursor()
         
         # Recherche du dernier gamenumber du joueur
@@ -39,7 +39,7 @@ def create_session():
         VALUES (?, ?, ?, ?)
         """
         
-        curseur.execute(requete, (ID_JOUEUR, starttime, endtime, gamenumber))
+        curseur.execute(requete, (ID_JOUEUR, starttime, None, gamenumber))
         session_id = curseur.lastrowid  # Récupération de l'ID de la session créée
         
         connexion.commit()
@@ -55,18 +55,18 @@ def save_ppg_data(session_id, ppg_values):
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
         curseur = connexion.cursor()
         
         date_actuelle = datetime.now().strftime("%Y-%m-%d")
-        heure_actuelle = datetime.now().strftime("%H:%M:%S")
+        #heure_actuelle = datetime.now().strftime("%H:%M:%S")
         
         requete = """
         INSERT INTO sleevyppg (idjoueur, session_id, valeurppg, dateppg, heureppg)
         VALUES (?, ?, ?, ?, ?)
         """
         
-        curseur.executemany(requete, [(ID_JOUEUR, session_id, valeur, date_actuelle, heure_actuelle) for valeur in ppg_values])
+        curseur.executemany(requete, [(ID_JOUEUR, session_id, valeur, date_actuelle, timestamp) for valeur, timestamp in ppg_values])
         
         connexion.commit()
         connexion.close()
@@ -77,18 +77,18 @@ def save_accel_data(session_id, accel_values) :
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
         curseur = connexion.cursor()
         
         date_actuelle = datetime.now().strftime("%Y-%m-%d")
-        heure_actuelle = datetime.now().strftime("%H:%M:%S")
+        #heure_actuelle = datetime.now().strftime("%H:%M:%S")
         
         requete = """
         INSERT INTO sleevyaccelerometre (idjoueur, session_id, valeuraccel, dateaccel, heureaccel)
         VALUES (?, ?, ?, ?, ?)
         """
         
-        curseur.executemany(requete, [(ID_JOUEUR, session_id, valeur, date_actuelle, heure_actuelle) for valeur in accel_values])
+        curseur.executemany(requete, [(ID_JOUEUR, session_id, valeur, date_actuelle, timestamp) for valeur, timestamp in accel_values])
         
         connexion.commit()
         connexion.close()
@@ -99,18 +99,18 @@ def save_emg_data(session_id, emg_values):
     """Fonction d'enregistrement des valeurs EMG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
         curseur = connexion.cursor()
         
         date_actuelle = datetime.now().strftime("%Y-%m-%d")
-        heure_actuelle = datetime.now().strftime("%H:%M:%S")
+        #heure_actuelle = datetime.now().strftime("%H:%M:%S")
         
         requete = """
         INSERT INTO sleevyemg (idjoueur, session_id, valeuremg, dateemg, heureemg)
         VALUES (?, ?, ?, ?, ?)
         """
         
-        curseur.executemany(requete, [(ID_JOUEUR, session_id, valeur, date_actuelle, heure_actuelle) for valeur in emg_values])
+        curseur.executemany(requete, [(ID_JOUEUR, session_id, valeur, date_actuelle, timestamp) for valeur, timestamp in emg_values])
         
         connexion.commit()
         connexion.close()
@@ -122,7 +122,7 @@ def update_endtime(session_id):
     """Met à jour l'heure de fin de la session."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\BDD\Sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
         curseur = connexion.cursor()
         
         endtime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -160,8 +160,9 @@ def emg(stop_event):
             raw_data = ser.readline().strip()  
             if raw_data:  
                 try:
-                    emg_value = int(raw_data)  
-                    emg_values.append(emg_value) 
+                    emg_value = int(raw_data)
+                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")  
+                    emg_values.append((emg_value, timestamp)) 
                 except ValueError:
                     continue
             time.sleep(0.1) 
@@ -174,7 +175,8 @@ def emg(stop_event):
 def handle_notification(sender, data):
     try:
         ppg_value = int.from_bytes(data, byteorder="big")
-        ppg_values.append(ppg_value)
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+        ppg_values.append((ppg_value, timestamp))
     except Exception as e:
         print(f"Erreur de décodage PPG : {e}")
 
@@ -204,7 +206,8 @@ def handle_notification_accel(sender, data) :
             ay = int.from_bytes(data[4:6], byteorder='little', signed=True) / 32768.0 * 16.0
             az = int.from_bytes(data[6:8], byteorder='little', signed=True) / 32768.0 * 16.0 -1
             max_accel = abs(az)
-            accel_values.append(max_accel)
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+            accel_values.append((max_accel, timestamp))   
     except Exception as e:
         print(f"Erreur de décodage : {e}")
 
@@ -213,10 +216,11 @@ async def receive_accel_notifications(stop_event) :
         try : 
             await client.start_notify(ACCELEROMETER_CHARACTERISTIC_UUID, handle_notification_accel)
             while not stop_event.is_set():
-                await asyncio.sleep(120)
+                await asyncio.sleep(1)
             await client.stop_notify(ACCELEROMETER_CHARACTERISTIC_UUID)
         except Exception as e:
             print(f"Erreur lors de l'abonnement : {e}")
+            
 def main_accel(stop_event):
     try:
         asyncio.run(receive_accel_notifications(stop_event))
@@ -254,9 +258,9 @@ def main():
     update_endtime(session_id)
 
     print(f"Simulation terminée. Session ID : {session_id}")
-    print(f"Valeurs EMG collectées : {emg_values}")
-    print(f"Valeurs PPG collectées : {ppg_values}")
-    print(f"Valeurs Accel collectées : {accel_values}")
+    #print(f"Valeurs EMG collectées : {emg_values}")
+    #print(f"Valeurs PPG collectées : {ppg_values}")
+    #print(f"Valeurs Accel collectées : {accel_values}")
 
 if __name__ == "__main__":
     main()
