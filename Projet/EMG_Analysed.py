@@ -8,7 +8,8 @@ def EMG_game_extraction(ID_JOUEUR):
     Retourne les valeurs EMG et les points brutaux pour la dernière session (utile dans les fonctions suivantes).
     """
     try:
-        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
+        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
         print("Connexion réussie.")
 
         curseur = connexion.cursor()
