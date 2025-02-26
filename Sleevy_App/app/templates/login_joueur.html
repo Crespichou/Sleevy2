@@ -5,37 +5,40 @@
     
     <meta charset="UTF-8">
     <title>Sleevy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_joueur_login.css') }}">
 </head>
 
-<body>
-    <div class="title">
+<body class="gradient-background">
+    <main>
         Sleevy
-    </div>
-    <div class="container">
-        <div class="text">
-            Connexion
-        </div>
+    </main>
+    <div class="form">
+        
+        <div class="subtitle">Connectez-vous à votre profil</div>
+        <div class="container">
         <form action='/login_players' method="post">
-            <div class="form-row">
-                <div class="input-data">
-                    <label for="">Pseudonyme</label>
-                    <input type="text" name="username" required>
-                    <div class="underline"></div>
+        
+            <div class="input-container ic1">
+                <input name="username" class="input" type="text" placeholder=" " />
+                <div class="cut"></div>
+                <label for="username" class="placeholder">Pseudo</label>
+            </div>
+                <div class="input-container ic2">
+                    <input name="password" class="input" type="password" placeholder=" " />
+                    <div class="cut_1"></div>
+                    <label for="password" class="placeholder">Mot de passe</label> 
                     
                 </div>
-                <div class="input-data">
-                    <label for="">Mot de passe</label>
-                    <input type="password" name="password" required>
-                    <div class="underline"></div>
-                </div>
-            </div>
+                 
+        
             <div class="form-row submit-btn">
                 <div class="input-data">
                     <div class="inner"></div>
-                    <input type="submit" value="Se Connecter">
+                    <input type="submit" class='submit' value="Se connecter">
                 </div>
             </div>
         </form>
+        </div>
     </div>
 </body>
 

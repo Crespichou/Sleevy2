@@ -2,24 +2,25 @@
 <html lang="fr">
 
 <head>
- 
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sleevy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main.css') }}">
 </head>
 
-<body>
-    <div class="title">
+<body class="gradient-background">  
+    <main>
         Sleevy
-    </div>
-    <div class="container custom-button-container">
-        <button class="custom-button" onclick="window.location.href ='/portal_coach';">
-            <div class="inner"></div>
-            <span>Portail Coach</span>
-        </button>
-        <button class="custom-button" onclick="window.location.href ='/portal_joueur';">
-            <div class="inner"></div>
-            <span>Portail Joueur</span>
-        </button>
+    </main>
+    <div class="form">
+        <div class="container custom-button-container">
+            <button class="btn" onclick="window.location.href='/portal_coach';">
+                <span>Portail Coach</span>
+            </button>
+            <button class="btn" onclick="window.location.href='/portal_joueur';">
+                <span>Portail Joueur</span>
+            </button>
+        </div>
     </div>
 </body>
 

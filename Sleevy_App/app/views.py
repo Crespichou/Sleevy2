@@ -84,7 +84,7 @@ def register_joueurs():
     joueur = Player.query.filter_by(pseudo=form['username']).first()  
     if joueur:
         session['joueur'] = joueur.idjoueur
-        return redirect(url_for('index'))
+        return redirect(url_for('joueurs'))
     else:
         return redirect(url_for('register'))
 
@@ -108,11 +108,12 @@ def login_coaches():
 @app.route('/login_players', methods=['POST'])
 def login_players():
     form = request.form
-    player = Player.query.filter_by(pseudo=form['username']).first()
-    if not player:
-        return redirect(url_for('login'))
-    if player.check_password(form['password']):
-        session['player'] = player.idjoueur
+    joueur = Player.query.filter_by(pseudo=form['username']).first()
+    if not joueur:
+        return redirect(url_for('login_joueur'))
+    if joueur.check_password(form['password']):
+        session['joueur'] = joueur.idjoueur  
+        print(session['joueur'])
         return redirect(url_for('joueurs'))
     else:
         return redirect(url_for('login_joueur'))
@@ -120,22 +121,36 @@ def login_players():
 
 @app.route('/coaches', methods=['POST', 'GET'])
 def coaches():
-    coach_id = None
     if session.get('coach'):
         coach_id = session.get('coach')
+        print(coach_id)
         coach_players = Player.query.filter_by(idcoach=coach_id)
         return render_template('main_coach.html', coach_players=coach_players)
     return render_template('login.html')
 
 @app.route('/joueurs', methods=['POST', 'GET'])
 def joueurs():
-    joueur_id = None
-    if session.get('joueur'):
+    if session.get('joueur'): 
         joueur_id = session.get('joueur')
-        player = Player.query.filter_by(idjoueur=joueur_id)
-        return render_template('main_joueur.html', player=player)
+        print(joueur_id)
+        joueur = Player.query.filter_by(idjoueur=joueur_id).first()  
+        return render_template('main_joueur.html', player=joueur)
+    print('error')
     return render_template('login_joueur.html')
 
+@app.route('/historique', methods=['POST', 'GET'])
+def historique():
+    print("➡️ Route /historique appelée")  # Vérification de l'appel
+
+    joueur_id = session.get('joueur')
+    if not joueur_id:
+        print("❌ Aucun joueur connecté, redirection vers l'index.")
+        return redirect(url_for('index')) 
+
+    player_sessions = Session.query.filter_by(idjoueur=joueur_id).all()
+    print("Sessions récupérées :", player_sessions)  # Debugging
+
+    return render_template('historique_joueur.html', sessions=player_sessions)
 
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():

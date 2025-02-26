@@ -1,0 +1,34 @@
+@font-face {
+    src: url("https://www.axis-praxis.org/fonts/webfonts/MetaVariableDemo-Set.woff2") format("woff2");
+    font-family: "Meta";
+    font-style: normal;
+    font-weight: normal;
+  }
+  
+  /* Titre principal centré */
+  /* Titre principal centré avec des lettres encore plus affinées */
+  main {
+    
+    font-size: 4rem;
+    text-align: left;
+    color: #d6f4f4; /* Couleur de remplissage */
+    font-family: "Meta";
+    font-weight: 50; /* Police encore plus fine */
+    text-shadow: none; /* Suppression de l'ombre pour plus de netteté */
+  }
+
+  .gradient-background {
+    background: linear-gradient(to bottom, #9dbebb, #62bebe);
+    height: 100vh; /* Hauteur de toute la fenêtre */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  
+  }
+
+  .fine-line {
+    border: none; /* Supprime la bordure par défaut */
+    height: 1px; /* Définit l'épaisseur de la ligne */
+    background-color: #d6f4f4;; /* Change la couleur */
+    margin: 5px 20px; /* Ajoute un espace autour */
+}
