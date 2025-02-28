@@ -6,13 +6,27 @@
     <title>Sleevy</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_joueur.css') }}">
 </head>
+
 <main>
     Bienvenue {{ player.pseudo }}
+    <div class="fine-line"></div>
 </main>
-<hr class="fine-line">
- <body class="gradient-background">
-   
-    <div class="container">
+
+<div class="form-row submit-btn">
+    <div class="input-data">
+        <div class="inner"></div>
+        <input type="submit" class='submit' value="Lancer l'enregistrement">
+    </div>
+</div>
+<body class="gradient-background">
+    <div class="square">
+        <main>
+            <div>Dernière Partie :</div>
+            <img src="../static/placeholder/Cadeau.png" alt="Photo">
+        </main>
+        <div class="vertical-line"></div>
+        <div class="container">
+        
         <div class="text">Liste de joueur</div>
         <table border="1">
             <tr>
@@ -33,6 +47,7 @@
             </tr>
             {% endif %}
         </table>
+        </div>
     </div>
 </body>
     
