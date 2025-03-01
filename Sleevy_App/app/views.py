@@ -1,7 +1,7 @@
 
 from app import app, db
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
-from app.models import Coach, Player,EMG, PPG,Session
+from app.models import Coach, Player,EMG, PPG,Session, Accelerometer
 from threading import Thread
 import base64
 from datetime import datetime
@@ -156,5 +156,37 @@ def historique():
 def logout():
     session.pop('coach', None)
     return redirect(url_for('index'))
+
+#Nouvelle route pour le graphique ppg
+@app.route('/graphique_ppg_emg', methods=['GET'])
+def graphique_ppg_emg():
+    joueur_id = session.get('joueur')  
+    if not joueur_id:
+        return jsonify({"error": "Aucun joueur connecté."}), 400
+    max_session = db.session.query(Session.session_id).filter_by(idjoueur=joueur_id).order_by(Session.session_id.desc()).first()
+    if not max_session:
+        return jsonify({"error": "Aucune session trouvée pour ce joueur."}), 404
+
+    ppg_data = db.session.query(PPG.valeurppg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
+    if not ppg_data:
+        return jsonify({"error": "Aucune donnée PPG trouvée pour cette session."}), 404
+    ppg_values = [ppg[0] for ppg in ppg_data]  # Extraire les valeurs PPG
+
+    emg_data = db.session.query(EMG.valeuremg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
+    if not emg_data:
+        return jsonify({"error": "Aucune donnée EMG trouvée pour cette session."}), 404
+    emg_values = [emg[0] for emg in emg_data]  # Extraire les valeurs EMG
+
+    accel_data = db.session.query(Accelerometer.valeuraccel).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
+    if not accel_data :
+        return jsonify({"error": "Aucune donnée Accel trouvée pour cette session."}), 404
+    accel_values = [accel[0] for accel in accel_data]  # Extraire les valeurs Accel
+
+    # Retourner les données PPG et EMG sous forme JSON
+    return jsonify({
+        "ppg_values": ppg_values,
+        "emg_values": emg_values,
+        "accel_values" : accel_values
+    })
 
 

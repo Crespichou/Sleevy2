@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <title>Sleevy</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_joueur.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Ajout de Chart.js -->
 </head>
 
 <main>
@@ -18,11 +19,19 @@
         <input type="submit" class='submit' value="Lancer l'enregistrement">
     </div>
 </div>
+
 <body class="gradient-background">
     <div class="square">
         <main>
             <div>Dernière Partie :</div>
-            <img src="../static/placeholder/Cadeau.png" alt="Photo">
+            
+            <!-- Image remplacée par le graphique -->
+            <!-- <img src="../static/placeholder/Cadeau.png" alt="Photo"> -->
+            <canvas id="myChartPPG" width="400" height="200"></canvas>
+            <canvas id="myChartEMG" width="400" height="200"></canvas>
+            <canvas id="myChartAccel" width="400" height="200"></canvas>
+
+
         </main>
         <div class="vertical-line"></div>
         <div class="container">
@@ -49,5 +58,8 @@
         </table>
         </div>
     </div>
+
+    <!-- Chargement du script Chart.js personnalisé -->
+    <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
 </body>
-    
+</html>
