@@ -32,7 +32,7 @@
     border: none;
     height: 1px; /* Augmente la hauteur */
     background-color: #d6f4f4;
-    margin: 5px;
+    margin: 1px;
     width: 98vw;
     margin-right: 25px;  
     margin-bottom: 20px;
@@ -41,7 +41,7 @@
 
 .square {
   width: 98vw;  /* Largeur = 100% de la fenêtre */
-  height: 100vh;
+  height: 600vh;
   border: 1px solid #d6f4f4; /* Remplace par ton code hex */
   display: flex;
   gap: 20px; /* Espacement entre <main> et la ligne */
@@ -86,7 +86,7 @@ img {
   
   background-color: #d6f4f4; /* Couleur */
 
-  height: 90vh;
+  height:150vh;
 }
 
 .submit {

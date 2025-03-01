@@ -18,6 +18,12 @@
         <div class="inner"></div>
         <input type="submit" class='submit' value="Lancer l'enregistrement">
     </div>
+    <div class="performances-analyse">
+        <div class="inner"></div>
+        <form action="{{ url_for('analyse_performance') }}" method="GET">
+            <input type="submit" class="submit" value="Analyse de performance">
+        </form>
+    </div>
 </div>
 
 <body class="gradient-background">

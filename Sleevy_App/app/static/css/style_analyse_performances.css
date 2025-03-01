@@ -1,0 +1,36 @@
+/* Applique la police Meta */
+@font-face {
+    src: url("https://www.axis-praxis.org/fonts/webfonts/MetaVariableDemo-Set.woff2") format("woff2");
+    font-family: "Meta";
+    font-style: normal;
+    font-weight: normal;
+}
+
+/* Titre principal centré */
+main {
+    font-size: 4rem;
+    text-align: left;
+    color: #d6f4f4; /* Couleur de remplissage */
+    font-family: "Meta";
+    font-weight: 50; /* Police encore plus fine */
+    text-shadow: none; /* Suppression de l'ombre pour plus de netteté */
+}
+
+.gradient-background {
+    background: linear-gradient(to bottom, #9dbebb, #62bebe);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sub-container {
+    margin: 20px 0;
+    padding: 20px;
+    background-color: #f4f4f46c;
+    border-radius: 8px;
+}
+
+.sub-container h2 {
+    font-size: 1.8rem;
+    color: #333;
+    font-family: "Meta";
+}

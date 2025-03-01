@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Analyse de Performance</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_analyse_performances.css') }}"> <!-- Vous pouvez ajouter un fichier CSS spécifique -->
+</head>
+
+<body class="gradient-background">
+
+    <div class="main-container">
+        <!-- Titre principal -->
+        <main>Analyse de vos performances</main>
+        
+        <!-- Sous-container 1 : Analyse du rythme cardiaque -->
+        <div class="sub-container">
+            <h2>Analyse du rythme cardiaque : </h2>
+            <!-- Espace pour le graphique -->
+            <canvas id="myChartPPG" width="600" height="400"></canvas>
+        </div>
+
+        <!-- Sous-container 2 : Analyse de l'activité musculaire -->
+        <div class="sub-container">
+            <h2>Analyse de l'activité musculaire : </h2>
+            <!-- Espace pour le graphique -->
+            <canvas id="myChartEMG" width="600" height="400"></canvas>
+        </div>
+
+        <!-- Sous-container 3 : Analyse des mouvements -->
+        <div class="sub-container">
+            <h2>Analyse des mouvements : </h2>
+            <!-- Espace pour le graphique -->
+            <canvas id="myChartAccel" width="600" height="400"></canvas>
+        </div>
+        
+    </div>
+
+    <!-- Chargement du script Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/analyse_chart.js') }}"></script> <!-- Script spécifique pour l'analyse -->
+
+</body>
+
+</html>

@@ -42,6 +42,11 @@ def login_joueur():
 def login_coach():
     return render_template('login_coach.html')
 
+@app.route('/analyse_performance')
+def analyse_performance():
+    return render_template('analyse_performances.html')
+
+
 
 
 @app.route('/add', methods=['POST'])
@@ -157,7 +162,7 @@ def logout():
     session.pop('coach', None)
     return redirect(url_for('index'))
 
-#Nouvelle route pour le graphique ppg
+
 @app.route('/graphique_ppg_emg', methods=['GET'])
 def graphique_ppg_emg():
     joueur_id = session.get('joueur')  
@@ -170,19 +175,18 @@ def graphique_ppg_emg():
     ppg_data = db.session.query(PPG.valeurppg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
     if not ppg_data:
         return jsonify({"error": "Aucune donnée PPG trouvée pour cette session."}), 404
-    ppg_values = [ppg[0] for ppg in ppg_data]  # Extraire les valeurs PPG
+    ppg_values = [ppg[0] for ppg in ppg_data]  
 
     emg_data = db.session.query(EMG.valeuremg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
     if not emg_data:
         return jsonify({"error": "Aucune donnée EMG trouvée pour cette session."}), 404
-    emg_values = [emg[0] for emg in emg_data]  # Extraire les valeurs EMG
+    emg_values = [emg[0] for emg in emg_data]  
 
     accel_data = db.session.query(Accelerometer.valeuraccel).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
     if not accel_data :
         return jsonify({"error": "Aucune donnée Accel trouvée pour cette session."}), 404
-    accel_values = [accel[0] for accel in accel_data]  # Extraire les valeurs Accel
+    accel_values = [accel[0] for accel in accel_data] 
 
-    # Retourner les données PPG et EMG sous forme JSON
     return jsonify({
         "ppg_values": ppg_values,
         "emg_values": emg_values,
