@@ -34,3 +34,9 @@ main {
     color: #333;
     font-family: "Meta";
 }
+
+canvas {
+    width: 70% !important;  /* Le canvas occupe 100% de la largeur du container */
+    height: auto !important; /* Hauteur auto pour préserver les proportions */
+    max-width: 100%; /* Empêche l'élargissement du graphique */
+}

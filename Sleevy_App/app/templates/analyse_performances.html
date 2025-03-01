@@ -31,14 +31,18 @@
         <div class="sub-container">
             <h2>Analyse des mouvements : </h2>
             <!-- Espace pour le graphique -->
-            <canvas id="myChartAccel" width="600" height="400"></canvas>
+            <canvas id="myChartAccel" width="200" height="100"></canvas>
         </div>
         
     </div>
 
     <!-- Chargement du script Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="{{ url_for('static', filename='js/analyse_chart.js') }}"></script> <!-- Script spécifique pour l'analyse -->
+
+    <!-- Scripts spécifiques pour chaque graphique -->
+    <script src="{{ url_for('static', filename='js/analyse_ppg_chart.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/EMG_analysed.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/analyse_accel_chart.js') }}"></script>
 
 </body>
 
