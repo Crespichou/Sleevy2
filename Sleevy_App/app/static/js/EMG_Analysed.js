@@ -6,16 +6,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 const emgValues = data.emg_values;
                 console.log('Données EMG :', emgValues);
 
+                // Extraire les valeurs et les heures EMG
+                let valeursEmg = data.emg_values.map(item => item.valeur);
+                let heuresEmg = data.emg_values.map(item => {
+                    let heure = item.heure; // Format "YYYY HH"
+                    let heurePart = heure.substring(17); // Extrait "HH"
+                    return `${heurePart}`; // Ajoute ":00:00.00" pour obtenir "HH:MM:SS.ss"
+                });
+
                 // Détection des points brutaux
-                const pointsBrutaux = detectBrutalPoints(emgValues, 70, 0.45);
+                const pointsBrutaux = detectBrutalPoints(valeursEmg, 70, 0.45);
                 console.log('Points Brutaux :', pointsBrutaux);
 
                 // Division des valeurs EMG en segments
-                const segments = divideByPoints(emgValues, pointsBrutaux);
+                const segments = divideByPoints(valeursEmg, pointsBrutaux);
                 console.log('Segments :', segments);
 
                 // Créer le graphique avec les données EMG
-                createEMGChart(emgValues, pointsBrutaux, segments);
+                createEMGChart(valeursEmg, heuresEmg, pointsBrutaux, segments);
             } else {
                 console.error('Aucune donnée EMG trouvée.');
             }
@@ -76,7 +84,7 @@ function divideByPoints(emgValues, pointsBrutaux) {
 }
 
 // Fonction pour créer le graphique avec les données EMG
-function createEMGChart(emgValues, pointsBrutaux, segments) {
+function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     const ctx = document.getElementById('myChartEMG').getContext('2d');
 
     const groupSize = 40;
@@ -104,7 +112,7 @@ function createEMGChart(emgValues, pointsBrutaux, segments) {
         pointRadius: 0
     }];
 
-    const scatterData = pointsBrutaux.map(point => ({ x: point, y: moyenneMobile[point] }));
+    const scatterData = pointsBrutaux.map(point => ({ x: heuresEmg[point], y: moyenneMobile[point] }));
 
     const scatterDataset = {
         label: 'Points Brutaux',
@@ -141,7 +149,7 @@ function createEMGChart(emgValues, pointsBrutaux, segments) {
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: Array.from({ length: emgValues.length }, (_, i) => i + 1),
+            labels: heuresEmg, // Utiliser les heures pour les labels
             datasets: datasets
         },
         options: {
@@ -151,6 +159,12 @@ function createEMGChart(emgValues, pointsBrutaux, segments) {
                     title: {
                         display: true,
                         text: 'Temps'
+                    },
+                    ticks: {
+                        callback: function(value, index, values) {
+                            // Afficher une heure toutes les 5 valeurs
+                            return index % 2 === 0 ? this.getLabelForValue(value) : '';
+                        }
                     }
                 },
                 y: {

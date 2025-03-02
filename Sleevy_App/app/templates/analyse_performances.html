@@ -16,8 +16,11 @@
         <!-- Sous-container 1 : Analyse du rythme cardiaque -->
         <div class="sub-container">
             <h2>Analyse du rythme cardiaque : </h2>
+            <h3>Comparaison de votre actuelle avec les autres sessions  : </h3>
             <!-- Espace pour le graphique -->
             <canvas id="myChartPPG" width="600" height="400"></canvas>
+            <h3>Pourcentage de rapprochement de votre session actuelle avec votre BPM au repos : </h3>
+            <canvas id="myChartPPG2" width="600" height="400"></canvas>
         </div>
 
         <!-- Sous-container 2 : Analyse de l'activité musculaire -->
@@ -40,8 +43,8 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <!-- Scripts spécifiques pour chaque graphique -->
-    <script src="{{ url_for('static', filename='js/analyse_ppg_chart.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/EMG_analysed.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/PPG_Analysed.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/EMG_Analysed.js') }}"></script>
     <script src="{{ url_for('static', filename='js/analyse_accel_chart.js') }}"></script>
 
 </body>

@@ -4,27 +4,34 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json()) // On s'attend à une réponse au format JSON
         .then(data => {
             if (data && data.ppg_values && data.ppg_values.length > 0 && data.emg_values && data.emg_values.length > 0 && data.accel_values && data.accel_values.length > 0) {
-                // Extraire les valeurs PPG, EMG et Accel de la réponse
-                let valeursPpg = data.ppg_values;
-                let valeursEmg = data.emg_values;
-                let valeursAccel = data.accel_values;
+                // Extraire les valeurs et les heures PPG, EMG et Accel de la réponse
+                let valeursPpg = data.ppg_values.map(item => item.valeur);
+                let heuresPpg = data.ppg_values.map(item => {
+                    let heure = item.heure; // Format "YYYY HH"
+                    let heurePart = heure.substring(17); // Extrait "HH"
+                    return `${heurePart}`; // Ajoute ":00:00.00" pour obtenir "HH:MM:SS.ss"
+                });
 
-                // Créer un tableau contenant les labels pour chaque graphique
-                // Pour PPG
-                const labelsPpg = valeursPpg.map((_, index) => index + 1);  // Labels PPG (indices des valeurs PPG)
-                
-                // Pour EMG
-                const labelsEmg = valeursEmg.map((_, index) => index + 1);  // Labels EMG (indices des valeurs EMG)
+                let valeursEmg = data.emg_values.map(item => item.valeur);
+                let heuresEmg = data.emg_values.map(item => {
+                    let heure = item.heure; // Format "YYYY HH"
+                    let heurePart = heure.substring(17); // Extrait "HH"
+                    return `${heurePart}`; // Ajoute ":00:00.00" pour obtenir "HH:MM:SS.ss"
+                });
 
-                // Pour Accel
-                const labelsAccel = valeursAccel.map((_, index) => index + 1);  // Labels Accel (indices des valeurs Accel)
+                let valeursAccel = data.accel_values.map(item => item.valeur);
+                let heuresAccel = data.accel_values.map(item => {
+                    let heure = item.heure; // Format "YYYY HH"
+                    let heurePart = heure.substring(17); // Extrait "HH"
+                    return `${heurePart}`; // Ajoute ":00:00.00" pour obtenir "HH:MM:SS.ss"
+                });
 
                 // Créer et afficher le graphique PPG
                 const ctxPPG = document.getElementById('myChartPPG').getContext('2d');
                 new Chart(ctxPPG, {
                     type: 'line', // Choisir le type de graphique (ici, un graphique linéaire)
                     data: {
-                        labels: labelsPpg, // Labels des données PPG
+                        labels: heuresPpg, // Labels des données PPG
                         datasets: [{
                             label: 'Valeurs PPG',
                             data: valeursPpg, // Valeurs PPG
@@ -54,7 +61,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Temps (s)'
+                                    text: 'Temps'
+                                },
+                                ticks: {
+                                    callback: function(value, index, values) {
+                                        // Afficher une heure toutes les 5 valeurs
+                                        return index % 2 === 0 ? this.getLabelForValue(value) : '';
+                                    }
                                 }
                             },
                             y: {
@@ -72,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 new Chart(ctxEMG, {
                     type: 'line', // Choisir le type de graphique (ici, un graphique linéaire)
                     data: {
-                        labels: labelsEmg, // Labels des données EMG
+                        labels: heuresEmg, // Labels des données EMG
                         datasets: [{
                             label: 'Valeurs EMG',
                             data: valeursEmg, // Valeurs EMG
@@ -102,7 +115,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Temps (s)'
+                                    text: 'Temps'
+                                },
+                                ticks: {
+                                    callback: function(value, index, values) {
+                                        // Afficher une heure toutes les 5 valeurs
+                                        return index % 3 === 0 ? this.getLabelForValue(value) : '';
+                                    }
                                 }
                             },
                             y: {
@@ -120,7 +139,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 new Chart(ctxAccel, {
                     type: 'line', // Choisir le type de graphique (ici, un graphique linéaire)
                     data: {
-                        labels: labelsAccel, // Labels des données Accel
+                        labels: heuresAccel, // Labels des données Accel
                         datasets: [{
                             label: 'Valeurs Accel',
                             data: valeursAccel, // Valeurs Accel
@@ -150,7 +169,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             x: {
                                 title: {
                                     display: true,
-                                    text: 'Temps (s)'
+                                    text: 'Temps'
+                                },
+                                ticks: {
+                                    callback: function(value, index, values) {
+                                        // Afficher une heure toutes les 5 valeurs
+                                        return index % 5 === 0 ? this.getLabelForValue(value) : '';
+                                    }
                                 }
                             },
                             y: {

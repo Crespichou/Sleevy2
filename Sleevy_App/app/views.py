@@ -162,35 +162,65 @@ def logout():
     session.pop('coach', None)
     return redirect(url_for('index'))
 
-
+#Sélection des données PPG, EMG et Accel correspondant à la dernière session
 @app.route('/graphique_ppg_emg', methods=['GET'])
 def graphique_ppg_emg():
-    joueur_id = session.get('joueur')  
+    joueur_id = session.get('joueur')
     if not joueur_id:
         return jsonify({"error": "Aucun joueur connecté."}), 400
+
     max_session = db.session.query(Session.session_id).filter_by(idjoueur=joueur_id).order_by(Session.session_id.desc()).first()
     if not max_session:
         return jsonify({"error": "Aucune session trouvée pour ce joueur."}), 404
 
-    ppg_data = db.session.query(PPG.valeurppg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
+    # Récupérer les données PPG avec les valeurs et les horodatages
+    ppg_data = db.session.query(PPG.valeurppg, PPG.heureppg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
     if not ppg_data:
         return jsonify({"error": "Aucune donnée PPG trouvée pour cette session."}), 404
-    ppg_values = [ppg[0] for ppg in ppg_data]  
+    ppg_values = [{"valeur": ppg[0], "heure": ppg[1]} for ppg in ppg_data]
 
-    emg_data = db.session.query(EMG.valeuremg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
+    # Récupérer les données EMG avec les valeurs et les horodatages
+    emg_data = db.session.query(EMG.valeuremg, EMG.heureemg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
     if not emg_data:
         return jsonify({"error": "Aucune donnée EMG trouvée pour cette session."}), 404
-    emg_values = [emg[0] for emg in emg_data]  
+    emg_values = [{"valeur": emg[0], "heure": emg[1]} for emg in emg_data]
 
-    accel_data = db.session.query(Accelerometer.valeuraccel).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
-    if not accel_data :
+    # Récupérer les données Accel avec les valeurs et les horodatages
+    accel_data = db.session.query(Accelerometer.valeuraccel, Accelerometer.heureaccel).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
+    if not accel_data:
         return jsonify({"error": "Aucune donnée Accel trouvée pour cette session."}), 404
-    accel_values = [accel[0] for accel in accel_data] 
+    accel_values = [{"valeur": accel[0], "heure": accel[1]} for accel in accel_data]
 
     return jsonify({
         "ppg_values": ppg_values,
         "emg_values": emg_values,
-        "accel_values" : accel_values
+        "accel_values": accel_values
     })
 
 
+
+#Sélection de toutes les données PPG pour un joueur donné 
+@app.route('/graphique_ppg_toutes_sessions', methods=['GET'])
+def graphique_ppg_toutes_sessions():
+    joueur_id = session.get('joueur')  
+    if not joueur_id:
+        return jsonify({"error": "Aucun joueur connecté."}), 400
+
+    # Récupérer tous les session_id associés à ce joueur
+    sessions = db.session.query(Session.session_id).filter_by(idjoueur=joueur_id).order_by(Session.session_id.asc()).all()
+    if not sessions:
+        return jsonify({"error": "Aucune session trouvée pour ce joueur."}), 404
+
+    # Dictionnaire pour stocker les valeurs PPG par session_id
+    ppg_sessions = {}
+
+    for session_row in sessions:
+        session_id = session_row[0]
+        ppg_data = db.session.query(PPG.valeurppg).filter_by(session_id=session_id, idjoueur=joueur_id).all()
+        if ppg_data:
+            ppg_sessions[session_id] = [ppg[0] for ppg in ppg_data]
+
+    if not ppg_sessions:
+        return jsonify({"error": "Aucune donnée PPG trouvée pour ce joueur."}), 404
+
+    return jsonify(ppg_sessions)
