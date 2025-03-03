@@ -87,14 +87,6 @@ function divideByPoints(emgValues, pointsBrutaux) {
 function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     const ctx = document.getElementById('myChartEMG').getContext('2d');
 
-    const groupSize = 40;
-    const moyenneMobile = emgValues.map((_, i) => {
-        const start = Math.max(0, i - groupSize + 1);
-        const end = i + 1;
-        const window = emgValues.slice(start, end);
-        return window.reduce((acc, val) => acc + val, 0) / window.length;
-    }).slice(groupSize - 1);
-
     const datasets = [{
         label: 'Valeurs EMG',
         data: emgValues,
@@ -102,28 +94,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         borderWidth: 1,
         fill: false,
         pointRadius: 0
-    }, {
-        label: 'Moyenne mobile',
-        data: moyenneMobile,
-        borderColor: 'orange',
-        borderWidth: 1,
-        borderDash: [5, 5],
-        fill: false,
-        pointRadius: 0
     }];
-
-    const scatterData = pointsBrutaux.map(point => ({ x: heuresEmg[point], y: moyenneMobile[point] }));
-
-    const scatterDataset = {
-        label: 'Points Brutaux',
-        data: scatterData,
-        type: 'scatter',
-        backgroundColor: 'red',
-        borderColor: 'red',
-        pointRadius: 5
-    };
-
-    datasets.push(scatterDataset);
 
     segments.sort((a, b) => b.segment.length - a.segment.length);
     const topSegments = segments.slice(0, 6);
@@ -131,12 +102,12 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     topSegments.forEach(segment => {
         const pente = calculateSlope(segment.segment);
         const xVals = Array.from({ length: segment.segment.length }, (_, i) => segment.start + i);
-        const yVals = segment.segment.map((val, i) => val + pente * (i - segment.start));
+        const yVals = segment.segment.map((val, i) => val + pente * (i));
 
         const color = pente >= 0 ? 'green' : 'red';
         datasets.push({
             label: `Segment ${segment.start} à ${segment.end}`,
-            data: yVals,
+            data: yVals.map((y, i) => ({ x: xVals[i], y })),
             borderColor: color,
             borderWidth: 1,
             borderDash: [5, 5],
@@ -149,7 +120,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: heuresEmg, // Utiliser les heures pour les labels
+            labels: Array.from({ length: emgValues.length }, (_, i) => i), // Utiliser les indices pour les labels
             datasets: datasets
         },
         options: {

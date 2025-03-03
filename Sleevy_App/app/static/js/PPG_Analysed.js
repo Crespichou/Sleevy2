@@ -111,7 +111,7 @@ function displayGroupedData(groupLabels, datasets, referenceMean, highestSession
         groupedDatasets.push({
             label: label === highestSessionLabel ? "Session actuelle" : "Autres sessions",
             data: datasets[label],
-            borderColor: label === highestSessionLabel ? 'red' : 'black',
+            borderColor: label === highestSessionLabel ? 'blue' : 'gray',
             borderWidth: 2,
             fill: false,
             pointRadius: 0,
@@ -180,7 +180,7 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         secondaryDatasets.push({
             label: label === highestSessionLabel ? "Session actuelle" : "Autres sessions",
             data: cumulativeVariabilities[label],
-            borderColor: label === highestSessionLabel ? 'red' : 'gray',
+            borderColor: label === highestSessionLabel ? 'blue' : 'gray',
             borderWidth: 2,
             fill: false,
             pointRadius: 0,
@@ -191,9 +191,9 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     // Ajouter la variabilité des referenceValues
     const referenceVariability = computeCumulativeVariability(referenceValues, referenceMean);
     secondaryDatasets.push({
-        label: "Variabilité de référence",
+        label: "Rythme cardiaque au repos",
         data: referenceVariability,
-        borderColor: 'blue',
+        borderColor: 'rgba(2, 48, 2, 0.69)',
         borderWidth: 2,
         fill: false,
         pointRadius: 0,
@@ -209,9 +209,9 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     const trendLineData = Array.from({ length: maxLength }, (_, i) => slope * (i + 1) + intercept);
 
     secondaryDatasets.push({
-        label: "Tendance de référence",
+        label: "Rythme cardiaque au repos",
         data: trendLineData,
-        borderColor: 'blue',
+        borderColor: 'rgba(2, 48, 2, 0.69)',
         borderWidth: 2,
         fill: false,
         pointRadius: 0,
