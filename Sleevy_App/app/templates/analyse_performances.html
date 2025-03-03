@@ -16,25 +16,49 @@
         <!-- Sous-container 1 : Analyse du rythme cardiaque -->
         <div class="sub-container">
             <h2>Analyse du rythme cardiaque : </h2>
-            <h3>Comparaison de votre actuelle avec les autres sessions  : </h3>
-            <!-- Espace pour le graphique -->
-            <canvas id="myChartPPG" width="600" height="400"></canvas>
-            <h3>Pourcentage de rapprochement de votre session actuelle avec votre BPM au repos : </h3>
-            <canvas id="myChartPPG2" width="600" height="400"></canvas>
+            <div class="container-position"> 
+                <div class="graph-container">
+                    <h3>Comparaison de votre session actuelle avec les autres sessions : </h3>
+                    <!-- Espace pour le graphique -->
+                    <canvas id="myChartPPG" width="600" height="400"></canvas>
+                    <h3>Pourcentage de rapprochement de votre session actuelle avec votre BPM au repos : </h3>
+                    <canvas id="myChartPPG2" width="600" height="400"></canvas>
+                </div>
+                <div class="info-container">
+                    <h3>Informations sur les graphiques :</h3>
+                    <!-- Ajoutez ici les informations que vous souhaitez afficher -->
+                </div>
+            </div>
         </div>
 
         <!-- Sous-container 2 : Analyse de l'activité musculaire -->
         <div class="sub-container">
-            <h2>Analyse de l'activité musculaire : </h2>
-            <!-- Espace pour le graphique -->
-            <canvas id="myChartEMG" width="600" height="400"></canvas>
+            <div class="container-position">
+                <div class="graph-container">
+                    <h2>Analyse de l'activité musculaire : </h2>
+                    <!-- Espace pour le graphique -->
+                    <canvas id="myChartEMG" width="600" height="400"></canvas>
+                </div>
+                <div class="info-container">
+                    <h3>Informations sur les graphiques :</h3>
+                    <!-- Ajoutez ici les informations que vous souhaitez afficher -->
+                </div>
+            </div>
         </div>
 
         <!-- Sous-container 3 : Analyse des mouvements -->
         <div class="sub-container">
-            <h2>Analyse des mouvements : </h2>
-            <!-- Espace pour le graphique -->
-            <canvas id="myChartAccel" width="200" height="100"></canvas>
+            <div class="container-position">
+                <div class="graph-container">
+                    <h2>Analyse des mouvements : </h2>
+                    <!-- Espace pour le graphique -->
+                    <canvas id="myChartAccel" width="600" height="400"></canvas>
+                </div>
+                <div class="info-container">
+                    <h3>Informations sur les graphiques :</h3>
+                    <!-- Ajoutez ici les informations que vous souhaitez afficher -->
+                </div>
+            </div>
         </div>
         
     </div>

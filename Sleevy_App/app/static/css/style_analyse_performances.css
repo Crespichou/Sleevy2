@@ -23,9 +23,26 @@ main {
   }
 
   .sub-container {
+    display : flex;
     margin: 20px 0;
     padding: 20px;
     background-color: #f4f4f46c;
+    border-radius: 8px;
+    flex-direction: column;
+}
+.container-position{
+    display: flex;
+    flex-direction: line;
+}
+
+.graph-container{
+    flex : 2.8;
+}
+
+.info-container{
+    padding-left : 20px;
+    background-color: rgba(255, 255, 255, 0.486);
+    flex : 1.2;
     border-radius: 8px;
 }
 
@@ -41,14 +58,13 @@ main {
     font-family: "Meta";
 }
 
-
 canvas {
     width: 70% !important;  /* Le canvas occupe 100% de la largeur du container */
     height: auto !important; /* Hauteur auto pour préserver les proportions */
     max-width: 100%; /* Empêche l'élargissement du graphique */
 }
 
-#myChartPPG, #myChartPPG2 {
+#myChartPPG, #myChartPPG2, #myChartEMG, #myChartAccel {
     width: 100% !important;
     max-width: 900px; /* Limite la largeur maximale */
     height: auto !important;

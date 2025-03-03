@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    fetch('/graphique_ppg_toutes_sessions')  // Récupère toutes les sessions PPG
+    fetch('/graphique_ppg_toutes_sessions')
         .then(response => response.json())
         .then(data => {
             console.log("Données PPG reçues :", data);
@@ -11,12 +11,13 @@ document.addEventListener("DOMContentLoaded", function () {
 function processAndDisplayData(data) {
     console.log("Données reçues pour le traitement :", data);
 
-    const referenceMean = 69.4; // Valeur de la référence moyenne
-    const datasets = {};
+    const referenceValues = data.referenceValues;
+    const referenceMean = calculateMean(referenceValues);
+    console.log("Moyenne des valeurs de référence :", referenceMean);
 
-    // Convertir les données reçues en un format utilisable
-    Object.keys(data).forEach(sessionId => {
-        datasets[`Session_${sessionId}`] = data[sessionId];
+    const datasets = {};
+    Object.keys(data.ppg_sessions).forEach(sessionId => {
+        datasets[`Session_${sessionId}`] = data.ppg_sessions[sessionId];
     });
 
     const cumulativeVariabilities = {};
@@ -30,8 +31,7 @@ function processAndDisplayData(data) {
 
     console.log("Groupes formés :", groups);
 
-    // Identifier le groupe contenant la session avec le session_id le plus élevé
-    const highestSessionId = Math.max(...Object.keys(data).map(Number));
+    const highestSessionId = Math.max(...Object.keys(data.ppg_sessions).map(Number));
     const highestSessionLabel = `Session_${highestSessionId}`;
     let groupToDisplay = null;
 
@@ -44,10 +44,15 @@ function processAndDisplayData(data) {
     if (groupToDisplay) {
         console.log("Groupe à afficher :", groupToDisplay);
         displayGroupedData(groupToDisplay, datasets, referenceMean, highestSessionLabel);
-        displaySecondaryData(groupToDisplay, cumulativeVariabilities, highestSessionLabel);
+        displaySecondaryData(groupToDisplay, cumulativeVariabilities, highestSessionLabel, referenceValues, referenceMean);
     } else {
         console.error("Aucun groupe trouvé pour la session avec le session_id le plus élevé.");
     }
+}
+
+function calculateMean(values) {
+    const sum = values.reduce((acc, val) => acc + val, 0);
+    return sum / values.length;
 }
 
 function computeCumulativeVariability(data, fixedMean) {
@@ -106,7 +111,7 @@ function displayGroupedData(groupLabels, datasets, referenceMean, highestSession
         groupedDatasets.push({
             label: label === highestSessionLabel ? "Session actuelle" : "Autres sessions",
             data: datasets[label],
-            borderColor: label === highestSessionLabel ? 'red' : 'black', // Mettre en rouge la courbe avec le session_id le plus élevé
+            borderColor: label === highestSessionLabel ? 'red' : 'black',
             borderWidth: 2,
             fill: false,
             pointRadius: 0,
@@ -149,7 +154,20 @@ function displayGroupedData(groupLabels, datasets, referenceMean, highestSession
     console.log("Graphique du groupe affiché :", window.myChartPPG);
 }
 
-function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessionLabel) {
+function calculateTrendLine(x, y) {
+    const n = x.length;
+    const sumX = x.reduce((a, b) => a + b, 0);
+    const sumY = y.reduce((a, b) => a + b, 0);
+    const sumXY = x.reduce((sum, xVal, index) => sum + xVal * y[index], 0);
+    const sumX2 = x.reduce((sum, xVal) => sum + xVal * xVal, 0);
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
+    return { slope, intercept };
+}
+
+function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessionLabel, referenceValues, referenceMean) {
     const ctx2 = document.getElementById('myChartPPG2').getContext('2d');
 
     if (window.myChartPPG2 && typeof window.myChartPPG2.destroy === 'function') {
@@ -162,7 +180,7 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         secondaryDatasets.push({
             label: label === highestSessionLabel ? "Session actuelle" : "Autres sessions",
             data: cumulativeVariabilities[label],
-            borderColor: label === highestSessionLabel ? 'red' : 'black', // Mettre en rouge la courbe avec le session_id le plus élevé
+            borderColor: label === highestSessionLabel ? 'red' : 'gray',
             borderWidth: 2,
             fill: false,
             pointRadius: 0,
@@ -170,10 +188,40 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         });
     });
 
+    // Ajouter la variabilité des referenceValues
+    const referenceVariability = computeCumulativeVariability(referenceValues, referenceMean);
+    secondaryDatasets.push({
+        label: "Variabilité de référence",
+        data: referenceVariability,
+        borderColor: 'blue',
+        borderWidth: 2,
+        fill: false,
+        pointRadius: 0,
+        tension: 0.4
+    });
+
+    // Calculer la ligne de tendance pour referenceVariability
+    const xValues = Array.from({ length: referenceVariability.length }, (_, i) => i + 1);
+    const { slope, intercept } = calculateTrendLine(xValues, referenceVariability);
+
+    // Étendre la ligne de tendance pour couvrir la même plage que les autres courbes
+    const maxLength = Math.max(...Object.values(cumulativeVariabilities).map(arr => arr.length));
+    const trendLineData = Array.from({ length: maxLength }, (_, i) => slope * (i + 1) + intercept);
+
+    secondaryDatasets.push({
+        label: "Tendance de référence",
+        data: trendLineData,
+        borderColor: 'blue',
+        borderWidth: 2,
+        fill: false,
+        pointRadius: 0,
+        tension: 0.4
+    });
+
     window.myChartPPG2 = new Chart(ctx2, {
         type: 'line',
         data: {
-            labels: Array.from({ length: Math.max(...Object.values(cumulativeVariabilities).map(arr => arr.length)) }, (_, i) => i + 1),
+            labels: Array.from({ length: maxLength }, (_, i) => i + 1),
             datasets: secondaryDatasets
         },
         options: {

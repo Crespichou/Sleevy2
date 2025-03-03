@@ -1,7 +1,7 @@
 
 from app import app, db
 from flask import render_template, request, redirect, url_for, session, flash, jsonify
-from app.models import Coach, Player,EMG, PPG,Session, Accelerometer
+from app.models import Coach, Player,EMG, PPG,Session, Accelerometer, PPGReference
 from threading import Thread
 import base64
 from datetime import datetime
@@ -173,19 +173,16 @@ def graphique_ppg_emg():
     if not max_session:
         return jsonify({"error": "Aucune session trouvée pour ce joueur."}), 404
 
-    # Récupérer les données PPG avec les valeurs et les horodatages
     ppg_data = db.session.query(PPG.valeurppg, PPG.heureppg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
     if not ppg_data:
         return jsonify({"error": "Aucune donnée PPG trouvée pour cette session."}), 404
     ppg_values = [{"valeur": ppg[0], "heure": ppg[1]} for ppg in ppg_data]
 
-    # Récupérer les données EMG avec les valeurs et les horodatages
     emg_data = db.session.query(EMG.valeuremg, EMG.heureemg).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
     if not emg_data:
         return jsonify({"error": "Aucune donnée EMG trouvée pour cette session."}), 404
     emg_values = [{"valeur": emg[0], "heure": emg[1]} for emg in emg_data]
 
-    # Récupérer les données Accel avec les valeurs et les horodatages
     accel_data = db.session.query(Accelerometer.valeuraccel, Accelerometer.heureaccel).filter_by(session_id=max_session[0], idjoueur=joueur_id).all()
     if not accel_data:
         return jsonify({"error": "Aucune donnée Accel trouvée pour cette session."}), 404
@@ -202,7 +199,7 @@ def graphique_ppg_emg():
 #Sélection de toutes les données PPG pour un joueur donné 
 @app.route('/graphique_ppg_toutes_sessions', methods=['GET'])
 def graphique_ppg_toutes_sessions():
-    joueur_id = session.get('joueur')  
+    joueur_id = session.get('joueur')
     if not joueur_id:
         return jsonify({"error": "Aucun joueur connecté."}), 400
 
@@ -211,7 +208,6 @@ def graphique_ppg_toutes_sessions():
     if not sessions:
         return jsonify({"error": "Aucune session trouvée pour ce joueur."}), 404
 
-    # Dictionnaire pour stocker les valeurs PPG par session_id
     ppg_sessions = {}
 
     for session_row in sessions:
@@ -223,4 +219,14 @@ def graphique_ppg_toutes_sessions():
     if not ppg_sessions:
         return jsonify({"error": "Aucune donnée PPG trouvée pour ce joueur."}), 404
 
-    return jsonify(ppg_sessions)
+    ppg_data_repos = db.session.query(PPGReference.valeurppgrepos).filter_by(idjoueur=joueur_id).all()
+    if not ppg_data_repos:
+        return jsonify({"error": "Aucune donnée PPG trouvée pour cette session."}), 404
+    ppg_values = [ppg[0] for ppg in ppg_data_repos]  # Simplification pour obtenir une liste de valeurs
+
+    # Inclure les valeurs de référence dans la réponse
+    return jsonify({
+        "ppg_sessions": ppg_sessions,
+        "referenceValues": ppg_values
+    })
+
