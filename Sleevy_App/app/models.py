@@ -66,3 +66,11 @@ class Accelerometer(db.Model):
     valeuraccel = db.Column(db.Integer)
     dateaccel = db.Column(db.Date)
     heureaccel = db.Column(db.DateTime, default=datetime.utcnow)
+
+#En rapport avec la table que j'ai ajoutée
+class PPGReference(db.Model):
+    __tablename__ = 'ppgreference'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    valeurppgrepos = db.Column(db.Integer, nullable=False)
+    heureppgrepos = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
+    idjoueur = db.Column(db.Integer, db.ForeignKey('joueur.idjoueur'), nullable=False)

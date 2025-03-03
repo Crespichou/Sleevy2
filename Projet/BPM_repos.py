@@ -11,7 +11,7 @@ ID_JOUEUR = 1      # Argument
 def save_ppg_data(ppg_values):
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db") #Tablette Antoine
         curseur = connexion.cursor()
         
         requete = """
@@ -72,4 +72,4 @@ def main() :
     print(f"Valeurs PPG collectées : {ppg_values}")
 
 if __name__ == "__main__":
-    main()
+    main() 

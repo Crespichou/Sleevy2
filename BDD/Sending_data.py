@@ -16,7 +16,7 @@ def afficher_donnees():
         curseur = connexion.cursor()
         
         #Mettre bonne requête
-        requete = "SELECT * FROM coach"
+        requete = "SELECT * FROM ppgreference"
         curseur.execute(requete)
 
         resultat = curseur.fetchall()
@@ -122,5 +122,5 @@ def afficher_valeurs_en_une_ligne():
 
 
 #afficher_valeurs_en_une_ligne()
-modifier_donnees()  
-#afficher_donnees() 
+#modifier_donnees()  
+afficher_donnees() 
