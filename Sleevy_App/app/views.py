@@ -128,9 +128,9 @@ def login_players():
 def coaches():
     if session.get('coach'):
         coach_id = session.get('coach')
-        print(coach_id)
-        coach_players = Player.query.filter_by(idcoach=coach_id)
-        return render_template('main_coach.html', coach_players=coach_players)
+        coach_players = Player.query.filter_by(idcoach=coach_id) 
+        coach = Coach.query.filter_by(idcoach=coach_id).first()
+        return render_template('main_coach.html', coach_players=coach_players, coach=coach)
     return render_template('login.html')
 
 @app.route('/joueurs', methods=['POST', 'GET'])

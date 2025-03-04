@@ -4,15 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Sleevy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_coach.css') }}">
 </head>
-<div class="title">
-    Sleevy
-</div>
-<div class="container">
-    <div class="text">
-        Bienvenue Coach
-    </div>
-    <div class="container">
+<body class="gradient-background">
+   
+        <main>
+        Bienvenue {{coach.ndccoach}}
+        </main>
+        <div class="fine-line"></div>
+        <div class="container">
         <div class="text">Liste de joueur</div>
         <table border="1">
             <tr>
@@ -32,6 +32,5 @@
             {% endfor %}
         </table>
     </div>
-    
-
-<a href="{{ url_for('logout') }}"> Logout </a>
+    <a href="{{ url_for('logout') }}"> Logout </a>
+</body>
