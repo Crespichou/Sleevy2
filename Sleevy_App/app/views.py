@@ -25,9 +25,9 @@ def portal_coach():
 def portal_joueur():
     return render_template('portal_joueur.html')
 
-@app.route('/register')
+@app.route('/register_coach')
 def register():
-    return render_template('register.html')
+    return render_template('register_coach.html')
 
 @app.route('/register_joueur')
 def register_joueur():
