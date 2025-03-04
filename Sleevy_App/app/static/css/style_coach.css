@@ -1,0 +1,66 @@
+/* Dégradé en arrière-plan */
+.gradient-background {
+    background: linear-gradient(to bottom, #9dbebb, #62bebe);
+    height: 100vh; /* Hauteur de toute la fenêtre */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Boutons stylisés */
+  .btn {
+    transition: all 0.3s ease-in-out;
+    font-family: "Dosis", sans-serif;
+    
+    width: 150px;
+    height: 60px;
+    border-radius: 50px;
+    background-image: linear-gradient(135deg, #8ea9a7 0%, #4da9a9 100%);
+    box-shadow: 0 20px 30px -6px rgba(54, 94, 94, 0.5);
+    outline: none;
+    cursor: pointer;
+  
+    border: none;
+    font-size: 18px; /* Taille de la police réduite */
+    color: white;
+  }
+  
+  .btn:hover {
+    transform: translateY(3px);
+    box-shadow: none;
+  }
+  
+  .btn:active {
+    opacity: 0.5;
+  }
+  
+  /* Chargement d'une police externe */
+  @font-face {
+    src: url("https://www.axis-praxis.org/fonts/webfonts/MetaVariableDemo-Set.woff2") format("woff2");
+    font-family: "Meta";
+    font-style: normal;
+    font-weight: normal;
+  }
+  
+  /* Titre principal centré */
+  /* Titre principal centré avec des lettres encore plus affinées */
+  main {
+    
+    font-size: 7rem;
+    text-align: center;
+    color: #d6f4f4; /* Couleur de remplissage */
+    font-family: "Meta";
+    font-weight: 50; /* Police encore plus fine */
+    text-shadow: none; /* Suppression de l'ombre pour plus de netteté */
+  }
+  
+  /* Centrage et espacement des boutons */
+  .container.custom-button-container {
+    display: flex;          /* Utilisation de flexbox */
+    justify-content: center; /* Centre horizontalement */
+    gap: 30px;              /* Espacement entre les boutons */
+    margin-top: 40px;       /* Ajuste l'espacement vertical */
+  }
+  

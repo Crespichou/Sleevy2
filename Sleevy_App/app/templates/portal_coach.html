@@ -5,21 +5,25 @@
  
     <meta charset="UTF-8">
     <title>Sleevy</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_coach.css') }}">
 </head>
 
-<body>
-    <div class="title">
-        Sleevy
-    </div>
+
+<body class="gradient-background">
+    <main>
+        Portail Coach
+    </main>
     <div>
-        <button class="container custom- tton" onclick="window.location.href ='/login_coach';">
-            <div class="inner"></div>
-            <span>Se Connecter</span>
-        </button>
-        <button class="custom-button" onclick="window.location.href ='/register';">
-            <div class="inner"></div>
-            <span>S'enregistrer</span>
-        </button>
+        <div class="container custom-button-container">
+            <button class="btn" onclick="window.location.href ='/login_coach';">
+                <div class="inner"></div>
+                <span>Se Connecter</span>
+            </button>
+            <button class="btn" onclick="window.location.href ='/register_coach';">
+                <div class="inner"></div>
+                <span>S'enregistrer</span>
+            </button>
+        </div>
     </div>
 </body>
 
