@@ -116,5 +116,46 @@ canvas {
     opacity: 1;
 }
 
+.info-container-accel p {
+    font-size: 1rem;
+    color: black;
+    font-family: "Meta";
+    margin: 5px 0; /* Ajout de marges pour espacer les paragraphes */
+    text-align: center;
+}
 
 
+.text-container{
+    background-color: #f4f4f46c;
+    border-radius: 5px;
+    margin-right : 20px;
+    padding: 10px;
+    margin-top: 30px;
+}
+
+.gauge-container {
+    text-align: center;
+    margin-right: 20px;
+    margin-top: 50px;
+}
+
+.gauge {
+    width: 100%;
+    background-color: #d4d4d4;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.gauge div {
+    height: 24px;
+    border-radius: 5px;
+    transition: width 0.5s, background-color 0.5s;
+}
+
+#gauge-label {
+    font-size: 1rem;
+    color: #000000;
+    font-family: "Meta";
+}

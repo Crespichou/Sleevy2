@@ -77,11 +77,12 @@
         <div class="sub-container">
             <div class="container-position">
                 <div class="graph-container">
-                    <h2>Analyse des mouvements : 
+                    <h2>Analyse des mouvements :
                         <span class="tooltip_big">🛈
                             <span class="tooltip-text">
                                 <p>Ce graphique représente les mouvements de votre bras gauche.</p>
-                                <p>Des valeurs trop élevées indiquent que vous avez enlever la main de votre clavier.</p>
+                                <p>Des valeurs élevées trop répétitives indiquent que vous avez enlevé la main de votre clavier.</p>
+                                <p>C'est ce qui est appelé : Mouvements parasites. </p>
                             </span>
                         </span>
                     </h2>
@@ -91,11 +92,19 @@
                 <div class="info-container">
                     <div class="info-container-accel">
                         <h3>Informations sur les graphiques :</h3>
+                        <div class="gauge-container">
+                            <div class="gauge" id="gauge"></div>
+                            <p id="gauge-label"></p>
+                        </div>
+                        <div class="text-container">
+                            <p> Détails des mouvements parasites : </p>
+                        </div>
                         <!-- Ajoutez ici les informations que vous souhaitez afficher -->
                     </div>
                 </div>
             </div>
         </div>
+        
         
     </div>
 
