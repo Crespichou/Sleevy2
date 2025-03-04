@@ -70,3 +70,51 @@ canvas {
     height: auto !important;
     max-height: 400px; /* Limite la hauteur maximale */
 }
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+}
+
+.tooltip_big {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    font-size: 22px;
+    color: #333;
+}
+
+
+.tooltip-text {
+    visibility: hidden;
+    width: 500px;
+    background-color: black;
+    color: #fff;
+    text-align: center;
+    padding: 8px;
+    border-radius: 5px;
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s, visibility 0.3s;
+    z-index: 1000;
+    font-size: 16px;
+}
+
+.tooltip:hover .tooltip-text{
+    visibility: visible;
+    opacity: 1;
+}
+
+.tooltip_big:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
+}
+
+
+

@@ -10,11 +10,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 let valeursAccel = accelValues.map(item => item.valeur);
                 let heuresAccel = accelValues.map(item => {
                     let heure = item.heure; // Format "YYYY-MM-DD HH:MM:SS"
-                    return heure.substring(17); // Extrait "HH:MM:SS"
+                    return new Date(heure); // Convertir en objet Date pour les comparaisons
                 });
 
                 // Créer le graphique avec les données Accel
-                createAccelChart(valeursAccel, heuresAccel);
+                createAccelChart(valeursAccel, heuresAccel.map(date => date.toTimeString().substring(0, 8)));
+
+                // Compter le nombre de fois où la ligne à 0.3 est coupée, en regroupant les coupures rapides
+                let coupures = 0;
+                let derniereCoupure = null;
+                const seuilTemps = 5000; // 1 seconde en millisecondes
+
+                for (let i = 1; i < valeursAccel.length; i++) {
+                    if ((valeursAccel[i - 1] <= 0.35 && valeursAccel[i] > 0.35) ||
+                        (valeursAccel[i - 1] > 0.35 && valeursAccel[i] <= 0.35)) {
+
+                        if (!derniereCoupure || (heuresAccel[i] - derniereCoupure) > seuilTemps) {
+                            coupures++;
+                            derniereCoupure = heuresAccel[i];
+                        }
+                    }
+                }
+
+                // Afficher le nombre de coupures dans le info-container
+                const infoContainer = document.querySelector('.info-container-accel');
+                const p = document.createElement('p');
+                p.textContent = `La ligne à 0.3 est coupée ${coupures} fois.`;
+                infoContainer.appendChild(p);
             } else {
                 console.error('Aucune donnée Accel trouvée.');
             }

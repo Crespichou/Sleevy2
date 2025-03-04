@@ -18,10 +18,28 @@
             <h2>Analyse du rythme cardiaque : </h2>
             <div class="container-position"> 
                 <div class="graph-container">
-                    <h3>Comparaison de votre session actuelle avec les autres sessions : </h3>
+                    <h3>
+                        Comparaison de votre session actuelle avec les autres sessions : 
+                        <span class="tooltip">🛈
+                            <span class="tooltip-text">
+                                <p>Toutes vos sessions sont analysées et réparties dans des groupes de sessions en fonction de leurs similitudes.</p>
+                                <p>Ce graphique représente le groupe dans lequel se situe votre session la plus récente (bleue) et permet de visualiser son évolution en fonction des autres sessions du même groupe (gris).</p>
+                            </span>
+                        </span>
+                    </h3>
                     <!-- Espace pour le graphique -->
                     <canvas id="myChartPPG" width="600" height="400"></canvas>
-                    <h3>Positionnement de votre session actuelle avec votre BPM au repos : </h3>
+                    <h3>
+                        Positionnement de votre session actuelle avec votre BPM au repos : 
+                        <span class="tooltip">🛈
+                            <span class="tooltip-text">
+                                <p>Ce graphique représente l'évolution des variations des différentes sessions en fonction de votre rythme cardique au repos.</p>
+                                <p>De même que le graphique précédent, il représente le groupe dans lequel se situe votre session la plus récente (bleue) comparée aux autres sessions du groupe (gris).</p>
+                                <p>La courbe verte représente l'évolution des variations de votre rythme cardiaque au repos.</p>
+                                <p>L'objectif de ce graphique est de visualiser l'écart de variation de vos sessions en fonction de votre rythme cardiaque au repos.</p>
+                            </span>
+                        </span>
+                    </h3>
                     <canvas id="myChartPPG2" width="600" height="400"></canvas>
                 </div>
                 <div class="info-container">
@@ -29,13 +47,22 @@
                     <!-- Ajoutez ici les informations que vous souhaitez afficher -->
                 </div>
             </div>
+            
         </div>
 
         <!-- Sous-container 2 : Analyse de l'activité musculaire -->
         <div class="sub-container">
             <div class="container-position">
                 <div class="graph-container">
-                    <h2>Analyse de l'activité musculaire : </h2>
+                    <h2>Analyse de l'activité musculaire : 
+                        <span class="tooltip_big">🛈
+                            <span class="tooltip-text">
+                                <p>Ce graphique représente l'activité musculaire de votre session la plus récente (blue).</p>
+                                <p>La courbe verte correspond au moment où votre activité musculaire est croissante.</p>
+                                <p>La courbe rouge correspond au moment où votre activité musculaire est décroissante.</p>
+                            </span>
+                        </span>
+                    </h2>
                     <!-- Espace pour le graphique -->
                     <canvas id="myChartEMG" width="600" height="400"></canvas>
                 </div>
@@ -50,13 +77,22 @@
         <div class="sub-container">
             <div class="container-position">
                 <div class="graph-container">
-                    <h2>Analyse des mouvements : </h2>
+                    <h2>Analyse des mouvements : 
+                        <span class="tooltip_big">🛈
+                            <span class="tooltip-text">
+                                <p>Ce graphique représente les mouvements de votre bras gauche.</p>
+                                <p>Des valeurs trop élevées indiquent que vous avez enlever la main de votre clavier.</p>
+                            </span>
+                        </span>
+                    </h2>
                     <!-- Espace pour le graphique -->
                     <canvas id="myChartAccel" width="600" height="400"></canvas>
                 </div>
                 <div class="info-container">
-                    <h3>Informations sur les graphiques :</h3>
-                    <!-- Ajoutez ici les informations que vous souhaitez afficher -->
+                    <div class="info-container-accel">
+                        <h3>Informations sur les graphiques :</h3>
+                        <!-- Ajoutez ici les informations que vous souhaitez afficher -->
+                    </div>
                 </div>
             </div>
         </div>
