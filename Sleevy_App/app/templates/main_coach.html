@@ -13,24 +13,34 @@
         </main>
         <div class="fine-line"></div>
         <div class="container">
-        <div class="text">Liste de joueur</div>
-        <table border="1">
-            <tr>
-                <th>Id</th>
-                <th>Pseudo</th>
-                <th>Historique</th>
-            </tr>
-            {% for player in coach_players %}
-            <tr>
-                <td>{{ player.idjoueur }}</td>
-                <td>{{ player.pseudo }}</td>
-                <td>
-                    <a href="{{ url_for('index') }}">Accès Historique</a>
-                </td>
-                
-            </tr>
-            {% endfor %}
-        </table>
+        <main class="submain">Liste de joueur
+            <div class="fine-line2"></div>
+        </main>
+        
+            <div class="space">
+            <div class="player-list">
+                <div class="header">
+                    <span>Id</span>
+                    <div class="separator"></div>
+                    <span>Pseudo</span>
+                    <div class="separator"></div>
+                    <span>Historique</span>
+                    <div class="separator"></div>
+                </div>
+                <div class="players">
+                    {% for player in coach_players %}
+                    <div class="player">
+                        <span>{{ player.idjoueur }}</span>
+                        <div class="separator"></div>
+                        <span>{{ player.pseudo }}</span>
+                        <div class="separator"></div>
+                        <span><a href="{{ url_for('index') }}">Historique</a></span>
+                        <div class="separator"></div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            </div>
     </div>
     <a href="{{ url_for('logout') }}"> Logout </a>
 </body>

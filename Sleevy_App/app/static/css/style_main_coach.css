@@ -17,6 +17,28 @@
     text-shadow: none; /* Suppression de l'ombre pour plus de netteté */
   }
 
+  .space {
+    background-color: #D7E3DE;
+    border-radius: 20px;
+    box-sizing: border-box;
+    height: auto; /* Définit une hauteur minimale */
+    padding: 20px;
+    width: fit-content; /* Ajuste la largeur au contenu sans forcer de retour à la ligne */
+    max-width: 100%; /* Empêche de dépasser la largeur de l’écran */
+    display: inline-block; /* S'ajuste selon le contenu */
+}
+
+  .submain {
+    
+    font-size: 3rem;
+    text-align: left;
+    color: #d6f4f4; /* Couleur de remplissage */
+    font-family: "Meta";
+    font-weight: 50; /* Police encore plus fine */
+    text-shadow: none; /* Suppression de l'ombre pour plus de netteté */
+  }
+
+
   .gradient-background {
     background: linear-gradient(to bottom, #9dbebb, #62bebe);
     height: 100vh; /* Hauteur de toute la fenêtre */
@@ -27,18 +49,39 @@
   }
 
   .fine-line {
-    margin-top: 20px;
-    margin-bottom: 20px;
+  
     border: none;
     height: 1px; /* Augmente la hauteur */
     background-color: #d6f4f4;
     margin: 1px;
     width: 98vw;
     margin-right: 25px;  
-    margin-bottom: 20px;
+
     display: flex; /* S'assure qu'elle est visible */
 }
 
+.fine-line {
+  
+  border: none;
+  height: 1px; /* Augmente la hauteur */
+  background-color: #d6f4f4;
+  margin: 1px;
+  width: 98vw;
+  margin-right: 25px;  
+ 
+  display: flex; /* S'assure qu'elle est visible */
+}
+.fine-line2 {
+  
+  border: none;
+  height: 1px; /* Augmente la hauteur */
+  background-color: #d6f4f4;
+  margin: 1px;
+  width: 98vw;
+  margin-right: 25px;  
+  margin-bottom: 20px;
+  display: flex; /* S'assure qu'elle est visible */
+}
 .square {
   width: 98vw;  /* Largeur = 100% de la fenêtre */
   height: 600vh;
@@ -108,3 +151,43 @@ img {
   background-color: #d6f4f4;
 }
 
+.player-list {
+  display: flex;
+  flex-direction: column;
+  width: max-content;
+  border-radius: 10px;
+  padding: 10px;
+ 
+}
+
+.header {
+  display: flex;
+  font-weight: bold;
+  border-bottom: 2px solid #000;
+  padding-bottom: 5px;
+  margin-bottom: 5px;
+}
+
+.players {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.player {
+  display: flex;
+  gap: 0px;
+  padding: 5px 0;
+}
+
+.header span, .player span {
+  width: 100px; /* Ajuste selon le contenu */
+  text-align: left;
+}
+
+.separator {
+  width: 1px;
+  height: 20px;
+  background-color: black;
+  margin: 0 10px;
+}
