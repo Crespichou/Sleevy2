@@ -60,6 +60,7 @@
                                 <p>Ce graphique représente l'activité musculaire de votre session la plus récente (blue).</p>
                                 <p>La courbe verte correspond au moment où votre activité musculaire est croissante.</p>
                                 <p>La courbe rouge correspond au moment où votre activité musculaire est décroissante.</p>
+                                <p>Cela permet d'identifier les moments de la partie où vous *à définir*</p>
                             </span>
                         </span>
                     </h2>
@@ -82,7 +83,7 @@
                     <h2>Analyse des mouvements :
                         <span class="tooltip_big">🛈
                             <span class="tooltip-text">
-                                <p>Ce graphique représente les mouvements de votre bras gauche.</p>
+                                <p>Ce graphique représente les mouvements verticaux de votre bras gauche.</p>
                                 <p>Des valeurs élevées trop répétitives indiquent que vous avez enlevé la main de votre clavier.</p>
                                 <p>C'est ce qui est appelé : Mouvements parasites. </p>
                             </span>
@@ -93,7 +94,13 @@
                 </div>
                 <div class="info-container">
                     <div class="info-container-accel">
-                        <h3>Informations sur les graphiques :</h3>
+                        <h3>
+                            <span class="tooltip">🛈 Informations sur les graphiques :
+                                <span class="tooltip-text">
+                                    <h4>Le nombre maximal de mouvement parasites tolérés correspond au temps (en min) de votre partie. </h4>
+                                </span>
+                            </span>
+                        </h3>
                         <div class="gauge-container">
                             <div class="gauge" id="gauge"></div>
                             <p id="gauge-label"></p>
@@ -112,6 +119,9 @@
 
     <!-- Chargement du script Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+
+
 
     <!-- Scripts spécifiques pour chaque graphique -->
     <script src="{{ url_for('static', filename='js/PPG_Analysed.js') }}"></script>

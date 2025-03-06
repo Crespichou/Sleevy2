@@ -6,32 +6,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 const accelValues = data.accel_values;
                 console.log('Données Accel :', accelValues);
 
-                // Extraire les valeurs et les heures Accel
                 let valeursAccel = accelValues.map(item => item.valeur);
-                let heuresAccel = accelValues.map(item => {
-                    let heure = item.heure; // Format "YYYY-MM-DD HH:MM:SS"
-                    return new Date(heure); // Convertir en objet Date pour les comparaisons
-                });
+                let heuresAccel = accelValues.map(item => new Date(item.heure));
 
-                // Calculer la durée totale de la session en minutes
                 const startTime = heuresAccel[0];
                 const endTime = heuresAccel[heuresAccel.length - 1];
-                const sessionDurationMinutes = (endTime - startTime) / 1000 / 60; // Durée en minutes
+                const sessionDurationMinutes = (endTime - startTime) / 1000 / 60;
 
-                // Créer le graphique avec les données Accel
-                createAccelChart(valeursAccel, heuresAccel.map(date => date.toTimeString().substring(0, 8)));
-
-                // Compter le nombre de fois où la ligne à 0.45 est coupée, en regroupant les coupures dans un intervalle de 10 secondes
                 let coupures = [];
                 let i = 1;
-                const interval = 10000; // 10 secondes en millisecondes
+                const interval = 10000;
 
                 while (i < valeursAccel.length) {
                     if ((valeursAccel[i - 1] <= 0.3 && valeursAccel[i] > 0.3) ||
                         (valeursAccel[i - 1] > 0.3 && valeursAccel[i] <= 0.3)) {
-
                         let startTime = heuresAccel[i];
-                        // Avancer de 10 secondes ou jusqu'à la fin des données
                         let nextIndex = i + 1;
                         while (nextIndex < heuresAccel.length && (heuresAccel[nextIndex] - heuresAccel[i]) <= interval) {
                             nextIndex++;
@@ -44,17 +33,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
 
-                // Afficher le nombre total de coupures dans le info-container
-                const infoContainer = document.querySelector('.info-container-accel');
-                const textContainer = document.querySelector('.text-container');
-
-                // Mettre à jour la jauge
                 const gauge = document.getElementById('gauge');
                 const gaugeLabel = document.getElementById('gauge-label');
-                const maxCoupures = sessionDurationMinutes; // Nombre maximal de coupures autorisées
-                const percentage = (coupures.length / maxCoupures) * 100; // Calcul du pourcentage par rapport au maximum
+                const maxCoupures = sessionDurationMinutes;
+                const percentage = (coupures.length / maxCoupures) * 100;
 
-                // Définir les couleurs pour chaque plage de pourcentage
                 let color;
                 if (percentage <= 25) {
                     color = '#d6f4f4';
@@ -67,14 +50,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
 
                 gauge.innerHTML = `<div style="width: ${Math.min(percentage, 100)}%; background-color: ${color};"></div>`;
-                gaugeLabel.textContent = `Nombre de mouvements parasites : ${coupures.length} `;
+                gaugeLabel.textContent = `Nombre de mouvements parasites : ${coupures.length}`;
 
-                // Afficher les intervalles de coupures dans le text-container
+                const textContainer = document.querySelector('.text-container');
                 coupures.forEach((coupure, index) => {
                     const p = document.createElement('p');
                     p.textContent = `N°${index + 1}: de ${coupure.start.toTimeString().substring(0, 8)} à ${coupure.end.toTimeString().substring(0, 8)}`;
                     textContainer.appendChild(p);
                 });
+
+                createAccelChart(valeursAccel, heuresAccel.map(date => date.toTimeString().substring(0, 8)), coupures);
             } else {
                 console.error('Aucune donnée Accel trouvée.');
             }
@@ -84,18 +69,27 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
-function createAccelChart(valeursAccel, heuresAccel) {
+function createAccelChart(valeursAccel, heuresAccel, coupures) {
     const ctxAccel = document.getElementById('myChartAccel').getContext('2d');
+    
+    let annotations = coupures.map((coupure, index) => ({
+        type: 'box',
+        xMin: heuresAccel.findIndex(time => time === coupure.start.toTimeString().substring(0, 8)),
+        xMax: heuresAccel.findIndex(time => time === coupure.end.toTimeString().substring(0, 8)),
+        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+        borderWidth: 0
+    }));
+    
     new Chart(ctxAccel, {
-        type: 'line', // Choisir le type de graphique (ici, un graphique linéaire)
+        type: 'line',
         data: {
-            labels: heuresAccel, // Labels des données Accel
+            labels: heuresAccel,
             datasets: [{
-                label: 'Valeurs Accélèromètre',
-                data: valeursAccel, // Valeurs Accel
-                borderColor: 'rgb(21, 0, 253)', // Couleur de la ligne
+                label: 'Mouvements verticaux de votre bras',
+                data: valeursAccel,
+                borderColor: 'rgb(21, 0, 253)',
                 borderWidth: 2,
-                fill: false, // Ne pas remplir l'aire sous la courbe
+                fill: false,
                 pointRadius: 0
             }]
         },
@@ -103,12 +97,15 @@ function createAccelChart(valeursAccel, heuresAccel) {
             responsive: true,
             plugins: {
                 tooltip: {
-                    enabled: true, // Activer les tooltips
+                    enabled: true,
                     callbacks: {
                         label: function(tooltipItem) {
                             return 'Valeur Accel: ' + tooltipItem.raw;
                         }
                     }
+                },
+                annotation: {
+                    annotations: annotations
                 }
             },
             hover: {
@@ -122,8 +119,7 @@ function createAccelChart(valeursAccel, heuresAccel) {
                         text: 'Temps'
                     },
                     ticks: {
-                        callback: function(value, index, values) {
-                            // Afficher une heure toutes les 5 valeurs
+                        callback: function(value, index) {
                             return index % 5 === 0 ? this.getLabelForValue(value) : '';
                         }
                     }
@@ -131,7 +127,7 @@ function createAccelChart(valeursAccel, heuresAccel) {
                 y: {
                     title: {
                         display: true,
-                        text: 'Valeur Accel'
+                        text: 'Amplitude de mouvement'
                     }
                 }
             }

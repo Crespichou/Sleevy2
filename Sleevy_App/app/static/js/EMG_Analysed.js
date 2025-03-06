@@ -21,6 +21,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const segments = divideByPoints(valeursEmg, pointsBrutaux);
                 console.log('Segments :', segments);
 
+                // Trier les segments par ordre croissant d'heure de début
+                segments.sort((a, b) => a.start - b.start);
+
                 // Créer le graphique avec les données EMG
                 createEMGChart(valeursEmg, heuresEmg.map(date => date.toTimeString().substring(0, 8)), pointsBrutaux, segments);
             } else {
@@ -100,10 +103,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     const greenDetails = [];  // Tableau pour les détails des segments verts
     const redDetails = [];    // Tableau pour les détails des segments rouges
 
-    segments.sort((a, b) => b.segment.length - a.segment.length);
-    const topSegments = segments.slice(0, 6);
-
-    topSegments.forEach(segment => {
+    segments.forEach(segment => {
         const pente = calculateSlope(segment.segment);
         const xVals = Array.from({ length: segment.segment.length }, (_, i) => segment.start + i);
         const yVals = segment.segment.map((val, i) => val + pente * (i));
@@ -114,12 +114,22 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         // Ajouter les informations aux tableaux de détails
         const heureDebut = heuresEmg[segment.start];
         const heureFin = heuresEmg[segment.end];
-
+        
+        let classification = '';
+        if (pente < -0.01) {
+            if (pente >= -0.03) {
+                classification = 'Diminution légère';
+            } else if (pente >= -0.06) {
+                classification = 'Diminution forte';
+            } else {
+                classification = 'Diminution inquiétante';
+            }
+        }
         if (color === 'green') {
-            greenDetails.push(`- Début : ${heureDebut}, Fin : ${heureFin}, Pente : ${pente.toFixed(2)}`);
+            greenDetails.push(`- Début : ${heureDebut}, Fin : ${heureFin}, ${classification}`);
             greenCount++;
         } else if (color === 'red') {
-            redDetails.push(`- Début : ${heureDebut}, Fin : ${heureFin}, Pente : ${pente.toFixed(2)}`);
+            redDetails.push(`- Début : ${heureDebut}, Fin : ${heureFin}, ${classification}`);
             redCount++;
         }
 
