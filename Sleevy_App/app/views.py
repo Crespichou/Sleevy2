@@ -4,7 +4,8 @@ from flask import render_template, request, redirect, url_for, session, flash, j
 from app.models import Coach, Player,EMG, PPG,Session, Accelerometer, PPGReference
 from threading import Thread
 import base64
-from datetime import datetime
+from datetime import datetime, timedelta
+
 from sqlalchemy import desc
 from PIL import Image
 from io import BytesIO
@@ -130,7 +131,16 @@ def coaches():
         coach_id = session.get('coach')
         coach_players = Player.query.filter_by(idcoach=coach_id) 
         coach = Coach.query.filter_by(idcoach=coach_id).first()
-        return render_template('main_coach.html', coach_players=coach_players, coach=coach)
+        seven_days_ago = datetime.utcnow() - timedelta(days=7)
+        sessions_last_7_days = (
+            db.session.query(Session.idjoueur, db.func.count(Session.session_id).label('game_count'))
+            .filter(Session.starttime >= seven_days_ago)
+            .group_by(Session.idjoueur)
+            .all()
+        )
+        last_7_days_games = {session.idjoueur: session.game_count for session in sessions_last_7_days}
+
+        return render_template('main_coach.html', coach_players=coach_players, coach=coach, last_7_days_games=last_7_days_games)
     return render_template('login.html')
 
 @app.route('/joueurs', methods=['POST', 'GET'])
