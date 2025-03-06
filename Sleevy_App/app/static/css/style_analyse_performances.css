@@ -141,6 +141,7 @@ canvas {
     font-family: "Meta";
     margin: 5px 0; /* Ajout de marges pour espacer les paragraphes */
     text-align: center;
+    font-weight: bold;
 }
 
 
@@ -187,16 +188,15 @@ canvas {
     margin-right : 20px;
     color: white;
     font-weight: bold;
-    text-align: center;
     border-radius: 5px;
 }
 
 .green-container {
-    background-color: rgba(79, 168, 79, 0.599);
+    background-color: rgba(43, 84, 43, 0.599);
 }
 
 .red-container {
-    background-color: rgba(224, 114, 114, 0.884);
+    background-color: rgba(115, 32, 32, 0.771);
 }
 
 .show {

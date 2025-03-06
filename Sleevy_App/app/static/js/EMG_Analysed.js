@@ -126,10 +126,10 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             }
         }
         if (color === 'green') {
-            greenDetails.push(`- Début : ${heureDebut}, fin : ${heureFin}, ${classification}`);
+            greenDetails.push(`${heureDebut} - ${heureFin}`);
             greenCount++;
         } else if (color === 'red') {
-            redDetails.push(`- Début : ${heureDebut}, fin : ${heureFin}, ${classification}`);
+            redDetails.push(`${classification} : ${heureDebut} - ${heureFin} `);
             redCount++;
         }
 
@@ -200,14 +200,14 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
 
     if (greenCount > 0) {
         greenContainer.classList.add('show');
-        greenContainer.innerHTML = `Nombre de périodes d'augmentation d'activité musculaire : ${greenCount}<br>Détails : <br>${greenDetails.join('<br>')}`;
+        greenContainer.innerHTML = `Nombre de périodes d'augmentation d'activité musculaire : ${greenCount}<br><br>Détails : <br>${greenDetails.join('<br>')}`;
     } else {
         greenContainer.classList.remove('show');
     }
 
     if (redCount > 0) {
         redContainer.classList.add('show');
-        redContainer.innerHTML = `Nombre de périodes de diminution d'activité musculaire : ${redCount}<br>Détails : <br>${redDetails.join('<br>')}`;
+        redContainer.innerHTML = `Nombre de périodes de diminution d'activité musculaire : ${redCount}<br><br>Détails : <br>${redDetails.join('<br>')}`;
     } else {
         redContainer.classList.remove('show');
     }
