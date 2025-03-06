@@ -8,64 +8,73 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Ajout de Chart.js -->
 </head>
 
-<main>
-    Bienvenue7 {{ player.pseudo }}
-    <div class="fine-line"></div>
-</main>
-
-<div class="form-row submit-btn">
-    <div class="input-data">
-        <div class="inner"></div>
-        <input type="submit" class='submit' value="Lancer l'enregistrement">
-    </div>
-    <div class="performances-analyse">
-        <div class="inner"></div>
-        <form action="{{ url_for('analyse_performance') }}" method="GET">
-            <input type="submit" class="submit" value="Analyse de performance">
-        </form>
-    </div>
-</div>
-
 <body class="gradient-background">
+    <main>
+        <div class="title">Bienvenue {{ player.pseudo }}</div>
+        <div class="fine-line"></div>
+    </main>
+
+    <div class="form-row submit-btn">
+        <div class="input-data">
+            <div class="inner"></div>
+            <input type="submit" class='submit' value="Lancer l'enregistrement">
+        </div>
+        <div class="performances-analyse">
+            <div class="inner"></div>
+            <form action="{{ url_for('analyse_performance') }}" method="GET">
+                <input type="submit" class="submit" value="Analyse de performance">
+            </form>
+        </div>
+    </div>
+
     <div class="square">
         <main>
-            <div>Dernière Partie :</div>
-            
-            <!-- Image remplacée par le graphique -->
-            <!-- <img src="../static/placeholder/Cadeau.png" alt="Photo"> -->
-            <canvas id="myChartPPG" width="400" height="200"></canvas>
-            <canvas id="myChartEMG" width="400" height="200"></canvas>
-            <canvas id="myChartAccel" width="400" height="200"></canvas>
-
-
+            <div class="section-title">Dernière Partie :</div>
+            <canvas id="myChartPPG" width="500" height="250"></canvas>
+            <canvas id="myChartEMG" width="500" height="250"></canvas>
+            <canvas id="myChartAccel" width="500" height="250"></canvas>
         </main>
+
         <div class="vertical-line"></div>
+
         <div class="container">
-        
-        <div class="text">Liste de joueur</div>
-        <table border="1">
-            <tr>
-                <th>Id</th>
-                <th>Pseudo</th>
-                <th>Historique</th>
-            </tr>
-            {% if player %}
-            <tr>
-                <td>{{ player.idjoueur }}</td>
-                <td>{{ player.pseudo }}</td>
-                <td>
-                    <form action="{{ url_for('historique') }}" method="POST">
-                        <button type="submit">Voir Historique</button>
-                    </form>
-                </td>
-                
-            </tr>
-            {% endif %}
-        </table>
+            <div class="section-title">Historique :</div>
+            <div class="history-links">
+                {% for session in sessions %}
+                <div class="history-item">
+                    <a href="{{ url_for('historique', session_id=session.gamenumber) }}">
+                        Partie {{ session.gamenumber }} - {{ session.starttime }} à {{ session.endtime }}
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Tableau affiché en permanence sous Historique -->
+            <table class="styled-table">
+                <tr>
+                    <th>Numéro de la partie</th>
+                    <th>Début de la session</th>
+                    <th>Fin de la session</th>
+                    <th>Détail de la Session</th>
+                </tr>
+                {% for session in sessions %}
+                <tr>
+                    <td>{{ session.gamenumber }}</td>
+                    <td>{{ session.starttime }}</td>
+                    <td>{{ session.endtime }}</td>
+                    <td>
+                        <a href="{{ url_for('historique', session_id=session.gamenumber) }}" class="detail-link">
+                            Détail session
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </table>
         </div>
     </div>
 
     <!-- Chargement du script Chart.js personnalisé -->
     <script src="{{ url_for('static', filename='js/chart.js') }}"></script>
 </body>
+
 </html>

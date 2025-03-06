@@ -1,105 +1,61 @@
 @font-face {
-    src: url("https://www.axis-praxis.org/fonts/webfonts/MetaVariableDemo-Set.woff2") format("woff2");
-    font-family: "Meta";
-    font-style: normal;
-    font-weight: normal;
-  }
-  
-  /* Titre principal centré */
-  /* Titre principal centré avec des lettres encore plus affinées */
-  main {
-    
-    font-size: 4rem;
-    text-align: left;
-    color: #d6f4f4; /* Couleur de remplissage */
-    font-family: "Meta";
-    font-weight: 50; /* Police encore plus fine */
-    text-shadow: none; /* Suppression de l'ombre pour plus de netteté */
-  }
+  src: url("https://www.axis-praxis.org/fonts/webfonts/MetaVariableDemo-Set.woff2") format("woff2");
+  font-family: "Meta";
+  font-style: normal;
+  font-weight: normal;
+}
 
-  .gradient-background {
-    background: linear-gradient(to bottom, #9dbebb, #62bebe);
-    height: 100vh; /* Hauteur de toute la fenêtre */
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-  
-  }
+.title {
+  font-size: 4rem;
+  text-align: left;
+  color: #d6f4f4;
+  font-family: "Meta", sans-serif;
+  font-weight: 50;
+}
 
-  .fine-line {
-    margin-top: 20px;
-    margin-bottom: 20px;
-    border: none;
-    height: 1px; /* Augmente la hauteur */
-    background-color: #d6f4f4;
-    margin: 1px;
-    width: 98vw;
-    margin-right: 25px;  
-    margin-bottom: 20px;
-    display: flex; /* S'assure qu'elle est visible */
+.section-title {
+  font-size: 4rem;
+  text-align: left;
+  color: #d6f4f4;
+  font-family: "Meta";
+  font-weight: 50;
+}
+
+.gradient-background {
+  background: linear-gradient(to bottom, #9dbebb, #62bebe);
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.fine-line {
+  margin-top: 20px;
+  border: none;
+  height: 1px;
+  background-color: #d6f4f4;
+  width: 98vw;
 }
 
 .square {
-  width: 98vw;  /* Largeur = 100% de la fenêtre */
-  height: 600vh;
-  border: 1px solid #d6f4f4; /* Remplace par ton code hex */
+  width: 98vw;
   display: flex;
-  gap: 20px; /* Espacement entre <main> et la ligne */
-}
-
-html, body {
-  max-width: 100vw; /* Empêche l'agrandissement au-delà de la largeur de l'écran */
-  overflow-x: hidden; /* Désactive le défilement horizontal */
-}
-/* Largeur de la barre de défilement */
-::-webkit-scrollbar {
-  width: 8px; /* Change la largeur */
-}
-
-/* Couleur de la piste */
-::-webkit-scrollbar-track {
-  background: #f1f1f1; /* Couleur de fond */
-}
-
-/* Couleur de la barre elle-même */
-::-webkit-scrollbar-thumb {
-  background: #888; /* Couleur du slider */
-  border-radius: 4px; /* Arrondi */
-}
-
-/* Changer la couleur au survol */
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-img {
-  width: 100%;
-  max-width: 600px;
-  border-radius: 10px;
-  margin-left: 10px;
+  gap: 20px;
 }
 
 .vertical-line {
-  margin-top: 20px;
-  margin-bottom: 20px;
-  width: 1px; /* Épaisseur de la ligne */
-  
-  background-color: #d6f4f4; /* Couleur */
-
-  height:150vh;
+  width: 1px;
+  background-color: #d6f4f4;
+  height: 150vh;
 }
 
 .submit {
   background-color: #6a6a6a;
   border-radius: 12px;
   border: 0;
-  box-sizing: border-box;
   color: #eee;
-  cursor: pointer;
   font-size: 18px;
   height: 50px;
-  margin-bottom: 20px;
-  outline: 0;
   text-align: center;
   width: 20%;
 }
@@ -108,3 +64,222 @@ img {
   background-color: #d6f4f4;
 }
 
+.chart {
+  width: 85%;
+  height: 350px;
+  margin: auto;
+}
+
+.history-links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* Style du tableau */
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-family: "Meta", sans-serif;
+    font-size: 18px;
+    color: #d6f4f4;
+    text-align: center;
+}
+
+.styled-table th, .styled-table td {
+    border: 1px solid #d6f4f4;
+    padding: 12px;
+}
+
+.styled-table th {
+    background-color: #6a6a6a;
+    color: #eee;
+    font-weight: bold;
+}
+
+.styled-table tr:nth-child(even) {
+    background-color: rgba(214, 244, 244, 0.2);
+}
+
+.styled-table tr:hover {
+    background-color: rgba(214, 244, 244, 0.4);
+}
+
+.detail-link {
+    color: #d6f4f4;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.detail-link:hover {
+    text-decoration: underline;
+    color: #62bebe;
+}
+
+/* Style amélioré du tableau */
+.styled-table {
+    width: 100%;
+    border-collapse: separate; /* Permet d'arrondir les bords */
+    border-spacing: 0;
+    margin-top: 20px;
+    font-family: "Meta", sans-serif;
+    font-size: 18px;
+    color: #d6f4f4;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.1); /* Fond légèrement transparent */
+    border-radius: 12px; /* Arrondi du tableau */
+    overflow: hidden; /* Empêche le débordement */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Ombre douce */
+}
+
+/* Style des cellules */
+.styled-table th, .styled-table td {
+    padding: 12px;
+    border-bottom: 1px solid rgba(214, 244, 244, 0.5); /* Ligne séparatrice semi-transparente */
+}
+
+/* Style des titres de colonnes */
+.styled-table th {
+    background-color: rgba(106, 106, 106, 0.8); /* Gris foncé semi-transparent */
+    color: #eee;
+    font-weight: bold;
+}
+
+/* Style des lignes alternées */
+.styled-table tr:nth-child(even) {
+    background-color: rgba(214, 244, 244, 0.2); /* Bleu clair */
+}
+
+/* Effet de survol */
+.styled-table tr:hover {
+    background-color: rgba(214, 244, 244, 0.4); /* Bleu plus clair */
+}
+
+/* Arrondir le haut du tableau */
+.styled-table th:first-child {
+    border-top-left-radius: 12px;
+}
+
+.styled-table th:last-child {
+    border-top-right-radius: 12px;
+}
+
+/* Arrondir le bas du tableau */
+.styled-table tr:last-child td:first-child {
+    border-bottom-left-radius: 12px;
+}
+
+.styled-table tr:last-child td:last-child {
+    border-bottom-right-radius: 12px;
+}
+
+/* Style du lien "Détail session" */
+.detail-link {
+    color: #d6f4f4;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+.detail-link:hover {
+    text-decoration: underline;
+    color: #62bebe;
+}
+/* Style amélioré du tableau avec bleu-vert */
+.styled-table {
+  width: 100%;
+  border-collapse: separate; /* Permet d'arrondir les bords */
+  border-spacing: 0;
+  margin-top: 20px;
+  font-family: "Meta", sans-serif;
+  font-size: 18px;
+  color: #d6f4f4;
+  text-align: center;
+  background-color: rgba(50, 150, 150, 0.3); /* Bleu-vert semi-transparent */
+  border-radius: 12px; /* Arrondi du tableau */
+  overflow: hidden; /* Empêche le débordement */
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Ombre douce */
+}
+
+/* Style des cellules */
+.styled-table th, .styled-table td {
+  padding: 12px;
+  border-bottom: 1px solid rgba(214, 244, 244, 0.5); /* Ligne séparatrice semi-transparente */
+}
+
+/* Style des titres de colonnes */
+.styled-table th {
+  background-color: rgba(30, 130, 130, 0.9); /* Bleu-vert foncé */
+  color: #eee;
+  font-weight: bold;
+}
+
+/* Style des lignes alternées */
+.styled-table tr:nth-child(even) {
+  background-color: rgba(80, 180, 180, 0.2); /* Bleu-vert plus clair */
+}
+
+/* Effet de survol */
+.styled-table tr:hover {
+  background-color: rgba(80, 180, 180, 0.4); /* Bleu-vert encore plus clair */
+}
+
+/* Arrondir le haut du tableau */
+.styled-table th:first-child {
+  border-top-left-radius: 12px;
+}
+
+.styled-table th:last-child {
+  border-top-right-radius: 12px;
+}
+
+/* Arrondir le bas du tableau */
+.styled-table tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+.styled-table tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+/* Style du lien "Détail session" */
+.detail-link {
+  color: #d6f4f4;
+  text-decoration: none;
+  font-weight: bold;
+  transition: color 0.3s;
+}
+
+.detail-link:hover {
+  text-decoration: underline;
+  color: #62bebe;
+}
+
+/* Style des boutons */
+.submit {
+  background-color: rgba(30, 130, 130, 0.9); /* Bleu-vert foncé */
+  border-radius: 12px;
+  border: none;
+  color: #eee;
+  font-size: 18px;
+  height: 50px;
+  text-align: center;
+  width: 20%;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Ombre douce */
+}
+
+/* Effet de survol */
+.submit:hover {
+  background-color: rgba(50, 150, 150, 1); /* Bleu-vert légèrement plus clair */
+  transform: scale(1.05); /* Légère mise en avant */
+}
+
+/* Effet au clic */
+.submit:active {
+  background-color: rgba(80, 180, 180, 1); /* Bleu-vert encore plus clair */
+  transform: scale(0.98);
+}
