@@ -126,10 +126,10 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             }
         }
         if (color === 'green') {
-            greenDetails.push(`- Début : ${heureDebut}, Fin : ${heureFin}, ${classification}`);
+            greenDetails.push(`- Début : ${heureDebut}, fin : ${heureFin}, ${classification}`);
             greenCount++;
         } else if (color === 'red') {
-            redDetails.push(`- Début : ${heureDebut}, Fin : ${heureFin}, ${classification}`);
+            redDetails.push(`- Début : ${heureDebut}, fin : ${heureFin}, ${classification}`);
             redCount++;
         }
 
