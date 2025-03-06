@@ -159,3 +159,27 @@ canvas {
     color: #000000;
     font-family: "Meta";
 }
+
+.green-container, .red-container {
+    font-family: "Meta";
+    display: none; /* Masque les conteneurs par défaut */
+    padding: 10px;
+    margin: 10px;
+    margin-right : 20px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 5px;
+}
+
+.green-container {
+    background-color: rgba(79, 168, 79, 0.599);
+}
+
+.red-container {
+    background-color: rgba(224, 114, 114, 0.884);
+}
+
+.show {
+    display: block; /* Affiche le conteneur */
+}

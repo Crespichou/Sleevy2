@@ -7,11 +7,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Données EMG :', emgValues);
 
                 // Extraire les valeurs et les heures EMG
-                let valeursEmg = data.emg_values.map(item => item.valeur);
-                let heuresEmg = data.emg_values.map(item => {
-                    let heure = item.heure; // Format "YYYY HH"
-                    let heurePart = heure.substring(17); // Extrait "HH"
-                    return `${heurePart}`; // Ajoute ":00:00.00" pour obtenir "HH:MM:SS.ss"
+                let valeursEmg = emgValues.map(item => item.valeur);
+                let heuresEmg = emgValues.map(item => {
+                    let heure = item.heure; // Format "YYYY-MM-DD HH:MM:SS"
+                    return new Date(heure); // Convertir en objet Date pour les comparaisons
                 });
 
                 // Détection des points brutaux
@@ -23,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Segments :', segments);
 
                 // Créer le graphique avec les données EMG
-                createEMGChart(valeursEmg, heuresEmg, pointsBrutaux, segments);
+                createEMGChart(valeursEmg, heuresEmg.map(date => date.toTimeString().substring(0, 8)), pointsBrutaux, segments);
             } else {
                 console.error('Aucune donnée EMG trouvée.');
             }
@@ -96,6 +95,11 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         pointRadius: 0
     }];
 
+    let greenCount = 0;
+    let redCount = 0;
+    const greenDetails = [];  // Tableau pour les détails des segments verts
+    const redDetails = [];    // Tableau pour les détails des segments rouges
+
     segments.sort((a, b) => b.segment.length - a.segment.length);
     const topSegments = segments.slice(0, 6);
 
@@ -105,6 +109,20 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         const yVals = segment.segment.map((val, i) => val + pente * (i));
 
         const color = pente >= 0 ? 'green' : 'red';
+        const labelText = `Pente : ${pente.toFixed(2)}`;
+
+        // Ajouter les informations aux tableaux de détails
+        const heureDebut = heuresEmg[segment.start];
+        const heureFin = heuresEmg[segment.end];
+
+        if (color === 'green') {
+            greenDetails.push(`- Début : ${heureDebut}, Fin : ${heureFin}, Pente : ${pente.toFixed(2)}`);
+            greenCount++;
+        } else if (color === 'red') {
+            redDetails.push(`- Début : ${heureDebut}, Fin : ${heureFin}, Pente : ${pente.toFixed(2)}`);
+            redCount++;
+        }
+
         datasets.push({
             label: `Segment ${segment.start} à ${segment.end}`,
             data: yVals.map((y, i) => ({ x: xVals[i], y })),
@@ -117,6 +135,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         });
     });
 
+    // Mettre à jour le graphique
     new Chart(ctx, {
         type: 'line',
         data: {
@@ -133,9 +152,11 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
                     },
                     ticks: {
                         callback: function(value, index, values) {
-                            // Afficher une heure toutes les 5 valeurs
-                            return index % 2 === 0 ? this.getLabelForValue(value) : '';
+                            return index % 1 === 0 ? heuresEmg[value] : '';
                         }
+                    },
+                    grid: {
+                        drawOnChartArea: false
                     }
                 },
                 y: {
@@ -162,4 +183,22 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             }
         }
     });
+
+    // Mettre à jour les informations dans le HTML
+    const greenContainer = document.querySelector('.green-container');
+    const redContainer = document.querySelector('.red-container');
+
+    if (greenCount > 0) {
+        greenContainer.classList.add('show');
+        greenContainer.innerHTML = `Nombre de périodes d'augmentation d'activité musculaire : ${greenCount}<br>Détails : <br>${greenDetails.join('<br>')}`;
+    } else {
+        greenContainer.classList.remove('show');
+    }
+
+    if (redCount > 0) {
+        redContainer.classList.add('show');
+        redContainer.innerHTML = `Nombre de périodes de diminution d'activité musculaire : ${redCount}<br>Détails : <br>${redDetails.join('<br>')}`;
+    } else {
+        redContainer.classList.remove('show');
+    }
 }
