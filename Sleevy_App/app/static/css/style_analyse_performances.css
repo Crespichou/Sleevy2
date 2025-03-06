@@ -189,6 +189,7 @@ canvas {
     color: white;
     font-weight: bold;
     border-radius: 5px;
+    text-align: center;
 }
 
 .green-container {
@@ -196,7 +197,7 @@ canvas {
 }
 
 .red-container {
-    background-color: rgba(115, 32, 32, 0.771);
+    background-color: rgba(146, 32, 32, 0.771);
 }
 
 .show {

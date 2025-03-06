@@ -261,7 +261,7 @@
   border: none;
   color: #ffffff;
   font-size: 24px; /* Légèrement plus grand */
-  font-weight: bold;
+  /*font-weight: bold;*/
   height: 70px; /* Hauteur augmentée */
   width: 300px; /* Largeur augmentée */
   text-align: center;
@@ -271,6 +271,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: "Meta";
+  margin : 10px;
 }
 
 /* Effet de survol */
