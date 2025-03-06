@@ -48,8 +48,6 @@ def analyse_performance():
     return render_template('analyse_performances.html')
 
 
-
-
 @app.route('/add', methods=['POST'])
 def add_data():
     type = request.json['type']
@@ -239,4 +237,17 @@ def graphique_ppg_toutes_sessions():
         "ppg_sessions": ppg_sessions,
         "referenceValues": ppg_values
     })
+
+@app.route("/historique_coach/<int:idjoueur>", methods=['GET'])
+def historique_coach(idjoueur):
+    # Vérifier que le joueur existe
+    player = Player.query.filter_by(idjoueur=idjoueur).first()
+    
+    if not player:
+        return "Joueur non trouvé", 404
+
+    # Récupérer les sessions associées à ce joueur
+    games = Session.query.filter_by(idjoueur=idjoueur).order_by(Session.starttime.desc()).all()
+
+    return render_template("historique_coach.html", player=player, games=games)
 

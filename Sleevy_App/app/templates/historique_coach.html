@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Historique de {{ player.pseudo }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_historique_coach.css') }}">
+</head>
+<body class="gradient-background">
+    <h1>Historique des parties de {{ player.pseudo }}</h1>
+    <a href="{{ url_for('coaches') }}">Retour</a>
+    
+    {% if games %}
+        <table>
+            <thead>
+                <tr>
+                    <th>ID Session</th>
+                    <th>Date de début</th>
+                    <th>Date de fin</th>
+                    <th>Nombre de parties</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for game in games %}
+                <tr>
+                    <td>{{ game.session_id }}</td>
+                    <td>{{ game.starttime.strftime('%d/%m/%Y %H:%M') }}</td>
+                    <td>{{ game.endtime.strftime('%d/%m/%Y %H:%M') if game.endtime else "En cours" }}</td>
+                    <td>{{ game.gamenumber }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>Aucune session trouvée pour ce joueur.</p>
+    {% endif %}
+</body>
+</html>

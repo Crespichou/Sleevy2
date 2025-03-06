@@ -38,7 +38,7 @@
                         <div class="separator"></div>
                         <span>{{ last_7_days_games.get(player.idjoueur, 0) }}</span>
                         <div class="separator"></div>
-                        <span><a href="{{ url_for('index') }}">Historique</a></span>
+                        <span><a href="{{ url_for('historique_coach', idjoueur=player.idjoueur) }}">Historique</a></span>
                         <div class="separator"></div>
                         
                     </div>
