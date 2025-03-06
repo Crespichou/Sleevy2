@@ -24,6 +24,8 @@
                     <div class="separator"></div>
                     <span>Pseudo</span>
                     <div class="separator"></div>
+                    <span>Sessions de la semaine</span>
+                    <div class="separator"></div>
                     <span>Historique</span>
                     <div class="separator"></div>
                 </div>
@@ -34,8 +36,11 @@
                         <div class="separator"></div>
                         <span>{{ player.pseudo }}</span>
                         <div class="separator"></div>
+                        <span>{{ last_7_days_games.get(player.idjoueur, 0) }}</span>
+                        <div class="separator"></div>
                         <span><a href="{{ url_for('index') }}">Historique</a></span>
                         <div class="separator"></div>
+                        
                     </div>
                     {% endfor %}
                 </div>
