@@ -4,34 +4,54 @@
     <meta charset="UTF-8">
     <title>Historique de {{ player.pseudo }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_historique_coach.css') }}">
+    <style>
+        body, main, .submain, .header span, .player span, p, a {
+            font-family: "Meta", sans-serif;
+        }
+    </style>
 </head>
 <body class="gradient-background">
-    <h1>Historique des parties de {{ player.pseudo }}</h1>
+    <main>Historique des parties de {{ player.pseudo }}</main>
     <a href="{{ url_for('coaches') }}">Retour</a>
-    
-    {% if games %}
-        <table>
-            <thead>
-                <tr>
-                    <th>ID Session</th>
-                    <th>Date de début</th>
-                    <th>Date de fin</th>
-                    <th>Nombre de parties</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for game in games %}
-                <tr>
-                    <td>{{ game.session_id }}</td>
-                    <td>{{ game.starttime.strftime('%d/%m/%Y %H:%M') }}</td>
-                    <td>{{ game.endtime.strftime('%d/%m/%Y %H:%M') if game.endtime else "En cours" }}</td>
-                    <td>{{ game.gamenumber }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>Aucune session trouvée pour ce joueur.</p>
-    {% endif %}
+    <div class="fine-line"></div>
+    <div class="container">
+        <main class="submain">Liste des sessions
+            <div class="fine-line2"></div>
+        </main>
+        <div class="space">
+            <div class="player-list">
+                <div class="header">
+                    <span>Nombre de parties</span>
+                    <div class="separator"></div>
+                    <span>Date de début</span>
+                    <div class="separator"></div>
+                    <span>Date de fin</span>
+                    <div class="separator"></div>
+                    <span>Détails session</span>
+                    <div class="separator"></div>
+                </div>
+                <div class="players">
+                    {% if games %}
+                        {% for game in games %}
+                        <div class="player">
+                            <span>{{ game.gamenumber }}</span>
+                            <div class="separator"></div>
+                            <span>{{ game.starttime.strftime('%d/%m/%Y %H:%M') }}</span>
+                            <div class="separator"></div>
+                            <span>{{ game.endtime.strftime('%d/%m/%Y %H:%M') if game.endtime else "En cours" }}</span>
+                            <div class="separator"></div>
+                            <span><a href="{{ url_for('detail_coach', session_id=game.session_id) }}">Voir détails</a></span>
+
+
+                            <div class="separator"></div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <p>Aucune session trouvée pour ce joueur.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

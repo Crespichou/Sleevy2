@@ -251,3 +251,23 @@ def historique_coach(idjoueur):
 
     return render_template("historique_coach.html", player=player, games=games)
 
+
+@app.route('/detail_coach/<int:session_id>', methods=['GET'])
+def detail_coach(session_id):
+    # Vérification que le coach est bien connecté
+    if not session.get('coach'):
+        return jsonify({"error": "Accès refusé. Connectez-vous en tant que coach."}), 403
+
+    # Récupération des données de la session sélectionnée
+    ppg_data = db.session.query(PPG.valeurppg, PPG.heureppg).filter_by(session_id=session_id).all()
+    emg_data = db.session.query(EMG.valeuremg, EMG.heureemg).filter_by(session_id=session_id).all()
+    accel_data = db.session.query(Accelerometer.valeuraccel, Accelerometer.heureaccel).filter_by(session_id=session_id).all()
+
+    if not ppg_data or not emg_data or not accel_data:
+        return jsonify({"error": "Aucune donnée trouvée pour cette session."}), 404
+
+    ppg_values = [{"valeur": ppg[0], "heure": ppg[1]} for ppg in ppg_data]
+    emg_values = [{"valeur": emg[0], "heure": emg[1]} for emg in emg_data]
+    accel_values = [{"valeur": accel[0], "heure": accel[1]} for accel in accel_data]
+
+    return render_template("detail_coach.html", session_id=session_id, ppg_values=ppg_values, emg_values=emg_values, accel_values=accel_values)
