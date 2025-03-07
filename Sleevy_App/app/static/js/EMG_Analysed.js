@@ -102,6 +102,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     let redCount = 0;
     const greenDetails = [];  // Tableau pour les détails des segments verts
     const redDetails = [];    // Tableau pour les détails des segments rouges
+    const annotations = [];
 
     segments.forEach(segment => {
         const pente = calculateSlope(segment.segment);
@@ -114,7 +115,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         // Ajouter les informations aux tableaux de détails
         const heureDebut = heuresEmg[segment.start];
         const heureFin = heuresEmg[segment.end];
-        
+
         let classification = '';
         if (pente < -0.01) {
             if (pente >= -0.03) {
@@ -134,14 +135,51 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         }
 
         datasets.push({
-            label: `Segment ${segment.start} à ${segment.end}`,
+            label: `Segment ${heureDebut} à ${heureFin}`,
             data: yVals.map((y, i) => ({ x: xVals[i], y })),
             borderColor: color,
             borderWidth: 1,
             borderDash: [5, 5],
-            fill: pente < 0,
-            backgroundColor: pente < 0 ? 'rgba(255, 0, 0, 0.05)' : undefined,
-            pointRadius: 0
+            fill: false,
+            pointRadius: 0,
+        });
+
+        // Ajouter une annotation pour colorier l'intervalle
+        annotations.push({
+            type: 'box',
+            xMin: segment.start,
+            xMax: segment.end,
+            backgroundColor: color === 'green' ? 'rgba(0, 255, 0, 0.05)' : 'rgba(255, 0, 0, 0.08)',
+            borderWidth: 0
+        });
+
+        // Ajouter des lignes verticales jaunes pour marquer le début et la fin des segments
+        annotations.push({
+            type: 'line',
+            scaleID: 'x',
+            value: segment.start,
+            borderColor: 'rgb(231, 255, 124)',
+            borderWidth: 1,
+            borderDash: [5, 5], 
+            label: {
+                enabled: false,
+                content: 'Début',
+                position: 'start'
+            }
+        });
+
+        annotations.push({
+            type: 'line',
+            scaleID: 'x',
+            value: segment.end,
+            borderColor: 'rgb(231, 255, 124)',
+            borderWidth: 1,
+            borderDash: [5, 5], 
+            label: {
+                enabled: false,
+                content: 'Fin',
+                position: 'end'
+            }
         });
     });
 
@@ -189,6 +227,9 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
                 },
                 tooltip: {
                     enabled: true
+                },
+                annotation: {
+                    annotations: annotations
                 }
             }
         }
@@ -198,26 +239,26 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     const greenContainer = document.querySelector('.green-container');
     const redContainer = document.querySelector('.red-container');
     const blankContainer = document.querySelector('.blank-container');
-    
+
     if (greenCount > 0) {
         greenContainer.classList.add('show');
         greenContainer.innerHTML = `Nombre de périodes d'augmentation d'activité musculaire : ${greenCount}<br><br>Détails : <br>${greenDetails.join('<br>')}`;
     } else {
         greenContainer.classList.remove('show');
     }
-    
+
     if (redCount > 0) {
         redContainer.classList.add('show');
         redContainer.innerHTML = `Nombre de périodes de diminution d'activité musculaire : ${redCount}<br><br>Détails : <br>${redDetails.join('<br>')}`;
     } else {
         redContainer.classList.remove('show');
     }
-    
+
     if (greenCount > 0 || redCount > 0) {
         blankContainer.classList.add('show');
         blankContainer.innerHTML = `Nombre total de changement de rythme : ${greenCount + redCount}`;
     } else {
         blankContainer.classList.remove('show');
     }
-    
+
 }

@@ -13,13 +13,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 const endTime = heuresAccel[heuresAccel.length - 1];
                 const sessionDurationMinutes = (endTime - startTime) / 1000 / 60;
 
+                // Calculer la moyenne des valeurs d'accélération
+                const moyenneAccel = valeursAccel.reduce((sum, value) => sum + value, 0) / valeursAccel.length;
+                console.log('Moyenne Accel :', moyenneAccel);
+
+                // Calculer la valeur de référence : moyenne + 225%
+                const referenceValue = moyenneAccel + (moyenneAccel * 2.25);
+                console.log('Valeur de référence :', referenceValue);
+
                 let coupures = [];
                 let i = 1;
                 const interval = 10000;
 
                 while (i < valeursAccel.length) {
-                    if ((valeursAccel[i - 1] <= 0.3 && valeursAccel[i] > 0.3) ||
-                        (valeursAccel[i - 1] > 0.3 && valeursAccel[i] <= 0.3)) {
+                    if ((valeursAccel[i - 1] <= referenceValue && valeursAccel[i] > referenceValue) ||
+                        (valeursAccel[i - 1] > referenceValue && valeursAccel[i] <= referenceValue)) {
                         let startTime = heuresAccel[i];
                         let nextIndex = i + 1;
                         while (nextIndex < heuresAccel.length && (heuresAccel[nextIndex] - heuresAccel[i]) <= interval) {
@@ -71,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function createAccelChart(valeursAccel, heuresAccel, coupures) {
     const ctxAccel = document.getElementById('myChartAccel').getContext('2d');
-    
+
     let annotations = coupures.map((coupure, index) => ({
         type: 'box',
         xMin: heuresAccel.findIndex(time => time === coupure.start.toTimeString().substring(0, 8)),
@@ -79,7 +87,7 @@ function createAccelChart(valeursAccel, heuresAccel, coupures) {
         backgroundColor: 'rgba(255, 0, 0, 0.2)',
         borderWidth: 0
     }));
-    
+
     new Chart(ctxAccel, {
         type: 'line',
         data: {

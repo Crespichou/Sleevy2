@@ -215,3 +215,26 @@ canvas {
     text-align: center;
     
 }
+
+.Bgraph-info-container {
+    background-color: #f4f4f46c;
+    border-radius: 5px;
+    margin-right : 20px;
+    padding: 5px;
+    font-family: "Meta";
+}
+
+#correlation-percentage {
+    font-size: 1.2em; /* Taille de la police */
+    color: #333; /* Couleur du texte */
+    font-weight: bold; /* Texte en gras */
+    margin-top: 10px; /* Marge au-dessus du texte */
+    display: block; /* Assure que l'élément est affiché comme un bloc */
+}
+
+.gauge-container-ppg {
+    position: relative;
+    width: 200px;
+    height: 100px;
+}
+

@@ -209,7 +209,7 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     const trendLineData = Array.from({ length: maxLength }, (_, i) => slope * (i + 1) + intercept);
 
     secondaryDatasets.push({
-        label: "Rythme cardiaque au repos",
+        label: "Tendance du rythme cardiaque au repos",
         data: trendLineData,
         borderColor: 'rgba(2, 48, 2, 0.69)',
         borderWidth: 2,
@@ -217,6 +217,50 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         pointRadius: 0,
         tension: 0.4
     });
+
+    // Calculer l'aire entre la courbe de session actuelle et la courbe de tendance du rythme cardiaque au repos
+    const areaCurrentSession = calculateAreaBetweenCurves(cumulativeVariabilities[highestSessionLabel], trendLineData);
+
+    // Calculer l'aire sous la courbe de tendance
+    const areaTrendLine = calculateAreaUnderCurve(trendLineData);
+
+    console.log("Aire entre la courbe de la session actuelle et la courbe de tendance :", areaCurrentSession);
+    console.log("Aire sous la courbe de tendance :", areaTrendLine);
+
+    let percentageOtherSessions = 0;
+    let areaOtherSessions = 0;
+    let percentageTrendLine = 0;
+
+    // Vérifier s'il y a plus d'une session
+    if (groupLabels.length > 1) {
+        const meanOfOtherSessions = calculateMeanOfOtherSessions(cumulativeVariabilities, highestSessionLabel);
+        areaOtherSessions = calculateAreaBetweenCurves(meanOfOtherSessions, trendLineData);
+
+        // Calculer le pourcentage de la première aire par rapport à la seconde
+        percentageOtherSessions = (areaCurrentSession / areaOtherSessions) * 100;
+
+        console.log("Aire entre la moyenne des autres sessions et la courbe de tendance :", areaOtherSessions);
+        console.log("Pourcentage de la première aire par rapport à la seconde :", percentageOtherSessions.toFixed(2) + "%");
+
+        // Mettre à jour le HTML pour afficher les résultats
+        document.getElementById('correlation-percentage').innerHTML = `
+            Aire entre la courbe de la session actuelle et la courbe de tendance : ${areaCurrentSession.toFixed(2)}<br>
+            Aire entre la moyenne des autres sessions et la courbe de tendance : ${areaOtherSessions.toFixed(2)}<br>
+            Aire sous la courbe de tendance : ${areaTrendLine.toFixed(2)}<br>
+            Pourcentage de la première aire par rapport à la seconde : ${percentageOtherSessions.toFixed(2)}%
+        `;
+    } else {
+        // Calculer le pourcentage de l'aire entre la courbe de la session actuelle et la courbe de tendance par rapport à l'aire sous la courbe de tendance
+        percentageTrendLine = (areaCurrentSession / areaTrendLine) * 100;
+
+        console.log("Aucune autre session disponible pour calculer l'aire.");
+        document.getElementById('correlation-percentage').innerHTML = `
+            Aire entre la courbe de la session actuelle et la courbe de tendance : ${areaCurrentSession.toFixed(2)}<br>
+            Aire sous la courbe de tendance : ${areaTrendLine.toFixed(2)}<br>
+            Pourcentage de la première aire par rapport à l'aire sous la courbe de tendance : ${percentageTrendLine.toFixed(2)}%<br>
+            Aucune autre session disponible pour calculer l'aire.
+        `;
+    }
 
     window.myChartPPG2 = new Chart(ctx2, {
         type: 'line',
@@ -251,4 +295,38 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     });
 
     console.log("Graphique secondaire affiché :", window.myChartPPG2);
+}
+
+function calculateAreaBetweenCurves(curve1, curve2) {
+    let area = 0;
+    const minLength = Math.min(curve1.length, curve2.length);
+    for (let i = 0; i < minLength; i++) {
+        area += Math.abs(curve1[i] - curve2[i]);
+    }
+    return area;
+}
+
+function calculateAreaUnderCurve(curve) {
+    let area = 0;
+    for (let i = 0; i < curve.length; i++) {
+        area += curve[i];
+    }
+    return area;
+}
+
+function calculateMeanOfOtherSessions(cumulativeVariabilities, highestSessionLabel) {
+    const otherSessions = Object.keys(cumulativeVariabilities).filter(label => label !== highestSessionLabel);
+    const sum = otherSessions.reduce((acc, label) => {
+        return acc.concat(cumulativeVariabilities[label]);
+    }, []);
+    const count = sum.length;
+    const mean = Array.from({ length: count }, () => 0);
+
+    otherSessions.forEach(label => {
+        for (let i = 0; i < cumulativeVariabilities[label].length; i++) {
+            mean[i] += cumulativeVariabilities[label][i] / otherSessions.length;
+        }
+    });
+
+    return mean;
 }
