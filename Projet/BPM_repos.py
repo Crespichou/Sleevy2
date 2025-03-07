@@ -6,12 +6,13 @@ from Event import monitor_stop_event
 import sqlite3
 from datetime import datetime
 
-ID_JOUEUR = 1      # Argument
+ID_JOUEUR = 3      # Argument
 
 def save_ppg_data(ppg_values):
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
-        connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db") #Tablette Antoine
+        #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db") #Tablette Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")  # Lien PC Antoine
         curseur = connexion.cursor()
         
         requete = """

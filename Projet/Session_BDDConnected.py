@@ -1,3 +1,4 @@
+#import asynciopip
 import asyncio
 import time
 import threading
@@ -9,7 +10,7 @@ import sqlite3
 from datetime import datetime
 
 
-ID_JOUEUR = 1      # Argument
+ID_JOUEUR = 3      # Argument
 
 def create_session():
     """Crée une nouvelle session dans la base de données pour acceuillir les données."""
