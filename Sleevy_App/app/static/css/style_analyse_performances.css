@@ -203,3 +203,15 @@ canvas {
 .show {
     display: block; /* Affiche le conteneur */
 }
+
+.blank-container {
+    font-family: "Meta";
+    padding: 10px;
+    margin: 10px;
+    margin-right : 20px;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+    border-radius: 5px;
+    text-align: center;
+    
+}

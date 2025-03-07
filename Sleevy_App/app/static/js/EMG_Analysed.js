@@ -197,18 +197,27 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     // Mettre à jour les informations dans le HTML
     const greenContainer = document.querySelector('.green-container');
     const redContainer = document.querySelector('.red-container');
-
+    const blankContainer = document.querySelector('.blank-container');
+    
     if (greenCount > 0) {
         greenContainer.classList.add('show');
         greenContainer.innerHTML = `Nombre de périodes d'augmentation d'activité musculaire : ${greenCount}<br><br>Détails : <br>${greenDetails.join('<br>')}`;
     } else {
         greenContainer.classList.remove('show');
     }
-
+    
     if (redCount > 0) {
         redContainer.classList.add('show');
         redContainer.innerHTML = `Nombre de périodes de diminution d'activité musculaire : ${redCount}<br><br>Détails : <br>${redDetails.join('<br>')}`;
     } else {
         redContainer.classList.remove('show');
     }
+    
+    if (greenCount > 0 || redCount > 0) {
+        blankContainer.classList.add('show');
+        blankContainer.innerHTML = `Nombre total de changement de rythme : ${greenCount + redCount}`;
+    } else {
+        blankContainer.classList.remove('show');
+    }
+    
 }
