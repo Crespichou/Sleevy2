@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Détails de la Session {{ session.session_id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_joueur.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body class="gradient-background">
+    <main>
+        <div class="title">Détails de la Session {{ session.session_id }}</div>
+        <div class="fine-line"></div>
+    </main>
+
+    <a href="{{ url_for('coaches') }}">Retour</a>
+
+    <div class="square">
+        <main>
+            <div class="section-title">Analyse de la session :</div>
+            <canvas id="myChartPPG" width="500" height="250"></canvas>
+            <canvas id="myChartEMG" width="500" height="250"></canvas>
+            <canvas id="myChartAccel" width="500" height="250"></canvas>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Correction : Échapper les données Flask en JSON
+            const ppgData = JSON.parse('{{ ppg_values | tojson | safe }}');
+            const emgData = JSON.parse('{{ emg_values | tojson | safe }}');
+            const accelData = JSON.parse('{{ accel_values | tojson | safe }}');
+
+            function extractValuesAndTimes(data) {
+                return {
+                    values: data.map(item => item.valeur),
+                    times: data.map(item => item.heure.substring(11, 16)) // Format HH:MM
+                };
+            }
+
+            const ppg = extractValuesAndTimes(ppgData);
+            const emg = extractValuesAndTimes(emgData);
+            const accel = extractValuesAndTimes(accelData);
+
+            function createChart(ctx, label, data, color) {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.times,
+                        datasets: [{
+                            label: label,
+                            data: data.values,
+                            borderColor: color,
+                            borderWidth: 2,
+                            fill: false,
+                            pointRadius: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return `${label}: ${tooltipItem.raw}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Temps'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: `Valeur ${label}`
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            createChart(document.getElementById('myChartPPG').getContext('2d'), 'PPG', ppg, 'red');
+            createChart(document.getElementById('myChartEMG').getContext('2d'), 'EMG', emg, 'blue');
+            createChart(document.getElementById('myChartAccel').getContext('2d'), 'Accélération', accel, 'green');
+        });
+    </script>
+</body>
+
+</html>
