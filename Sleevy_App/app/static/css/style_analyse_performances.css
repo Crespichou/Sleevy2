@@ -135,6 +135,13 @@ canvas {
     opacity: 1;
 }
 
+.Agraph-info-container p {
+    font-size: 1rem;
+    color: black;
+    font-family: "Meta";
+    margin: 5px 0; /* Ajout de marges pour espacer les paragraphes */
+}
+
 .info-container-accel p {
     font-size: 1rem;
     color: black;
@@ -255,13 +262,14 @@ canvas {
     display: flex;
     align-items: flex-end;
     justify-content: center;
+    margin-bottom : 20px;
+    margin-top : 20px;
+    margin-left: 30px;
   }
   
   [role="progressbar"]::before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     --color-stop: calc(var(--percentage) * 1% / 2);
