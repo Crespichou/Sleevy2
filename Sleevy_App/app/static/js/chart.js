@@ -6,76 +6,44 @@ document.addEventListener('DOMContentLoaded', function() {
             if (data && data.ppg_values && data.ppg_values.length > 0 && data.emg_values && data.emg_values.length > 0 && data.accel_values && data.accel_values.length > 0) {
                 // Extraire les valeurs et les heures PPG, EMG et Accel de la réponse
                 let valeursPpg = data.ppg_values.map(item => item.valeur);
-                let heuresPpg = data.ppg_values.map(item => {
-                    let heure = item.heure; // Format "YYYY HH"
-                    let heurePart = heure.substring(17); // Extrait "HH"
-                    return `${heurePart}`; // Ajoute ":00:00.00" pour obtenir "HH:MM:SS.ss"
-                });
+                let heuresPpg = data.ppg_values.map(item => new Date(item.heure));
 
                 let valeursEmg = data.emg_values.map(item => item.valeur);
-                let heuresEmg = data.emg_values.map(item => {
-                    let heure = item.heure; // Format "YYYY HH"
-                    let heurePart = heure.substring(17); // Extrait "HH"
-                    return `${heurePart}`; // Ajoute ":00:00.00" pour obtenir "HH:MM:SS.ss"
-                });
+                let heuresEmg = data.emg_values.map(item => new Date(item.heure));
 
                 let valeursAccel = data.accel_values.map(item => item.valeur);
-                let heuresAccel = data.accel_values.map(item => {
-                    let heure = item.heure; // Format "YYYY HH"
-                    let heurePart = heure.substring(17); // Extrait "HH"
-                    return `${heurePart}`; // Ajoute ":00:00.00" pour obtenir "HH:MM:SS.ss"
-                });
+                let heuresAccel = data.accel_values.map(item => new Date(item.heure));
+
+                // Fonction pour formater les heures en HH:MM:SS en soustrayant 1 heure
+                function formatTime(date) {
+                    date.setHours(date.getHours() - 1); // Soustraire 1 heure
+                    return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                }
+
+                let labelsPpg = heuresPpg.map(formatTime);
+                let labelsEmg = heuresEmg.map(formatTime);
+                let labelsAccel = heuresAccel.map(formatTime);
 
                 // Créer et afficher le graphique PPG
                 const ctxPPG = document.getElementById('myChartPPG').getContext('2d');
                 new Chart(ctxPPG, {
-                    type: 'line', // Choisir le type de graphique (ici, un graphique linéaire)
+                    type: 'line',
                     data: {
-                        labels: heuresPpg, // Labels des données PPG
+                        labels: labelsPpg,
                         datasets: [{
-                            label: 'Valeurs PPG',
-                            data: valeursPpg, // Valeurs PPG
-                            borderColor: 'rgb(235, 0, 27)', // Couleur de la ligne
+                            label: 'Rythme cardiaque',
+                            data: valeursPpg,
+                            borderColor: 'rgb(154, 2, 19)',
                             borderWidth: 2,
-                            fill: false, // Ne pas remplir l'aire sous la courbe
+                            fill: false,
                             pointRadius: 0
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            tooltip: {
-                                enabled: true, // Activer les tooltips
-                                callbacks: {
-                                    label: function(tooltipItem) {
-                                        return 'Valeur PPG: ' + tooltipItem.raw;
-                                    }
-                                }
-                            }
-                        },
-                        hover: {
-                            mode: 'nearest',
-                            intersect: true
-                        },
                         scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Temps'
-                                },
-                                ticks: {
-                                    callback: function(value, index, values) {
-                                        // Afficher une heure toutes les 5 valeurs
-                                        return index % 2 === 0 ? this.getLabelForValue(value) : '';
-                                    }
-                                }
-                            },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: 'Valeur PPG'
-                                }
-                            }
+                            x: { title: { display: true, text: 'Temps' } },
+                            y: { title: { display: true, text: 'Valeur PPG' } }
                         }
                     }
                 });
@@ -83,53 +51,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Créer et afficher le graphique EMG
                 const ctxEMG = document.getElementById('myChartEMG').getContext('2d');
                 new Chart(ctxEMG, {
-                    type: 'line', // Choisir le type de graphique (ici, un graphique linéaire)
+                    type: 'line',
                     data: {
-                        labels: heuresEmg, // Labels des données EMG
+                        labels: labelsEmg,
                         datasets: [{
-                            label: 'Valeurs EMG',
-                            data: valeursEmg, // Valeurs EMG
-                            borderColor: 'rgb(0, 123, 255)', // Couleur de la ligne
+                            label: 'Activité musculaire',
+                            data: valeursEmg,
+                            borderColor: 'rgb(0, 90, 186)',
                             borderWidth: 2,
-                            fill: false, // Ne pas remplir l'aire sous la courbe
+                            fill: false,
                             pointRadius: 0
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            tooltip: {
-                                enabled: true, // Activer les tooltips
-                                callbacks: {
-                                    label: function(tooltipItem) {
-                                        return 'Valeur EMG: ' + tooltipItem.raw;
-                                    }
-                                }
-                            }
-                        },
-                        hover: {
-                            mode: 'nearest',
-                            intersect: true
-                        },
                         scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Temps'
-                                },
-                                ticks: {
-                                    callback: function(value, index, values) {
-                                        // Afficher une heure toutes les 5 valeurs
-                                        return index % 3 === 0 ? this.getLabelForValue(value) : '';
-                                    }
-                                }
-                            },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: 'Valeur EMG'
-                                }
-                            }
+                            x: { title: { display: true, text: 'Temps' } },
+                            y: { title: { display: true, text: 'Valeur EMG' } }
                         }
                     }
                 });
@@ -137,53 +75,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Créer et afficher le graphique Accel
                 const ctxAccel = document.getElementById('myChartAccel').getContext('2d');
                 new Chart(ctxAccel, {
-                    type: 'line', // Choisir le type de graphique (ici, un graphique linéaire)
+                    type: 'line',
                     data: {
-                        labels: heuresAccel, // Labels des données Accel
+                        labels: labelsAccel,
                         datasets: [{
-                            label: 'Valeurs Accel',
-                            data: valeursAccel, // Valeurs Accel
-                            borderColor: 'rgb(0, 255, 0)', // Couleur de la ligne
+                            label: 'Mouvements du bras',
+                            data: valeursAccel,
+                            borderColor: 'rgb(0, 132, 0)',
                             borderWidth: 2,
-                            fill: false, // Ne pas remplir l'aire sous la courbe
+                            fill: false,
                             pointRadius: 0
                         }]
                     },
                     options: {
                         responsive: true,
-                        plugins: {
-                            tooltip: {
-                                enabled: true, // Activer les tooltips
-                                callbacks: {
-                                    label: function(tooltipItem) {
-                                        return 'Valeur Accel: ' + tooltipItem.raw;
-                                    }
-                                }
-                            }
-                        },
-                        hover: {
-                            mode: 'nearest',
-                            intersect: true
-                        },
                         scales: {
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Temps'
-                                },
-                                ticks: {
-                                    callback: function(value, index, values) {
-                                        // Afficher une heure toutes les 5 valeurs
-                                        return index % 5 === 0 ? this.getLabelForValue(value) : '';
-                                    }
-                                }
-                            },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: 'Valeur Accel'
-                                }
-                            }
+                            x: { title: { display: true, text: 'Temps' } },
+                            y: { title: { display: true, text: 'Valeur Accel' } }
                         }
                     }
                 });

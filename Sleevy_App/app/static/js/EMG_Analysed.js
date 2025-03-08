@@ -9,8 +9,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Extraire les valeurs et les heures EMG
                 let valeursEmg = emgValues.map(item => item.valeur);
                 let heuresEmg = emgValues.map(item => {
-                    let heure = item.heure; // Format "YYYY-MM-DD HH:MM:SS"
-                    return new Date(heure); // Convertir en objet Date pour les comparaisons
+                let heure = item.heure; // Format "YYYY-MM-DD HH:MM:SS"
+                let date = new Date(heure); // Convertir en objet Date pour les comparaisons
+                date.setHours(date.getHours() - 1); // Réduire l'heure d'une heure
+                    return date; // Retourner la nouvelle heure ajustée
                 });
 
                 // Détection des points brutaux

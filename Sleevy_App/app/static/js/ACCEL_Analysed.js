@@ -9,6 +9,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 let valeursAccel = accelValues.map(item => item.valeur);
                 let heuresAccel = accelValues.map(item => new Date(item.heure));
 
+                // Soustraire 1 heure à chaque valeur de temps
+                heuresAccel = heuresAccel.map(date => {
+                    date.setHours(date.getHours() - 1);
+                    return date;
+                });
+
                 const startTime = heuresAccel[0];
                 const endTime = heuresAccel[heuresAccel.length - 1];
                 const sessionDurationMinutes = (endTime - startTime) / 1000 / 60;
