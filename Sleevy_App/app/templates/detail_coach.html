@@ -35,7 +35,11 @@
             function extractValuesAndTimes(data) {
                 return {
                     values: data.map(item => item.valeur),
-                    times: data.map(item => item.heure.substring(11, 16)) // Format HH:MM
+                    times: data.map(item => {
+                        const date = new Date(item.heure); // Convertir en objet Date
+                        date.setHours(date.getHours() - 1); // Soustraire 1 heure
+                        return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+                    })
                 };
             }
 
@@ -87,9 +91,9 @@
                 });
             }
 
-            createChart(document.getElementById('myChartPPG').getContext('2d'), 'PPG', ppg, 'red');
-            createChart(document.getElementById('myChartEMG').getContext('2d'), 'EMG', emg, 'blue');
-            createChart(document.getElementById('myChartAccel').getContext('2d'), 'Accélération', accel, 'green');
+            createChart(document.getElementById('myChartPPG').getContext('2d'), 'Rythme cardiaque', ppg, 'rgb(154, 2, 19)');
+            createChart(document.getElementById('myChartEMG').getContext('2d'), 'Activité musculaire', emg, 'rgb(0, 90, 186)');
+            createChart(document.getElementById('myChartAccel').getContext('2d'), 'Mouvement du bras', accel, 'rgb(0, 132, 0)');
         });
     </script>
 </body>
