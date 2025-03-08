@@ -239,6 +239,9 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         // Calculer le pourcentage de la première aire par rapport à la seconde
         percentageOtherSessions = (areaCurrentSession / areaOtherSessions) * 100;
 
+        // Inverser le pourcentage
+        percentageOtherSessions = 100 - percentageOtherSessions;
+
         console.log("Aire entre la moyenne des autres sessions et la courbe de tendance :", areaOtherSessions);
         console.log("Pourcentage de la première aire par rapport à la seconde :", percentageOtherSessions.toFixed(2) + "%");
 
@@ -257,6 +260,9 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     } else {
         // Calculer le pourcentage de l'aire entre la courbe de la session actuelle et la courbe de tendance par rapport à l'aire sous la courbe de tendance
         percentageTrendLine = (areaCurrentSession / areaTrendLine) * 100;
+
+        // Inverser le pourcentage
+        percentageTrendLine = 100 - percentageTrendLine;
 
         console.log("Aucune autre session disponible pour calculer l'aire.");
         //document.getElementById('correlation-percentage').innerHTML = `
