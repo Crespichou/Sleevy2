@@ -139,7 +139,7 @@ def coaches():
         last_7_days_games = {session.idjoueur: session.game_count for session in sessions_last_7_days}
 
         return render_template('main_coach.html', coach_players=coach_players, coach=coach, last_7_days_games=last_7_days_games)
-    return render_template('login.html')
+    return render_template('login_coach.html')
 
 @app.route('/joueurs', methods=['POST', 'GET'])
 def joueurs():

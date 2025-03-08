@@ -13,10 +13,17 @@
 
 <body class="gradient-background">
     
-    <main>
+    <!-- Conteneur pour aligner "Bienvenue" et "Logout" -->
+    <div class="header-container">
         <div class="title">Bienvenue {{ coach.ndccoach }}</div>
-        <div class="fine-line"></div>
-    </main>
+        <div class="logout-container">
+            <form action="{{ url_for('logout') }}" method="POST">
+                <button type="submit" class="logout-button">Logout</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="fine-line"></div>
 
     <div class="container">
         <main class="submain">Liste des joueurs</main>
@@ -50,13 +57,6 @@
                 </table>
             </div>
         </div>
-    </div>
-
-    <!-- Bouton Logout -->
-    <div class="logout-container">
-        <form action="{{ url_for('logout') }}" method="POST">
-            <button type="submit" class="logout-button">Logout</button>
-        </form>
     </div>
 
 </body>

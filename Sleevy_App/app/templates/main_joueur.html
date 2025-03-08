@@ -6,11 +6,21 @@
     <title>Sleevy - Joueur</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_joueur.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Ajout de Chart.js -->
+
+
 </head>
 
 <body class="gradient-background">
     <main>
-        <div class="title">Bienvenue {{ player.pseudo }}</div>
+        <!-- Conteneur Flex pour aligner Bienvenue + Logout -->
+        <div class="header-container">
+            <div class="title">Bienvenue {{ player.pseudo }}</div>
+            <div class="logout-container">
+                <form action="{{ url_for('logout') }}" method="POST">
+                    <button type="submit" class="logout-button">Logout</button>
+                </form>
+            </div>
+        </div>
         <div class="fine-line"></div>
     </main>
 
