@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Sleevy</title>
+    <title>Sleevy - Joueur</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_joueur.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Ajout de Chart.js -->
 </head>
@@ -14,10 +14,11 @@
         <div class="fine-line"></div>
     </main>
 
-    <div class="form-row submit-btn">
+    <!-- Conteneur pour aligner les boutons -->
+    <div class="button-container">
         <div class="input-data">
             <div class="inner"></div>
-            <input type="submit" class='submit' value="Lancer l'enregistrement">
+            <input type="submit" class="submit" value="Lancer l'enregistrement">
         </div>
         <div class="performances-analyse">
             <div class="inner"></div>
@@ -26,6 +27,9 @@
             </form>
         </div>
     </div>
+
+    <!-- Fine line sous les boutons -->
+    <div class="fine-line3"></div>
 
     <div class="square">
         <main>
@@ -39,28 +43,31 @@
 
         <div class="container">
             <div class="section-title">Historique :</div>
-         
 
             <!-- Tableau affiché en permanence sous Historique -->
             <table class="styled-table">
-                <tr>
-                    <th>Numéro de la partie</th>
-                    <th>Début de la session</th>
-                    <th>Fin de la session</th>
-                    <th>Détail de la Session</th>
-                </tr>
-                {% for session in sessions %}
-                <tr>
-                    <td>{{ session.gamenumber }}</td>
-                    <td>{{ session.starttime }}</td>
-                    <td>{{ session.endtime }}</td>
-                    <td>
-                        <a href="{{ url_for('historique', session_id=session.gamenumber) }}" class="detail-link">
-                            Détail session
-                        </a>
-                    </td>
-                </tr>
-                {% endfor %}
+                <thead>
+                    <tr>
+                        <th>Numéro de la partie</th>
+                        <th>Début de la session</th>
+                        <th>Fin de la session</th>
+                        <th>Détail de la Session</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for session in sessions %}
+                    <tr>
+                        <td>{{ session.gamenumber }}</td>
+                        <td>{{ session.starttime }}</td>
+                        <td>{{ session.endtime }}</td>
+                        <td>
+                            <a href="{{ url_for('historique', session_id=session.gamenumber) }}" class="detail-link">
+                                Détail session
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>
