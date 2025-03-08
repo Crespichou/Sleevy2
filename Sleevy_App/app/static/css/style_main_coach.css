@@ -67,14 +67,18 @@
   text-shadow: none;
 }
 
-/* Fond en dégradé */
-.gradient-background {
-  background: linear-gradient(to bottom, #9dbebb, #62bebe);
-  height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
 }
+
+.gradient-background {
+  min-height: 100vh;
+  background: linear-gradient(to bottom, #9dbebb, #62bebe);
+  background-attachment: fixed; /* Empêche la répétition */
+}
+
 
 /* Ligne fine */
 .fine-line, .fine-line2 {

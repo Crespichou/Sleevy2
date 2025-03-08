@@ -3,21 +3,21 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Détails de la Session {{ session.session_id }}</title>
+    <title>Détails de la Session {{ session_id }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_joueur.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 
 <body class="gradient-background">
     <div class="header-container">
-        <div class="title">Détails de la Session </div>
+        <div class="title">Détails de la Session</div>
         <div class="logout-container">
-            <form action="{{ url_for('coaches') }}" method="POST">
+            <form action="{{ url_for('joueurs') }}" method="POST">
                 <button type="submit" class="logout-button">Retour</button>
             </form>
         </div>
     </div>
-    
+
     <div class="fine-line3"></div>
     <div class="square">
         <main>
@@ -30,7 +30,6 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Correction : Échapper les données Flask en JSON
             const ppgData = JSON.parse('{{ ppg_values | tojson | safe }}');
             const emgData = JSON.parse('{{ emg_values | tojson | safe }}');
             const accelData = JSON.parse('{{ accel_values | tojson | safe }}');
@@ -39,8 +38,8 @@
                 return {
                     values: data.map(item => item.valeur),
                     times: data.map(item => {
-                        const date = new Date(item.heure); // Convertir en objet Date
-                        date.setHours(date.getHours() - 1); // Soustraire 1 heure
+                        const date = new Date(item.heure);
+                        date.setHours(date.getHours() - 1);
                         return date.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
                     })
                 };

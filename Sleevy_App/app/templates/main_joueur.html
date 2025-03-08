@@ -71,7 +71,7 @@
                         <td>{{ session.starttime }}</td>
                         <td>{{ session.endtime }}</td>
                         <td>
-                            <a href="{{ url_for('historique', session_id=session.gamenumber) }}" class="detail-link">
+                            <a href="{{ url_for('detail_joueur', session_id=session.session_id) }}" class="detail-link">
                                 Détail session
                             </a>
                         </td>

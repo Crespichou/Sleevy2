@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Historique de {{ player.pseudo }}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_historique_coach.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_coach.css') }}">
     <style>
         body, main, .submain, p, a {
             font-family: "Meta", sans-serif;
@@ -11,9 +11,15 @@
     </style>
 </head>
 <body class="gradient-background">
-    <main>Historique des parties de {{ player.pseudo }}</main>
-    <a href="{{ url_for('coaches') }}" class="back-link">Retour</a>
-    <div class="fine-line"></div>
+    <div class="header-container">
+        <div class="title">Historique de {{ player.pseudo }}</div>
+        <div class="logout-container">
+            <form action="{{ url_for('coaches') }}" method="POST">
+                <button type="submit" class="logout-button">Retour</button>
+            </form>
+        </div>
+    </div>
+    <div class="fine-line2"></div>
     <div class="container">
         <main class="submain">Liste des sessions</main>
         <div class="fine-line2"></div>
