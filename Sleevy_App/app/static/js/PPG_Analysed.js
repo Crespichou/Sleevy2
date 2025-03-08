@@ -243,23 +243,33 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         console.log("Pourcentage de la première aire par rapport à la seconde :", percentageOtherSessions.toFixed(2) + "%");
 
         // Mettre à jour le HTML pour afficher les résultats
-        document.getElementById('correlation-percentage').innerHTML = `
-            Aire entre la courbe de la session actuelle et la courbe de tendance : ${areaCurrentSession.toFixed(2)}<br>
-            Aire entre la moyenne des autres sessions et la courbe de tendance : ${areaOtherSessions.toFixed(2)}<br>
-            Aire sous la courbe de tendance : ${areaTrendLine.toFixed(2)}<br>
-            Pourcentage de la première aire par rapport à la seconde : ${percentageOtherSessions.toFixed(2)}%
-        `;
+        //document.getElementById('correlation-percentage').innerHTML = `
+            //Aire entre la courbe de la session actuelle et la courbe de tendance : ${areaCurrentSession.toFixed(2)}<br>
+            //Aire entre la moyenne des autres sessions et la courbe de tendance : ${areaOtherSessions.toFixed(2)}<br>
+            //Aire sous la courbe de tendance : ${areaTrendLine.toFixed(2)}<br>
+            //Pourcentage de la première aire par rapport à la seconde : ${percentageOtherSessions.toFixed(2)}%
+        //`;
+
+        // Mettre à jour la variable CSS pour le pourcentage
+        const progressBar = document.querySelector('[role="progressbar"]');
+        progressBar.style.setProperty('--value', percentageOtherSessions.toFixed(2));
+        progressBar.setAttribute('data-label', `${percentageOtherSessions.toFixed(2)}%`);
     } else {
         // Calculer le pourcentage de l'aire entre la courbe de la session actuelle et la courbe de tendance par rapport à l'aire sous la courbe de tendance
         percentageTrendLine = (areaCurrentSession / areaTrendLine) * 100;
 
         console.log("Aucune autre session disponible pour calculer l'aire.");
-        document.getElementById('correlation-percentage').innerHTML = `
-            Aire entre la courbe de la session actuelle et la courbe de tendance : ${areaCurrentSession.toFixed(2)}<br>
-            Aire sous la courbe de tendance : ${areaTrendLine.toFixed(2)}<br>
-            Pourcentage de la première aire par rapport à l'aire sous la courbe de tendance : ${percentageTrendLine.toFixed(2)}%<br>
-            Aucune autre session disponible pour calculer l'aire.
-        `;
+        //document.getElementById('correlation-percentage').innerHTML = `
+            //Aire entre la courbe de la session actuelle et la courbe de tendance : ${areaCurrentSession.toFixed(2)}<br>
+            //Aire sous la courbe de tendance : ${areaTrendLine.toFixed(2)}<br>
+            //Pourcentage de la première aire par rapport à l'aire sous la courbe de tendance : ${percentageTrendLine.toFixed(2)}%<br>
+            //Aucune autre session disponible pour calculer l'aire.
+        //`;
+
+        // Mettre à jour la variable CSS pour le pourcentage
+        const progressBar = document.querySelector('[role="progressbar"]');
+        progressBar.style.setProperty('--value', percentageTrendLine.toFixed(2));
+        progressBar.setAttribute('data-label', `${percentageTrendLine.toFixed(2)}%`);
     }
 
     window.myChartPPG2 = new Chart(ctx2, {
