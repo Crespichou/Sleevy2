@@ -113,13 +113,17 @@ def login_coaches():
 def login_players():
     form = request.form
     joueur = Player.query.filter_by(pseudo=form['username']).first()
+    
     if not joueur:
+        flash("Pseudo incorrect", "danger")
         return redirect(url_for('login_joueur'))
+
     if joueur.check_password(form['password']):
-        session['joueur'] = joueur.idjoueur  
-        print(session['joueur'])
+        session['joueur'] = joueur.idjoueur  # ✅ Stocker l'ID du joueur dans la session
+        session['pseudo'] = joueur.pseudo  # ✅ Stocker son pseudo (facultatif)
         return redirect(url_for('joueurs'))
     else:
+        flash("Mot de passe incorrect", "danger")
         return redirect(url_for('login_joueur'))
 
 
@@ -143,16 +147,16 @@ def coaches():
 
 @app.route('/joueurs', methods=['POST', 'GET'])
 def joueurs():
-    if session.get('joueur'): 
-        joueur_id = session.get('joueur')
-        print(joueur_id)
+    if 'joueur' in session:  # ✅ Vérifier si 'joueur' est dans la session
+        joueur_id = session['joueur']
         joueur = Player.query.filter_by(idjoueur=joueur_id).first()
-        player_sessions = Session.query.filter_by(idjoueur=joueur_id).all()  # ✅ Renommé
-        
-        return render_template('main_joueur.html', player=joueur, sessions=player_sessions)  # ✅ Mise à jour
-        
-    print('error')
-    return render_template('login_joueur.html')
+        player_sessions = Session.query.filter_by(idjoueur=joueur_id).all()
+
+        return render_template('main_joueur.html', player=joueur, sessions=player_sessions)
+
+    flash("Vous devez être connecté pour accéder à cette page.", "warning")
+    return redirect(url_for('login_joueur'))
+
 
 
 @app.route('/historique', methods=['POST', 'GET'])
@@ -172,12 +176,14 @@ def historique():
 @app.route('/logout', methods=['POST', 'GET'])
 def logout():
     session.pop('coach', None)
+    session.pop('joueur', None) 
     return redirect(url_for('index'))
 
 #Sélection des données PPG, EMG et Accel correspondant à la dernière session
 @app.route('/graphique_ppg_emg', methods=['GET'])
 def graphique_ppg_emg():
     joueur_id = session.get('joueur')
+    print(joueur_id)
     if not joueur_id:
         return jsonify({"error": "Aucun joueur connecté."}), 400
 
@@ -261,7 +267,7 @@ def detail_coach(session_id):
     # Vérification que le coach est bien connecté
     if not session.get('coach'):
         return jsonify({"error": "Accès refusé. Connectez-vous en tant que coach."}), 403
-
+    
     # Récupération des données de la session sélectionnée
     ppg_data = db.session.query(PPG.valeurppg, PPG.heureppg).filter_by(session_id=session_id).all()
     emg_data = db.session.query(EMG.valeuremg, EMG.heureemg).filter_by(session_id=session_id).all()
@@ -275,3 +281,27 @@ def detail_coach(session_id):
     accel_values = [{"valeur": accel[0], "heure": accel[1]} for accel in accel_data]
 
     return render_template("detail_coach.html", session_id=session_id, ppg_values=ppg_values, emg_values=emg_values, accel_values=accel_values)
+
+@app.route('/detail_joueur/<int:session_id>', methods=['GET'])
+def detail_joueur(session_id):
+    # Vérification si le joueur est connecté
+    if 'joueur' not in session:
+        return jsonify({"error": "Accès refusé. Connectez-vous en tant que joueur."}), 403
+    print(session_id)
+    print('ping')
+    
+
+    # Récupération des données de la session sélectionnée
+    ppg_data = db.session.query(PPG.valeurppg, PPG.heureppg).filter_by(session_id=session_id).all()
+    emg_data = db.session.query(EMG.valeuremg, EMG.heureemg).filter_by(session_id=session_id).all()
+    accel_data = db.session.query(Accelerometer.valeuraccel, Accelerometer.heureaccel).filter_by(session_id=session_id).all()
+    print(ppg_data)
+    if not ppg_data or not emg_data or not accel_data:
+        return jsonify({"error": "Aucune donnée trouvée pour cette session."}), 404
+
+    ppg_values = [{"valeur": ppg[0], "heure": ppg[1]} for ppg in ppg_data]
+    emg_values = [{"valeur": emg[0], "heure": emg[1]} for emg in emg_data]
+    accel_values = [{"valeur": accel[0], "heure": accel[1]} for accel in accel_data]
+
+    return render_template("detail_joueur.html", session_id=session_id, ppg_values=ppg_values, emg_values=emg_values, accel_values=accel_values)
+
