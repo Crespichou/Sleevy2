@@ -39,15 +39,7 @@
 
         <div class="container">
             <div class="section-title">Historique :</div>
-            <div class="history-links">
-                {% for session in sessions %}
-                <div class="history-item">
-                    <a href="{{ url_for('historique', session_id=session.gamenumber) }}">
-                        Partie {{ session.gamenumber }} - {{ session.starttime }} à {{ session.endtime }}
-                    </a>
-                </div>
-                {% endfor %}
-            </div>
+         
 
             <!-- Tableau affiché en permanence sous Historique -->
             <table class="styled-table">

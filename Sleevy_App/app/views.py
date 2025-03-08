@@ -146,10 +146,14 @@ def joueurs():
     if session.get('joueur'): 
         joueur_id = session.get('joueur')
         print(joueur_id)
-        joueur = Player.query.filter_by(idjoueur=joueur_id).first()  
-        return render_template('main_joueur.html', player=joueur)
+        joueur = Player.query.filter_by(idjoueur=joueur_id).first()
+        player_sessions = Session.query.filter_by(idjoueur=joueur_id).all()  # ✅ Renommé
+        
+        return render_template('main_joueur.html', player=joueur, sessions=player_sessions)  # ✅ Mise à jour
+        
     print('error')
     return render_template('login_joueur.html')
+
 
 @app.route('/historique', methods=['POST', 'GET'])
 def historique():
