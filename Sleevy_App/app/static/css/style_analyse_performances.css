@@ -229,6 +229,7 @@ canvas {
     margin-right : 20px;
     padding: 5px;
     font-family: "Meta";
+    margin-top: 30px;
 }
 
 #correlation-percentage {
@@ -274,7 +275,7 @@ canvas {
     height: 100%;
     --color-stop: calc(var(--percentage) * 1% / 2);
     --color-start: calc(var(--percentage) * 1% / 2 + 0.1%);
-    --color: hsl(calc(120 - var(--percentage) * 1.2), 100%, 50%);
+    --color: hsl(calc(var(--percentage) * 1.2), 100%, 50%);
     background: conic-gradient(from 0.75turn at 50% 100%, var(--color) var(--color-stop), #adf var(--color-start));
     mask: radial-gradient(at 50% 100%, white 55%, transparent 55.5%);
     mask-mode: alpha;
@@ -288,4 +289,26 @@ canvas {
     font-size: calc(var(--size) / 5);
     color: var(--color);
   }
+
+  .legend-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-family: "Meta";
+    margin-top: 30px;
+    margin-left: 7px;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+}
+
+.color-box {
+    width: 40px;
+    height: 20px;
+    margin-right: 10px;
+    border-radius: 2px;
+}
+
   
