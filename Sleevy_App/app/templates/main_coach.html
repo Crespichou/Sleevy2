@@ -1,51 +1,63 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
-    <title>Sleevy</title>
+    <title>Sleevy - Coach</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_coach.css') }}">
+    <style>
+        body, main, .submain, p, a {
+            font-family: "Meta", sans-serif;
+        }
+    </style>
 </head>
+
 <body class="gradient-background">
-   
-        <main>
-        Bienvenue {{coach.ndccoach}}
-        </main>
+    
+    <main>
+        <div class="title">Bienvenue {{ coach.ndccoach }}</div>
         <div class="fine-line"></div>
-        <div class="container">
-        <main class="submain">Liste de joueur
-            <div class="fine-line2"></div>
-        </main>
+    </main>
+
+    <div class="container">
+        <main class="submain">Liste des joueurs</main>
+        <div class="fine-line2"></div>
         
-            <div class="space">
+        <div class="space">
             <div class="player-list">
-                <div class="header">
-                    <span>Id</span>
-                    <div class="separator"></div>
-                    <span>Pseudo</span>
-                    <div class="separator"></div>
-                    <span>Sessions de la semaine</span>
-                    <div class="separator"></div>
-                    <span>Historique</span>
-                    <div class="separator"></div>
-                </div>
-                <div class="players">
-                    {% for player in coach_players %}
-                    <div class="player">
-                        <span>{{ player.idjoueur }}</span>
-                        <div class="separator"></div>
-                        <span>{{ player.pseudo }}</span>
-                        <div class="separator"></div>
-                        <span>{{ last_7_days_games.get(player.idjoueur, 0) }}</span>
-                        <div class="separator"></div>
-                        <span><a href="{{ url_for('historique_coach', idjoueur=player.idjoueur) }}">Historique</a></span>
-                        <div class="separator"></div>
-                        
-                    </div>
-                    {% endfor %}
-                </div>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>Id</th>
+                            <th>Pseudo</th>
+                            <th>Sessions de la semaine</th>
+                            <th>Historique</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for player in coach_players %}
+                        <tr>
+                            <td>{{ player.idjoueur }}</td>
+                            <td>{{ player.pseudo }}</td>
+                            <td>{{ last_7_days_games.get(player.idjoueur, 0) }}</td>
+                            <td>
+                                <a href="{{ url_for('historique_coach', idjoueur=player.idjoueur) }}" class="detail-link">
+                                    Voir historique
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
-            </div>
+        </div>
     </div>
-    <a href="{{ url_for('logout') }}"> Logout </a>
+
+    <!-- Bouton Logout -->
+    <div class="logout-container">
+        <form action="{{ url_for('logout') }}" method="POST">
+            <button type="submit" class="logout-button">Logout</button>
+        </form>
+    </div>
+
 </body>
+</html>

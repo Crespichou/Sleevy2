@@ -14,7 +14,7 @@
 }
 
 .section-title {
-  font-size: 4rem;
+  font-size: 3rem;
   text-align: left;
   color: #d6f4f4;
   font-family: "Meta";
@@ -22,10 +22,10 @@
 }
 
 .gradient-background {
-  background: linear-gradient(to bottom, #88c0c0, #62bebe); /* Ajusté pour un bleu plus doux */
+  background: linear-gradient(to bottom, #88c0c0, #62bebe);
 }
 
-
+/* Ligne fine */
 .fine-line {
   margin-top: 20px;
   border: none;
@@ -46,181 +46,84 @@
   height: 150vh;
 }
 
-.submit {
-  background-color: #6a6a6a;
-  border-radius: 12px;
-  border: 0;
-  color: #eee;
-  font-size: 18px;
-  height: 50px;
-  text-align: center;
-  width: 20%;
-}
-
-.submit:active {
-  background-color: #d6f4f4;
-}
-
-.chart {
-  width: 85%;
-  height: 350px;
-  margin: auto;
-}
-
-.history-links {
+/* Conteneur pour aligner les boutons */
+.button-container {
   display: flex;
-  flex-direction: column;
+  justify-content: center; /* Centre les boutons */
+  gap: 20px; /* Espacement entre les boutons */
+  margin-top: 20px;
+}
+
+/* S'assure que les boutons ont la même taille */
+.submit {
+  background: linear-gradient(to bottom, rgba(30, 130, 130, 0.9), rgba(50, 150, 150, 1));
+  border-radius: 30px;
+  border: none;
+  color: #ffffff;
+  font-size: 24px;
+  height: 70px;
+  width: 300px;
+  text-align: center;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
+  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
   align-items: center;
-  margin-top: 10px;
+  justify-content: center;
+  font-family: "Meta";
+  font-weight: bold;
+}
+
+/* Effet au survol */
+.submit:hover {
+  background: linear-gradient(to bottom, rgba(50, 150, 150, 1), rgba(80, 180, 180, 1));
+  transform: scale(1.05);
+  box-shadow: 0px 10px 18px rgba(0, 0, 0, 0.3);
+}
+
+/* Effet au clic */
+.submit:active {
+  transform: scale(0.98);
+  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Style du tableau */
 .styled-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-    font-family: "Meta", sans-serif;
-    font-size: 18px;
-    color: #d6f4f4;
-    text-align: center;
-}
-
-.styled-table th, .styled-table td {
-    border: 1px solid #d6f4f4;
-    padding: 12px;
-}
-
-.styled-table th {
-    background-color: #6a6a6a;
-    color: #eee;
-    font-weight: bold;
-}
-
-.styled-table tr:nth-child(even) {
-    background-color: rgba(214, 244, 244, 0.2);
-}
-
-.styled-table tr:hover {
-    background-color: rgba(214, 244, 244, 0.4);
-}
-
-.detail-link {
-    color: #d6f4f4;
-    text-decoration: none;
-    font-weight: bold;
-}
-
-.detail-link:hover {
-    text-decoration: underline;
-    color: #62bebe;
-}
-
-/* Style amélioré du tableau */
-.styled-table {
-    width: 100%;
-    border-collapse: separate; /* Permet d'arrondir les bords */
-    border-spacing: 0;
-    margin-top: 20px;
-    font-family: "Meta", sans-serif;
-    font-size: 18px;
-    color: #d6f4f4;
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.1); /* Fond légèrement transparent */
-    border-radius: 12px; /* Arrondi du tableau */
-    overflow: hidden; /* Empêche le débordement */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Ombre douce */
-}
-
-/* Style des cellules */
-.styled-table th, .styled-table td {
-    padding: 12px;
-    border-bottom: 1px solid rgba(214, 244, 244, 0.5); /* Ligne séparatrice semi-transparente */
-}
-
-/* Style des titres de colonnes */
-.styled-table th {
-    background-color: rgba(106, 106, 106, 0.8); /* Gris foncé semi-transparent */
-    color: #eee;
-    font-weight: bold;
-}
-
-/* Style des lignes alternées */
-.styled-table tr:nth-child(even) {
-    background-color: rgba(214, 244, 244, 0.2); /* Bleu clair */
-}
-
-/* Effet de survol */
-.styled-table tr:hover {
-    background-color: rgba(214, 244, 244, 0.4); /* Bleu plus clair */
-}
-
-/* Arrondir le haut du tableau */
-.styled-table th:first-child {
-    border-top-left-radius: 12px;
-}
-
-.styled-table th:last-child {
-    border-top-right-radius: 12px;
-}
-
-/* Arrondir le bas du tableau */
-.styled-table tr:last-child td:first-child {
-    border-bottom-left-radius: 12px;
-}
-
-.styled-table tr:last-child td:last-child {
-    border-bottom-right-radius: 12px;
-}
-
-/* Style du lien "Détail session" */
-.detail-link {
-    color: #d6f4f4;
-    text-decoration: none;
-    font-weight: bold;
-    transition: color 0.3s;
-}
-
-.detail-link:hover {
-    text-decoration: underline;
-    color: #62bebe;
-}
-/* Style amélioré du tableau avec bleu-vert */
-.styled-table {
   width: 100%;
-  border-collapse: separate; /* Permet d'arrondir les bords */
+  border-collapse: separate;
   border-spacing: 0;
   margin-top: 20px;
   font-family: "Meta", sans-serif;
   font-size: 18px;
   color: #d6f4f4;
   text-align: center;
-  background-color: rgba(50, 150, 150, 0.3); /* Bleu-vert semi-transparent */
-  border-radius: 12px; /* Arrondi du tableau */
-  overflow: hidden; /* Empêche le débordement */
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2); /* Ombre douce */
+  background-color: rgba(50, 150, 150, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 /* Style des cellules */
 .styled-table th, .styled-table td {
   padding: 12px;
-  border-bottom: 1px solid rgba(214, 244, 244, 0.5); /* Ligne séparatrice semi-transparente */
+  border-bottom: 1px solid rgba(214, 244, 244, 0.5);
 }
 
-/* Style des titres de colonnes */
+/* Style des titres */
 .styled-table th {
-  background-color: rgba(30, 130, 130, 0.9); /* Bleu-vert foncé */
+  background-color: rgba(30, 130, 130, 0.9);
   color: #eee;
   font-weight: bold;
 }
 
-/* Style des lignes alternées */
+/* Lignes alternées */
 .styled-table tr:nth-child(even) {
-  background-color: rgba(80, 180, 180, 0.2); /* Bleu-vert plus clair */
+  background-color: rgba(80, 180, 180, 0.2);
 }
 
 /* Effet de survol */
 .styled-table tr:hover {
-  background-color: rgba(80, 180, 180, 0.4); /* Bleu-vert encore plus clair */
+  background-color: rgba(80, 180, 180, 0.4);
 }
 
 /* Arrondir le haut du tableau */
@@ -254,36 +157,12 @@
   color: #62bebe;
 }
 
-/* Boutons mis à jour */
-.submit {
-  background: linear-gradient(to bottom, rgba(30, 130, 130, 0.9), rgba(50, 150, 150, 1));
-  border-radius: 30px; /* Arrondi accentué */
+/* Ligne fine sous les boutons */
+.fine-line3 {
   border: none;
-  color: #ffffff;
-  font-size: 24px; /* Légèrement plus grand */
-  /*font-weight: bold;*/
-  height: 70px; /* Hauteur augmentée */
-  width: 300px; /* Largeur augmentée */
-  text-align: center;
-  cursor: pointer;
-  transition: background 0.3s, transform 0.2s, box-shadow 0.3s;
-  box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2); /* Effet d'ombre */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "Meta";
-  margin : 10px;
-}
-
-/* Effet de survol */
-.submit:hover {
-  background: linear-gradient(to bottom, rgba(50, 150, 150, 1), rgba(80, 180, 180, 1));
-  transform: scale(1.05);
-  box-shadow: 0px 10px 18px rgba(0, 0, 0, 0.3);
-}
-
-/* Effet au clic */
-.submit:active {
-  transform: scale(0.98);
-  box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+  height: 1px;
+  background-color: #d6f4f4;
+  width: 98vw;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
