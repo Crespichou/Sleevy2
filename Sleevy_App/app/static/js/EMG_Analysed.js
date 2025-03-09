@@ -151,7 +151,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             type: 'box',
             xMin: segment.start,
             xMax: segment.end,
-            backgroundColor: color === 'green' ? 'rgba(0, 255, 0, 0.05)' : 'rgba(255, 0, 0, 0.08)',
+            backgroundColor: color === 'green' ? 'rgba(0, 255, 0, 0.05)' : 'rgba(255, 136, 136, 0.08)',
             borderWidth: 0
         });
 
@@ -160,7 +160,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             type: 'line',
             scaleID: 'x',
             value: segment.start,
-            borderColor: 'rgb(231, 255, 124)',
+            borderColor: 'rgb(106, 106, 106)',
             borderWidth: 1,
             borderDash: [5, 5], 
             label: {
@@ -238,20 +238,20 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     });
 
     // Mettre à jour les informations dans le HTML
-    const greenContainer = document.querySelector('.green-container');
-    const redContainer = document.querySelector('.red-container');
+    const greenContainer = document.querySelector('.bottom-green-container');
+    const redContainer = document.querySelector('.bottom-red-container');
     const blankContainer = document.querySelector('.blank-container');
 
     if (greenCount > 0) {
         greenContainer.classList.add('show');
-        greenContainer.innerHTML = `Nombre de périodes d'augmentation d'activité musculaire : ${greenCount}<br><br>Détails : <br>${greenDetails.join('<br>')}`;
+        greenContainer.innerHTML = `Nombre d'augmentation: ${greenCount}<br><br>Détails : <br>${greenDetails.join('<br>')}`;
     } else {
         greenContainer.classList.remove('show');
     }
 
     if (redCount > 0) {
         redContainer.classList.add('show');
-        redContainer.innerHTML = `Nombre de périodes de diminution d'activité musculaire : ${redCount}<br><br>Détails : <br>${redDetails.join('<br>')}`;
+        redContainer.innerHTML = `Nombre  de diminution: ${redCount}<br><br>Détails : <br>${redDetails.join('<br>')}`;
     } else {
         redContainer.classList.remove('show');
     }

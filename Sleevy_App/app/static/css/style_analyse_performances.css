@@ -9,8 +9,7 @@
 /* Titre principal centré */
 main {
     text-shadow: none; 
-    background-color: rgb(103, 175, 175);
-    border-radius: 20px;
+    border-radius: 15px;
 }
 
 .main-title{
@@ -20,8 +19,8 @@ main {
     font-size: 4rem;
     text-align: left;
     margin-left: 10px;
-    color : white;
-    margin-bottom: -40px;
+    color : rgb(103, 175, 175);
+    font-weight: bold;
 }
 
 .container{
@@ -31,28 +30,28 @@ main {
 .main-container{
     flex-grow: 1; 
     padding: 20px;
-    margin-left: 70px; /* Ajoute une marge gauche pour que le contenu principal soit à droite de la side-bar */
+    margin-left: 75px; /* Ajoute une marge gauche pour que le contenu principal soit à droite de la side-bar */
     width: calc(100% - 90px); /* La largeur du conteneur principal est ajustée en fonction de la largeur de la barre latérale */
 }
 
 .side-bar {
-    margin-left: 10px;
-    margin-top: 10px;
     width: 80px;
-    height: 99vh;
+    height: 100vh;
     background-color: rgb(103, 175, 175);
-    border-radius: 20px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
     display: flex;            
     align-items: center;          
     flex-direction: column;  
     position: fixed;              
     top: 0;                       
     left: 0;                      
-    z-index: 1000;                    
+    z-index: 1000;    
+    border-left: none ;                
 }
 
 .logo img {
-    width: 100px;
+    width: 80px;
     height: auto;
     transition: transform 0.3s ease-in-out; 
 }
@@ -73,13 +72,15 @@ main {
 .button {
     height: 60px;
     width: 60px;             
-    margin-top: 30px;
+    margin-top: 20px;
     display: flex;
     justify-content: center;  
     align-items: center;     
     background-color: rgb(103, 175, 175); 
     transition: background-color 0.4s ease; 
     border-radius: 20px;
+    border: none;
+    outline: none; 
 }
 
 .button:hover {
@@ -87,20 +88,20 @@ main {
 }
 
 #button1 img {
-    max-width: 70%;
-    max-height: 70%;
+    max-width: 50%;
+    max-height: 50%;
     filter: invert(1) grayscale(100%) brightness(100%);
 }
 
 #button2 img{
-    max-width: 70%;
-    max-height: 70%;
+    max-width: 50%;
+    max-height: 50%;
     filter: invert(1) grayscale(100%) brightness(100%);
 }
 
 #button3 img{
-    max-width: 70%;
-    max-height: 70%;
+    max-width: 50%;
+    max-height: 50%;
     filter: invert(1) grayscale(100%) brightness(100%);
 }
 
@@ -117,10 +118,10 @@ main {
     border-radius: 8px;
     flex-direction: column;
 }
+
 .container-position{
     display: flex;
     flex-direction: line;
-    margin-top: -15px;
 }
 
 .graph-container{
@@ -129,34 +130,36 @@ main {
 
 .graph-container-emg{
     flex : 2.8;
-    border-radius: 20px;
+    border-radius: 15px;
     background-color: white;
-    padding-right: 20px;
+    padding: 20px;
 }
 
 .graph-container-accel{
     flex : 2.8;
-    border-radius: 20px;
+    border-radius: 15px;
     background-color: white;
-    padding-right: 20px;
+    padding: 20px;
 }
 .graph-container1{
-    border-radius: 20px;
+    border-radius: 15px;
     background-color: white;
+    padding: 10px;
 }
 .graph-container2{
-    border-radius: 20px;
+    border-radius : 15px;
     background-color: white;
     margin-top: 20px;
+    padding: 10px;
 }
 
 .info-container{
     padding-left : 20px;
     background-color: white;
     flex : 1.2;
-    border-radius: 20px;
+    border-radius: 15px;
     margin-left: 20px;
-    margin-top: 10px;
+
 }
 
 .sub-container h2 {
@@ -164,9 +167,7 @@ main {
     color: #333;
     font-family: "Meta";
     margin-left: 10px;
-    background-color: white;
-    border-radius: 20px;
-    padding : 5px;
+    border-radius: 15px;
 }
 
 .sub-container h3 {
@@ -308,10 +309,9 @@ canvas {
 
 .green-container, .red-container {
     font-family: "Meta";
-    display: none; /* Masque les conteneurs par défaut */
-    padding: 10px;
-    margin: 10px;
-    margin-right : 20px;
+    display: flex; 
+    margin-right: 20px;
+    margin-top: 20px;
     color: white;
     font-weight: bold;
     border-radius: 5px;
@@ -319,15 +319,82 @@ canvas {
 }
 
 .green-container {
-    background-color: rgba(43, 84, 43, 0.599);
+    border: 2px solid rgb(0, 255, 0);
+    display: flex;
+    flex-direction: column; 
+    height: 150px; 
+    padding: 0; 
+    margin: 0;
+    height: auto;
+    margin-right: 20px;
+}
+
+.top-green-container {
+    background-color: rgb(176, 255, 176, 0.5);
+    flex-grow: 1;
+    min-height: 0;
+    height: 40px;
+    display: flex; 
+    align-items: stretch; 
+    gap: 10px;
+}
+
+#valid {
+    order: -1; 
+    display: flex; 
+    align-items: center; 
+}
+
+#top-green-text{
+    display: flex; 
+    align-items: center;
+    color : black;
+}
+
+.bottom-green-container {
+    flex-grow: 2; /* 2/3 de la hauteur */
+    min-height: 0;
+    color : black;
+    padding: 5px;
 }
 
 .red-container {
-    background-color: rgba(146, 32, 32, 0.771);
+    border: 2px solid rgb(255, 0, 0);
+    display: flex;
+    flex-direction: column; 
+    height: 150px; 
+    padding: 0; 
+    margin: 0;
+    margin-top: 20px;
+    height: auto;
+    margin-right: 20px;
+}
+
+.top-red-container {
+    background-color: rgba(255, 176, 176, 0.5);
+    flex-grow: 1;
+    min-height: 0;
+    height: 40px;
+    display: flex; 
+    align-items: stretch; 
+    gap: 10px;
+}
+
+#top-red-text{
+    display: flex; 
+    align-items: center;
+    color : black;
+}
+
+.bottom-red-container {
+    flex-grow: 2; 
+    min-height: 0;
+    color : black;
+    padding: 5px;
 }
 
 .show {
-    display: block; /* Affiche le conteneur */
+    display: block; 
 }
 
 .blank-container {
@@ -372,7 +439,7 @@ canvas {
   
   [role="progressbar"] {
     --percentage: var(--value);
-    --size: 300px;
+    --size: 250px;
     animation: progress 2s 0.5s forwards;
     width: var(--size);
     height: var(--size);
@@ -405,10 +472,10 @@ canvas {
   [role="progressbar"]::after {
     content: attr(data-label);
     font-family: Helvetica, Arial, sans-serif;
-    font-size: calc(var(--size) / 5);
-    color: var(--color);
+    font-size: calc(var(--size) / 8);
+    font-weight: bold;
+    color:  rgb(103, 175, 175);
   }
-  
   
 
   .legend-container {

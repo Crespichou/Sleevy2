@@ -90,7 +90,7 @@ function createAccelChart(valeursAccel, heuresAccel, coupures) {
         type: 'box',
         xMin: heuresAccel.findIndex(time => time === coupure.start.toTimeString().substring(0, 8)),
         xMax: heuresAccel.findIndex(time => time === coupure.end.toTimeString().substring(0, 8)),
-        backgroundColor: 'rgba(255, 0, 0, 0.2)',
+        backgroundColor: 'rgba(255, 111, 111, 0.2)',
         borderWidth: 0
     }));
 
@@ -134,7 +134,7 @@ function createAccelChart(valeursAccel, heuresAccel, coupures) {
                     },
                     ticks: {
                         callback: function(value, index) {
-                            return index % 5 === 0 ? this.getLabelForValue(value) : '';
+                            return index % 1 === 0 ? this.getLabelForValue(value) : '';
                         }
                     }
                 },

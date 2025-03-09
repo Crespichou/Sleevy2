@@ -14,27 +14,29 @@
             <img src="{{ url_for('static', filename='images/mascotte.png') }}" alt="Mascotte">
         </div>
         <div class="button-container">
-            <div class=button id="button1">
-                <img src="{{ url_for('static', filename='images/house.png') }}" alt="House">
-            </div>
-            <div class=button id="button2">
-                <img src="{{ url_for('static', filename='images/back.png') }}" alt="Seting">
-            </div>
-            <div class=button id="button3">
+            <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
+                <button type="submit" class="button" id="button3">
+                    <img src="{{ url_for('static', filename='images/house.png') }}" alt="Exit">
+                </button>
+            </form>
+            <button class="button" id="button2" onclick="window.location.href='/joueurs';" >
+                <img src="{{ url_for('static', filename='images/back.png') }}" alt="Setting">
+            </button>
+            <button class="button" id="button3" onclick="window.location.href='/portal_joueur';" >
                 <img src="{{ url_for('static', filename='images/logout.png') }}" alt="Exit">
-            </div>
+            </button>
         </div>
     </div>
     <div class="main-container">
         <main>
-            <div class="main-title"> Analyse de vos performances</div>
+            <div class="main-title"> Performances</div>
         </main>
         <!-- Sous-container 1 : Analyse du rythme cardiaque -->
         <div class="sub-container">
-            <h2>Analyse du rythme cardiaque : </h2>
             <div class="container-position"> 
                 <div class="graph-container">
                     <div class="graph-container1">
+                        <h2>Activité cardiaque : </h2>
                     <h3>
                         Comparaison de votre session actuelle avec les autres sessions : 
                         <span class="tooltip">🛈
@@ -98,7 +100,7 @@
         <div class="sub-container">
             <div class="container-position">
                 <div class="graph-container-emg">
-                    <h2>Analyse de l'activité musculaire : 
+                    <h2>Activité musculaire : 
                         <span class="tooltip_big">🛈
                             <span class="tooltip-text">
                                 <p>Ce graphique représente l'activité musculaire de votre session la plus récente (blue).</p>
@@ -113,8 +115,20 @@
                 </div>
                 <div class="info-container">
                     <h3>Informations sur les graphiques :</h3>
-                    <div class="green-container"></div>
-                    <div class="red-container"></div>
+                    <div class="green-container">
+                        <div class="top-green-container">
+                            <img id=valid src="{{ url_for('static', filename='images/valid.png') }}" alt="Exit">
+                            <p id="top-green-text">Augmentation d'activité musculaire</p>
+                        </div>
+                        <div class="bottom-green-container"></div>
+                    </div>
+                    <div class="red-container">
+                        <div class="top-red-container">
+                            <img id=valid src="{{ url_for('static', filename='images/cross.png') }}" alt="Exit">
+                            <p id="top-red-text">Diminution d'activité musculaire</p>
+                        </div>
+                        <div class="bottom-red-container"></div>
+                    </div>
                     <div class="blank-container"></div>
                 </div>
             </div>
