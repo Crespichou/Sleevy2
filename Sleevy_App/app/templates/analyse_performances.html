@@ -8,16 +8,33 @@
 </head>
 
 <body class="gradient-background">
-
+    <div class="container">
+    <div class="side-bar">
+        <div class="logo">
+            <img src="{{ url_for('static', filename='images/mascotte.png') }}" alt="Mascotte">
+        </div>
+        <div class="button-container">
+            <div class=button id="button1">
+                <img src="{{ url_for('static', filename='images/house.png') }}" alt="House">
+            </div>
+            <div class=button id="button2">
+                <img src="{{ url_for('static', filename='images/back.png') }}" alt="Seting">
+            </div>
+            <div class=button id="button3">
+                <img src="{{ url_for('static', filename='images/logout.png') }}" alt="Exit">
+            </div>
+        </div>
+    </div>
     <div class="main-container">
-        <!-- Titre principal -->
-        <main>Analyse de vos performances</main>
-        
+        <main>
+            <div class="main-title"> Analyse de vos performances</div>
+        </main>
         <!-- Sous-container 1 : Analyse du rythme cardiaque -->
         <div class="sub-container">
             <h2>Analyse du rythme cardiaque : </h2>
             <div class="container-position"> 
                 <div class="graph-container">
+                    <div class="graph-container1">
                     <h3>
                         Comparaison de votre session actuelle avec les autres sessions : 
                         <span class="tooltip">🛈
@@ -29,6 +46,8 @@
                     </h3>
                     <!-- Espace pour le graphique -->
                     <canvas id="myChartPPG" width="600" height="400"></canvas>
+                </div>
+                <div class="graph-container2">
                     <h3>
                         Positionnement de votre session actuelle avec votre BPM au repos : 
                         <span class="tooltip">🛈
@@ -42,14 +61,10 @@
                     </h3>
                     <canvas id="myChartPPG2" width="600" height="400"></canvas>
                 </div>
+                </div>
                 <div class="info-container">
-                    <h3>Informations sur les graphiques :</h3>
-                        <div class="Agraph-info-container">
-                            <p> Ce premier graphique vous permet de visualiser l'évolution du rythme cardiaque de votre session la plus récente.</p>
-                            <p> Vous pouvez comparer cette évolution avec les anciennes session du même groupe </p>
-                            <p> Si une seule courbe bleue apparait, cela signifie que vous n'avez pas encore assez d'échantillon pour consituer un groupe.</p>
+                    <h3>Pourcentage de corrélation entre votre session la plus récente et votre rythme cardiaque au repos :</h3>
                             <div class="Bgraph-info-container">
-                                <h4>Pourcentage de corrélation entre votre session la plus récente et votre rythme cardiaque au repos : </h4>
                                 <p> Le pourcentage affiché ci-dessous évalue la similitude entre le rythme cardiaque de votre session la plus récente et votre rythme cardiaque au repos.</p>
                                 <p> Plus le pourcentage est élevé, plus votre session est similaire à votre rythme cardiaque au repos.</p>
                                 <p id="correlation-percentage"></p>
@@ -74,7 +89,6 @@
                                     <span>Aucune corrélation : Session très mouvementée</span>
                                 </div>
                             </div>
-                    </div>
                 </div>
             </div>
             
@@ -83,7 +97,7 @@
         <!-- Sous-container 2 : Analyse de l'activité musculaire -->
         <div class="sub-container">
             <div class="container-position">
-                <div class="graph-container">
+                <div class="graph-container-emg">
                     <h2>Analyse de l'activité musculaire : 
                         <span class="tooltip_big">🛈
                             <span class="tooltip-text">
@@ -109,7 +123,7 @@
         <!-- Sous-container 3 : Analyse des mouvements -->
         <div class="sub-container">
             <div class="container-position">
-                <div class="graph-container">
+                <div class="graph-container-accel">
                     <h2>Analyse des mouvements :
                         <span class="tooltip_big">🛈
                             <span class="tooltip-text">
@@ -146,6 +160,7 @@
         
         
     </div>
+</div>
 
     <!-- Chargement du script Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>

@@ -8,16 +8,104 @@
 
 /* Titre principal centré */
 main {
+    text-shadow: none; 
+    background-color: rgb(103, 175, 175);
+    border-radius: 20px;
+}
+
+.main-title{
+    padding : 10px;
+    font-family: "Meta";
+    font-weight: 50; 
     font-size: 4rem;
     text-align: left;
-    color: #d6f4f4; /* Couleur de remplissage */
-    font-family: "Meta";
-    font-weight: 50; /* Police encore plus fine */
-    text-shadow: none; /* Suppression de l'ombre pour plus de netteté */
+    margin-left: 10px;
+    color : white;
+    margin-bottom: -40px;
+}
+
+.container{
+    display : flex;
+    flex-direction: row;
+}
+.main-container{
+    flex-grow: 1; 
+    padding: 20px;
+    margin-left: 70px; /* Ajoute une marge gauche pour que le contenu principal soit à droite de la side-bar */
+    width: calc(100% - 90px); /* La largeur du conteneur principal est ajustée en fonction de la largeur de la barre latérale */
+}
+
+.side-bar {
+    margin-left: 10px;
+    margin-top: 10px;
+    width: 80px;
+    height: 99vh;
+    background-color: rgb(103, 175, 175);
+    border-radius: 20px;
+    display: flex;            
+    align-items: center;          
+    flex-direction: column;  
+    position: fixed;              
+    top: 0;                       
+    left: 0;                      
+    z-index: 1000;                    
+}
+
+.logo img {
+    width: 100px;
+    height: auto;
+    transition: transform 0.3s ease-in-out; 
+}
+
+.logo img:hover {
+    transform: scale(1.1); 
+}
+
+.button-container {
+    height: 50vh;
+    display: flex;               
+    justify-content: center;     
+    align-items: center;         
+    flex-direction: column; 
+    margin-top: 10vh;     
+}
+
+.button {
+    height: 60px;
+    width: 60px;             
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;  
+    align-items: center;     
+    background-color: rgb(103, 175, 175); 
+    transition: background-color 0.4s ease; 
+    border-radius: 20px;
+}
+
+.button:hover {
+    background-color: #277272; 
+}
+
+#button1 img {
+    max-width: 70%;
+    max-height: 70%;
+    filter: invert(1) grayscale(100%) brightness(100%);
+}
+
+#button2 img{
+    max-width: 70%;
+    max-height: 70%;
+    filter: invert(1) grayscale(100%) brightness(100%);
+}
+
+#button3 img{
+    max-width: 70%;
+    max-height: 70%;
+    filter: invert(1) grayscale(100%) brightness(100%);
 }
 
 .gradient-background {
-    background: linear-gradient(to bottom, #9dbebb, #62bebe);
+    background-color: #d9d7d76c;
     display: flex;
     flex-direction: column;
   }
@@ -26,36 +114,67 @@ main {
     display : flex;
     margin: 20px 0;
     padding: 20px;
-    background-color: #f4f4f46c;
     border-radius: 8px;
     flex-direction: column;
 }
 .container-position{
     display: flex;
     flex-direction: line;
+    margin-top: -15px;
 }
 
 .graph-container{
     flex : 2.8;
 }
 
+.graph-container-emg{
+    flex : 2.8;
+    border-radius: 20px;
+    background-color: white;
+    padding-right: 20px;
+}
+
+.graph-container-accel{
+    flex : 2.8;
+    border-radius: 20px;
+    background-color: white;
+    padding-right: 20px;
+}
+.graph-container1{
+    border-radius: 20px;
+    background-color: white;
+}
+.graph-container2{
+    border-radius: 20px;
+    background-color: white;
+    margin-top: 20px;
+}
+
 .info-container{
     padding-left : 20px;
-    background-color: rgba(255, 255, 255, 0.486);
+    background-color: white;
     flex : 1.2;
-    border-radius: 8px;
+    border-radius: 20px;
+    margin-left: 20px;
+    margin-top: 10px;
 }
 
 .sub-container h2 {
     font-size: 1.8rem;
     color: #333;
     font-family: "Meta";
+    margin-left: 10px;
+    background-color: white;
+    border-radius: 20px;
+    padding : 5px;
 }
 
 .sub-container h3 {
     font-size: 1.2rem;
     color: #333;
     font-family: "Meta";
+    margin-left : 10px;
+    margin-top: 10px;
 }
 
 canvas {
@@ -153,7 +272,7 @@ canvas {
 
 
 .text-container{
-    background-color: #f4f4f46c;
+    background-color: white;
     border-radius: 5px;
     margin-right : 20px;
     padding: 10px;
@@ -224,12 +343,12 @@ canvas {
 }
 
 .Bgraph-info-container {
-    background-color: #f4f4f46c;
+    background-color: white;
     border-radius: 5px;
     margin-right : 20px;
     padding: 5px;
     font-family: "Meta";
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 #correlation-percentage {
@@ -256,15 +375,15 @@ canvas {
     --size: 300px;
     animation: progress 2s 0.5s forwards;
     width: var(--size);
-    aspect-ratio: 2 / 1;
-    border-radius: 50% / 100% 100% 0 0;
+    height: var(--size);
+    border-radius: 50%;
     position: relative;
     overflow: hidden;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: center;
-    margin-bottom : 20px;
-    margin-top : 20px;
+    margin-bottom: 20px;
+    margin-top: 20px;
     margin-left: 30px;
   }
   
@@ -273,13 +392,13 @@ canvas {
     position: absolute;
     width: 100%;
     height: 100%;
-    --color-stop: calc(var(--percentage) * 1% / 2);
-    --color-start: calc(var(--percentage) * 1% / 2 + 0.1%);
+    --color-stop: calc(var(--percentage) * 1%); /* ajuste pourcentage pour remplir le cercle */
+    --color-start: calc(var(--percentage) * 1% + 0.1%); /* ajustement léger pour éviter des chevauchements */
     --color: hsl(calc(var(--percentage) * 1.2), 100%, 50%);
-    background: conic-gradient(from 0.75turn at 50% 100%, var(--color) var(--color-stop), #adf var(--color-start));
-    mask: radial-gradient(at 50% 100%, white 55%, transparent 55.5%);
+    background: conic-gradient(from 0deg at 50% 50%, var(--color) 0%, var(--color) var(--color-stop), #adf var(--color-stop), #adf 100%);
+    mask: radial-gradient(at 50% 50%, white 50%, transparent 50.5%);
     mask-mode: alpha;
-    -webkit-mask: radial-gradient(at 50% 100%, #0000 55%, #000 55.5%);
+    -webkit-mask: radial-gradient(at 50% 50%, #0000 50%, #000 50.5%);
     -webkit-mask-mode: alpha;
   }
   
@@ -289,6 +408,8 @@ canvas {
     font-size: calc(var(--size) / 5);
     color: var(--color);
   }
+  
+  
 
   .legend-container {
     display: flex;
