@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const textContainer = document.querySelector('.text-container');
                 coupures.forEach((coupure, index) => {
                     const p = document.createElement('p');
-                    p.textContent = `N°${index + 1}: de ${coupure.start.toTimeString().substring(0, 8)} à ${coupure.end.toTimeString().substring(0, 8)}`;
+                    p.textContent = `- N°${index + 1} : de ${coupure.start.toTimeString().substring(0, 8)} à ${coupure.end.toTimeString().substring(0, 8)}`;
                     textContainer.appendChild(p);
                 });
 
