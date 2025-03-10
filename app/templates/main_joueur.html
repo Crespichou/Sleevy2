@@ -28,7 +28,11 @@
     <div class="button-container">
         <div class="input-data">
             <div class="inner"></div>
-            <input type="submit" class="submit" value="Lancer l'enregistrement">
+            <form action="{{ url_for('start', idjoueur=player.idjoueur) }}" method="get">
+                <input type="submit" class="submit" value="Lancer l'enregistrement">
+            </form>
+            
+            
         </div>
         <div class="performances-analyse">
             <div class="inner"></div>

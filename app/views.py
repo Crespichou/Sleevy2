@@ -5,12 +5,15 @@ from app.models import Coach, Player,EMG, PPG,Session, Accelerometer, PPGReferen
 from threading import Thread
 import base64
 from datetime import datetime, timedelta
-
+from Projet.Session_BDDConnected import main
+from Projet.Event import monitor_stop_event
 from sqlalchemy import desc
 from PIL import Image
 from io import BytesIO
 import os
 import requests
+from threading import Event
+from Projet.ping import test
 
 
 @app.route('/')
@@ -305,3 +308,7 @@ def detail_joueur(session_id):
 
     return render_template("detail_joueur.html", session_id=session_id, ppg_values=ppg_values, emg_values=emg_values, accel_values=accel_values)
 
+@app.route('/start/<int:idjoueur>', methods=['GET'])
+def start(idjoueur):
+    main(idjoueur)
+    return redirect(url_for('joueurs'))

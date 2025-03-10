@@ -5,14 +5,13 @@ import threading
 import serial
 from bleak import BleakClient
 from threading import Event
-from Event import monitor_stop_event
+from Projet.Event import monitor_stop_event
 import sqlite3
 from datetime import datetime
 
 
-ID_JOUEUR = 3      # Argument
 
-def create_session():
+def create_session(ID_JOUEUR):
     """Crée une nouvelle session dans la base de données pour acceuillir les données."""
     try:
         # Connexion à la base de données
@@ -52,7 +51,7 @@ def create_session():
         return None
 
 
-def save_ppg_data(session_id, ppg_values):
+def save_ppg_data(session_id, ppg_values,ID_JOUEUR):
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
@@ -74,7 +73,7 @@ def save_ppg_data(session_id, ppg_values):
     except sqlite3.Error as e:
         print("Erreur lors de l'insertion des données PPG :", e)
 
-def save_accel_data(session_id, accel_values) :
+def save_accel_data(session_id, accel_values, ID_JOUEUR) :
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
@@ -96,7 +95,7 @@ def save_accel_data(session_id, accel_values) :
     except sqlite3.Error as e:
         print("Erreur lors de l'insertion des données Accel :", e)
 
-def save_emg_data(session_id, emg_values):
+def save_emg_data(session_id, emg_values, ID_JOUEUR):
     """Fonction d'enregistrement des valeurs EMG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
@@ -229,8 +228,8 @@ def main_accel(stop_event):
         print(f"Erreur dans la boucle asyncio Accel : {e}")
 
 
-def main():
-    session_id = create_session()
+def main(ID_JOUEUR):
+    session_id = create_session(ID_JOUEUR)
     if session_id is None:
         print("Erreur lors de la création de la session. Arrêt du programme.")
         return
@@ -252,9 +251,9 @@ def main():
     ppg_thread.join()
     accel_thread.join()
 
-    save_ppg_data(session_id, ppg_values)
-    save_emg_data(session_id, emg_values)
-    save_accel_data(session_id, accel_values)
+    save_ppg_data(session_id, ppg_values, ID_JOUEUR)
+    save_emg_data(session_id, emg_values, ID_JOUEUR)
+    save_accel_data(session_id, accel_values, ID_JOUEUR)
 
     update_endtime(session_id)
 
@@ -264,4 +263,5 @@ def main():
     #print(f"Valeurs Accel collectées : {accel_values}")
 
 if __name__ == "__main__":
-    main()
+    ID_JOUEUR = 3
+    main(ID_JOUEUR)
