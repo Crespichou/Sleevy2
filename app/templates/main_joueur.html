@@ -6,8 +6,6 @@
     <title>Sleevy - Joueur</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style_main_joueur.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Ajout de Chart.js -->
-
-
 </head>
 
 <body class="gradient-background">
@@ -34,6 +32,11 @@
             
             
         </div>
+        <div class="input-data">
+            <div class="inner"></div>
+            <button onclick="initialiserVariable()" class="submit">Stop enregistrement</button>
+        </div>
+
         <div class="performances-analyse">
             <div class="inner"></div>
             <form action="{{ url_for('analyse_performance') }}" method="GET">

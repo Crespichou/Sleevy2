@@ -2,17 +2,16 @@ import asyncio
 import threading
 from bleak import BleakClient
 from threading import Event
-from Event import monitor_stop_event
+from Projet.Event import monitor_stop_event
 import sqlite3
 from datetime import datetime
 
-ID_JOUEUR = 3      # Argument
 
-def save_ppg_data(ppg_values):
+def save_ppg_data(ppg_values, ID_JOUEUR):
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db") #Tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")  # Lien PC Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\instance\sleevy.db")  # Lien PC Antoine
         curseur = connexion.cursor()
         
         requete = """
@@ -58,7 +57,7 @@ def main_ppg(stop_event):
     except Exception as e:
         print(f"Erreur dans la boucle asyncio PPG : {e}")
 
-def main() :
+def main(ID_JOUEUR) :
     stop_event = Event()
 
     ppg_thread = threading.Thread(target=main_ppg, args=(stop_event,))
@@ -68,9 +67,10 @@ def main() :
 
     ppg_thread.join()
 
-    save_ppg_data(ppg_values)
+    save_ppg_data(ppg_values, ID_JOUEUR)
 
     print(f"Valeurs PPG collectées : {ppg_values}")
 
 if __name__ == "__main__":
-    main() 
+    ID_JOUEUR = 4
+    main(ID_JOUEUR) 

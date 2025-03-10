@@ -11,12 +11,13 @@ from datetime import datetime
 
 
 
+
 def create_session(ID_JOUEUR):
     """Crée une nouvelle session dans la base de données pour acceuillir les données."""
     try:
         # Connexion à la base de données
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db) #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")  # Lien PC Antoine
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\instance\sleevy.db")  # Lien PC Antoine
         curseur = connexion.cursor()
         
         # Recherche du dernier gamenumber du joueur
@@ -55,7 +56,7 @@ def save_ppg_data(session_id, ppg_values,ID_JOUEUR):
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\instance\sleevy.db")
         curseur = connexion.cursor()
         
         date_actuelle = datetime.now().strftime("%Y-%m-%d")
@@ -77,7 +78,7 @@ def save_accel_data(session_id, accel_values, ID_JOUEUR) :
     """Fonction d'ennregistrement des valeurs PPG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\instance\sleevy.db")
         curseur = connexion.cursor()
         
         date_actuelle = datetime.now().strftime("%Y-%m-%d")
@@ -99,7 +100,7 @@ def save_emg_data(session_id, emg_values, ID_JOUEUR):
     """Fonction d'enregistrement des valeurs EMG dans la base de données."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\instance\sleevy.db")
         curseur = connexion.cursor()
         
         date_actuelle = datetime.now().strftime("%Y-%m-%d")
@@ -122,7 +123,7 @@ def update_endtime(session_id):
     """Met à jour l'heure de fin de la session."""
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\BDD\Sleevy.db") #Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\instance\sleevy.db")
         curseur = connexion.cursor()
         
         endtime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -245,11 +246,16 @@ def main(ID_JOUEUR):
     accel_thread = threading.Thread(target=main_accel, args=(stop_event,))
     accel_thread.start()
 
+    stop_thread = threading.Thread(target=monitor_stop_event, args=(stop_event,))
+    stop_thread.start()
+    
     monitor_stop_event(stop_event)
-
+    
     emg_thread.join()
     ppg_thread.join()
     accel_thread.join()
+    
+    
 
     save_ppg_data(session_id, ppg_values, ID_JOUEUR)
     save_emg_data(session_id, emg_values, ID_JOUEUR)
