@@ -10,8 +10,6 @@ import sqlite3
 from datetime import datetime
 
 
-
-
 def create_session(ID_JOUEUR):
     """Crée une nouvelle session dans la base de données pour acceuillir les données."""
     try:
@@ -254,7 +252,6 @@ def main(ID_JOUEUR):
     emg_thread.join()
     ppg_thread.join()
     accel_thread.join()
-    
     
 
     save_ppg_data(session_id, ppg_values, ID_JOUEUR)

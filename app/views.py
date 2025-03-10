@@ -15,7 +15,6 @@ from threading import Event
 from Projet.ping import test
 import threading
 
-stop_event = Event()
 
 @app.route('/')
 def index():
