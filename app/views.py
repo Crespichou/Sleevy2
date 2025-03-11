@@ -6,6 +6,7 @@ from threading import Thread
 import base64
 from datetime import datetime, timedelta
 from Projet.Session_BDDConnected import main
+from Projet.Event import stop_event
 from sqlalchemy import desc
 from PIL import Image
 from io import BytesIO
@@ -14,6 +15,7 @@ import requests
 from threading import Event
 from Projet.ping import test
 import threading
+import time
 
 
 @app.route('/')
@@ -189,6 +191,8 @@ def graphique_ppg_emg():
     print(joueur_id)
     if not joueur_id:
         return jsonify({"error": "Aucun joueur connecté."}), 400
+    
+    time.sleep(5)
 
     max_session = db.session.query(Session.session_id).filter_by(idjoueur=joueur_id).order_by(Session.session_id.desc()).first()
     if not max_session:
@@ -310,7 +314,13 @@ def detail_joueur(session_id):
 
 @app.route('/start/<int:idjoueur>', methods=['GET'])
 def start(idjoueur):
+    stop_event.clear()
     main(idjoueur)
     return redirect(url_for('joueurs'))
 
+@app.route('/stoprec')
+def stoprec():
+    stop_event.set()
+    time.sleep(1)
+    return redirect(url_for('joueurs'))
 

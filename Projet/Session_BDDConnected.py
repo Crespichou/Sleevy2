@@ -5,7 +5,7 @@ import threading
 import serial
 from bleak import BleakClient
 from threading import Event
-from Projet.Event import monitor_stop_event
+from Projet.Event import stop_event
 import sqlite3
 from datetime import datetime
 
@@ -155,19 +155,30 @@ accel_values = []
 """Fonction de récolte EMG"""
 def emg(stop_event):
     try:
-        while not stop_event.is_set():  
-            raw_data = ser.readline().strip()  
-            if raw_data:  
-                try:
-                    emg_value = int(raw_data)
-                    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")  
-                    emg_values.append((emg_value, timestamp)) 
-                except ValueError:
-                    continue
-            time.sleep(0.1) 
+        if not ser.is_open:
+            ser.open()
+
+        while not stop_event.is_set():
+            if ser.is_open:
+                raw_data = ser.readline().strip()
+                if raw_data:
+                    try:
+                        emg_value = int(raw_data)
+                        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f")
+                        emg_values.append((emg_value, timestamp))
+                    except ValueError:
+                        continue
+            else:
+                print("Le port série n'est pas ouvert.")
+            time.sleep(0.1)
+    except serial.SerialException as e:
+        print(f"Erreur de port série : {e}")
     except KeyboardInterrupt:
         print("\nArrêt du programme EMG.")
-    ser.close()
+    finally:
+        if ser.is_open:
+            ser.close()
+
 
 
 """Fonction de récolte PPG"""
@@ -233,7 +244,6 @@ def main(ID_JOUEUR):
         print("Erreur lors de la création de la session. Arrêt du programme.")
         return
 
-    stop_event = Event()
 
     emg_thread = threading.Thread(target=emg, args=(stop_event,))
     emg_thread.start()
@@ -244,21 +254,21 @@ def main(ID_JOUEUR):
     accel_thread = threading.Thread(target=main_accel, args=(stop_event,))
     accel_thread.start()
 
-    stop_thread = threading.Thread(target=monitor_stop_event, args=(stop_event,))
-    stop_thread.start()
     
-    monitor_stop_event(stop_event)
+    stop_event.wait()
+    update_endtime(session_id)
     
     emg_thread.join()
     ppg_thread.join()
     accel_thread.join()
     
-
+    update_endtime(session_id)
+    
     save_ppg_data(session_id, ppg_values, ID_JOUEUR)
     save_emg_data(session_id, emg_values, ID_JOUEUR)
     save_accel_data(session_id, accel_values, ID_JOUEUR)
-
-    update_endtime(session_id)
+    
+    
 
     print(f"Simulation terminée. Session ID : {session_id}")
     #print(f"Valeurs EMG collectées : {emg_values}")
