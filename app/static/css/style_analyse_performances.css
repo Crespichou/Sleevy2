@@ -479,7 +479,7 @@ canvas {
     height: 100%;
     --color-stop: calc(var(--percentage) * 1%); /* ajuste pourcentage pour remplir le cercle */
     --color-start: calc(var(--percentage) * 1% + 0.1%); /* ajustement léger pour éviter des chevauchements */
-    --color: hsl(calc(var(--percentage) * 1.2), 100%, 50%);
+    --color: hsl(calc(120 - (var(--percentage) * 1.2)), 100%, 50%);
     background: conic-gradient(from 0deg at 50% 50%, var(--color) 0%, var(--color) var(--color-stop), #adf var(--color-stop), #adf 100%);
     mask: radial-gradient(at 50% 50%, white 50%, transparent 50.5%);
     mask-mode: alpha;

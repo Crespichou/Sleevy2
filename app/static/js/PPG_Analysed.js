@@ -124,27 +124,30 @@ function displayGroupedData(groupLabels, datasets, referenceMean, highestSession
         tension: 0.4
     });
 
-    // Créer une courbe synthétique pour les autres sessions avec un dégradé
+    // Vérifier si des courbes d'autres sessions existent
     const otherSessionsLabels = groupLabels.filter(label => label !== highestSessionLabel);
-    const syntheticCurve = calculateSyntheticCurve(datasets, otherSessionsLabels);
+    if (otherSessionsLabels.length > 0) {
+        // Créer une courbe synthétique pour les autres sessions avec un dégradé
+        const syntheticCurve = calculateSyntheticCurve(datasets, otherSessionsLabels);
 
-    const gradientGray = ctx.createLinearGradient(0, 0, 0, 400);
-    gradientGray.addColorStop(0, 'rgba(247, 177, 0, 0.8)'); // Gris semi-transparent
-    gradientGray.addColorStop(0.5, 'rgba(247, 177, 0, 0)'); // Transparent
+        const gradientGray = ctx.createLinearGradient(0, 0, 0, 400);
+        gradientGray.addColorStop(0, 'rgba(247, 177, 0, 0.8)'); // Gris semi-transparent
+        gradientGray.addColorStop(0.5, 'rgba(247, 177, 0, 0)'); // Transparent
 
-    groupedDatasets.push({
-        label: "Synthèse des autres sessions",
-        data: syntheticCurve,
-        borderColor: 'rgba(247, 177, 0, 0.8)',
-        borderWidth: 2,
-        fill: true,
-        backgroundColor: gradientGray,
-        pointRadius: 0,
-        tension: 0.4
-    });
+        groupedDatasets.push({
+            label: "Synthèse des autres sessions",
+            data: syntheticCurve,
+            borderColor: 'rgba(247, 177, 0, 0.8)',
+            borderWidth: 2,
+            fill: true,
+            backgroundColor: gradientGray,
+            pointRadius: 0,
+            tension: 0.4
+        });
+    }
 
     // Déterminer la longueur maximale entre la session actuelle et la synthèse des autres sessions
-    const maxLength = Math.max(currentSessionData.length, syntheticCurve.length);
+    const maxLength = Math.max(currentSessionData.length, ...otherSessionsLabels.map(label => datasets[label].length));
 
     window.myChartPPG = new Chart(ctx, {
         type: 'line',
@@ -193,28 +196,11 @@ function calculateSyntheticCurve(datasets, otherSessionsLabels) {
             .filter(value => value !== 0);
 
         if (valuesAtIndex.length > 0) {
-            // Utiliser la moyenne ou la valeur maximale pour synthétiser
             syntheticCurve[i] = Math.max(...valuesAtIndex); // ou valuesAtIndex.reduce((a, b) => a + b, 0) / valuesAtIndex.length pour la moyenne
         }
     }
 
     return syntheticCurve;
-}
-
-
-
-
-function calculateTrendLine(x, y) {
-    const n = x.length;
-    const sumX = x.reduce((a, b) => a + b, 0);
-    const sumY = y.reduce((a, b) => a + b, 0);
-    const sumXY = x.reduce((sum, xVal, index) => sum + xVal * y[index], 0);
-    const sumX2 = x.reduce((sum, xVal) => sum + xVal * xVal, 0);
-
-    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-    const intercept = (sumY - slope * sumX) / n;
-
-    return { slope, intercept };
 }
 
 function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessionLabel, referenceValues, referenceMean) {
@@ -252,11 +238,11 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
 
     // Calculer la ligne de tendance pour referenceVariability
     const xValues = Array.from({ length: referenceVariability.length }, (_, i) => i + 1);
-    const { slope, intercept } = calculateTrendLine(xValues, referenceVariability);
+    const { slope: slopeTrendLine, intercept } = calculateTrendLine(xValues, referenceVariability);
 
     // Étendre la ligne de tendance pour couvrir la même plage que les autres courbes
     const maxLength = Math.max(...Object.values(cumulativeVariabilities).map(arr => arr.length));
-    const trendLineData = Array.from({ length: maxLength }, (_, i) => slope * (i + 1) + intercept);
+    const trendLineData = Array.from({ length: maxLength }, (_, i) => slopeTrendLine * (i + 1) + intercept);
 
     secondaryDatasets.push({
         label: "Tendance du rythme cardiaque au repos",
@@ -268,64 +254,106 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         tension: 0.4
     });
 
-    // Calculer l'aire entre la courbe de session actuelle et la courbe de tendance du rythme cardiaque au repos
-    const areaCurrentSession = calculateAreaBetweenCurves(cumulativeVariabilities[highestSessionLabel], trendLineData);
+    // Calculer la ligne de tendance pour la session actuelle
+    const currentSessionData = cumulativeVariabilities[highestSessionLabel];
+    const currentSessionXValues = Array.from({ length: currentSessionData.length }, (_, i) => i + 1);
+    const currentSessionTrendLine = calculateTrendLine(currentSessionXValues, currentSessionData);
+    const currentSessionTrendData = Array.from({ length: maxLength }, (_, i) => currentSessionTrendLine.slope * (i + 1) + currentSessionTrendLine.intercept);
 
-    // Calculer l'aire sous la courbe de tendance
-    const areaTrendLine = calculateAreaUnderCurve(trendLineData);
+    //secondaryDatasets.push({
+        //label: "Tendance de la session actuelle",
+        //data: currentSessionTrendData,
+        //borderColor: 'blue',
+        //borderWidth: 2,
+        //fill: false,
+        //pointRadius: 0,
+        //tension: 0.4
+    //});
 
-    console.log("Aire entre la courbe de la session actuelle et la courbe de tendance :", areaCurrentSession);
-    console.log("Aire sous la courbe de tendance :", areaTrendLine);
+    // Vérifier si des courbes d'autres sessions existent
+    const otherSessionsLabels = groupLabels.filter(label => label !== highestSessionLabel);
+    if (otherSessionsLabels.length > 0) {
+        // Calculer la moyenne des courbes "autres sessions"
+        const averageCurve = calculateAverageCurve(cumulativeVariabilities, otherSessionsLabels);
 
-    let percentageOtherSessions = 0;
-    let areaOtherSessions = 0;
-    let percentageTrendLine = 0;
+        //secondaryDatasets.push({
+            //label: "Moyenne des autres sessions",
+            //data: averageCurve,
+            //borderColor: 'purple',
+            //borderWidth: 2,
+            //fill: false,
+            //pointRadius: 0,
+            //tension: 0.4
+        //});
 
-    // Vérifier s'il y a plus d'une session
-    if (groupLabels.length > 1) {
-        const meanOfOtherSessions = calculateMeanOfOtherSessions(cumulativeVariabilities, highestSessionLabel);
-        areaOtherSessions = calculateAreaBetweenCurves(meanOfOtherSessions, trendLineData);
+        // Calculer la ligne de tendance pour la moyenne des autres sessions
+        const averageCurveXValues = Array.from({ length: averageCurve.length }, (_, i) => i + 1);
+        const averageCurveTrendLine = calculateTrendLine(averageCurveXValues, averageCurve);
+        const averageCurveTrendData = Array.from({ length: maxLength }, (_, i) => averageCurveTrendLine.slope * (i + 1) + averageCurveTrendLine.intercept);
 
-        // Calculer le pourcentage de la première aire par rapport à la seconde
-        percentageOtherSessions = (areaCurrentSession / areaOtherSessions) * 100;
+        //secondaryDatasets.push({
+            //label: "Tendance de la moyenne des autres sessions",
+            //data: averageCurveTrendData,
+            //borderColor: 'purple',
+            //borderWidth: 2,
+            //borderDash: [5, 5], // Ligne en pointillés pour la tendance
+            //fill: false,
+            //pointRadius: 0,
+            //tension: 0.4
+        //});
 
-        // Inverser le pourcentage
-        percentageOtherSessions = 100 - percentageOtherSessions;
+        // Calculer le pourcentage basé sur les coefficients directeurs
+        const currentSlope = currentSessionTrendLine.slope;
+        const averageSlope = averageCurveTrendLine.slope;
+        const referenceSlope = slopeTrendLine;
 
-        console.log("Aire entre la moyenne des autres sessions et la courbe de tendance :", areaOtherSessions);
-        console.log("Pourcentage de la première aire par rapport à la seconde :", percentageOtherSessions.toFixed(2) + "%");
+        let correlationPercentage;
+        if (currentSlope === averageSlope) {
+            correlationPercentage = 50;
+        } else if (currentSlope >= referenceSlope && currentSlope <= averageSlope) {
+            const slopeRange = averageSlope - referenceSlope;
+            const relativePosition = (currentSlope * 100) / slopeRange
+            //const relativePosition = (currentSlope - referenceSlope) / slopeRange;
+            correlationPercentage = 50 * (relativePosition/100);
+        } else if (currentSlope > averageSlope) {
+            const difference = currentSlope - averageSlope;
+            const relativePosition = (difference / (averageSlope - referenceSlope)) * 100;
+            const additionalPercentage = 50 * (relativePosition / 100);
+            correlationPercentage = 50 + additionalPercentage;
+        } else {
+            // Si le coefficient directeur est en dehors de l'intervalle, fixer le pourcentage à 0% ou 100%
+            correlationPercentage = currentSlope < referenceSlope ? 0 : 100;
+        }
 
-        // Mettre à jour le HTML pour afficher les résultats
-        //document.getElementById('correlation-percentage').innerHTML = `
-            //Aire entre la courbe de la session actuelle et la courbe de tendance : ${areaCurrentSession.toFixed(2)}<br>
-            //Aire entre la moyenne des autres sessions et la courbe de tendance : ${areaOtherSessions.toFixed(2)}<br>
-            //Aire sous la courbe de tendance : ${areaTrendLine.toFixed(2)}<br>
-            //Pourcentage de la première aire par rapport à la seconde : ${percentageOtherSessions.toFixed(2)}%
-        //`;
+
+        console.log("Nouveau pourcentage de corrélation :", correlationPercentage.toFixed(2) + "%");
 
         // Mettre à jour la variable CSS pour le pourcentage
         const progressBar = document.querySelector('[role="progressbar"]');
-        progressBar.style.setProperty('--value', percentageOtherSessions.toFixed(2));
-        progressBar.setAttribute('data-label', `${percentageOtherSessions.toFixed(2)}%`);
+        progressBar.style.setProperty('--value', correlationPercentage.toFixed(2));
+        progressBar.setAttribute('data-label', `${correlationPercentage.toFixed(2)}%`);
     } else {
-        // Calculer le pourcentage de l'aire entre la courbe de la session actuelle et la courbe de tendance par rapport à l'aire sous la courbe de tendance
-        percentageTrendLine = (areaCurrentSession / areaTrendLine) * 100;
+        // Si aucune courbe d'autres sessions n'existe, calculer le pourcentage avec les deux coefficients restants
+        const currentSlope = currentSessionTrendLine.slope;
+        const referenceSlope = slopeTrendLine;
 
-        // Inverser le pourcentage
-        percentageTrendLine = 100 - percentageTrendLine;
+        let correlationPercentage = (Math.max(currentSlope, referenceSlope) / Math.min(currentSlope, referenceSlope));
 
-        console.log("Aucune autre session disponible pour calculer l'aire.");
-        //document.getElementById('correlation-percentage').innerHTML = `
-            //Aire entre la courbe de la session actuelle et la courbe de tendance : ${areaCurrentSession.toFixed(2)}<br>
-            //Aire sous la courbe de tendance : ${areaTrendLine.toFixed(2)}<br>
-            //Pourcentage de la première aire par rapport à l'aire sous la courbe de tendance : ${percentageTrendLine.toFixed(2)}%<br>
-            //Aucune autre session disponible pour calculer l'aire.
-        //`;
+        // Décaler la virgule vers la gauche en divisant par 10
+        correlationPercentage = correlationPercentage / 10;
+
+        // Convertir en pourcentage
+        correlationPercentage = correlationPercentage * 100;
+
+        // Arrondir au centième le plus proche
+        correlationPercentage = Math.round(correlationPercentage * 100) / 100;
+
+        console.log("Pourcentage de corrélation basé sur les coefficients directeurs restants :", correlationPercentage + "%");
 
         // Mettre à jour la variable CSS pour le pourcentage
         const progressBar = document.querySelector('[role="progressbar"]');
-        progressBar.style.setProperty('--value', percentageTrendLine.toFixed(2));
-        progressBar.setAttribute('data-label', `${percentageTrendLine.toFixed(2)}%`);
+        progressBar.style.setProperty('--value', correlationPercentage);
+        progressBar.setAttribute('data-label', `${correlationPercentage}%`);
     }
 
     window.myChartPPG2 = new Chart(ctx2, {
@@ -355,6 +383,29 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
                 legend: {
                     display: true,
                     position: 'top'
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(tooltipItem) {
+                            const datasetLabel = tooltipItem.dataset.label || '';
+                            const value = tooltipItem.raw || 0;
+                            let slopeLabel = '';
+
+                            if (datasetLabel === "Session actuelle") {
+                                slopeLabel = `Coefficient directeur : ${currentSessionTrendLine.slope.toFixed(2)}`;
+                            } else if (datasetLabel === "Synthèse des autres sessions") {
+                                slopeLabel = `Coefficient directeur : ${slopeTrendLine.toFixed(2)}`;
+                            } else if (datasetLabel === "Tendance du rythme cardiaque au repos") {
+                                slopeLabel = `Coefficient directeur : ${slopeTrendLine.toFixed(2)}`;
+                            } else if (datasetLabel === "Tendance de la session actuelle") {
+                                slopeLabel = `Coefficient directeur : ${currentSessionTrendLine.slope.toFixed(2)}`;
+                            } else if (datasetLabel === "Tendance de la moyenne des autres sessions") {
+                                slopeLabel = `Coefficient directeur : ${averageCurveTrendLine.slope.toFixed(2)}`;
+                            }
+
+                            return `${datasetLabel}: ${value} ${slopeLabel}`;
+                        }
+                    }
                 }
             }
         }
@@ -363,36 +414,56 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     console.log("Graphique secondaire affiché :", window.myChartPPG2);
 }
 
-function calculateAreaBetweenCurves(curve1, curve2) {
-    let area = 0;
-    const minLength = Math.min(curve1.length, curve2.length);
-    for (let i = 0; i < minLength; i++) {
-        area += Math.abs(curve1[i] - curve2[i]);
-    }
-    return area;
-}
+function calculateAverageCurve(cumulativeVariabilities, otherSessionsLabels) {
+    const maxLength = Math.max(...otherSessionsLabels.map(label => cumulativeVariabilities[label].length));
+    const averageCurve = Array(maxLength).fill(0);
 
-function calculateAreaUnderCurve(curve) {
-    let area = 0;
-    for (let i = 0; i < curve.length; i++) {
-        area += curve[i];
-    }
-    return area;
-}
+    for (let i = 0; i < maxLength; i++) {
+        const valuesAtIndex = otherSessionsLabels
+            .map(label => cumulativeVariabilities[label][i] || 0)
+            .filter(value => value !== 0);
 
-function calculateMeanOfOtherSessions(cumulativeVariabilities, highestSessionLabel) {
-    const otherSessions = Object.keys(cumulativeVariabilities).filter(label => label !== highestSessionLabel);
-    const sum = otherSessions.reduce((acc, label) => {
-        return acc.concat(cumulativeVariabilities[label]);
-    }, []);
-    const count = sum.length;
-    const mean = Array.from({ length: count }, () => 0);
-
-    otherSessions.forEach(label => {
-        for (let i = 0; i < cumulativeVariabilities[label].length; i++) {
-            mean[i] += cumulativeVariabilities[label][i] / otherSessions.length;
+        if (valuesAtIndex.length > 0) {
+            averageCurve[i] = valuesAtIndex.reduce((a, b) => a + b, 0) / valuesAtIndex.length;
         }
-    });
+    }
 
-    return mean;
+    return averageCurve;
+}
+
+function calculateSlope(x, y) {
+    const n = x.length;
+    const sumX = x.reduce((a, b) => a + b, 0);
+    const sumY = y.reduce((a, b) => a + b, 0);
+    const sumXY = x.reduce((sum, xVal, index) => sum + xVal * y[index], 0);
+    const sumX2 = x.reduce((sum, xVal) => sum + xVal * xVal, 0);
+
+    return (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+}
+
+function calculateTrendLine(x, y) {
+    const n = x.length;
+    const sumX = x.reduce((a, b) => a + b, 0);
+    const sumY = y.reduce((a, b) => a + b, 0);
+    const sumXY = x.reduce((sum, xVal, index) => sum + xVal * y[index], 0);
+    const sumX2 = x.reduce((sum, xVal) => sum + xVal * xVal, 0);
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
+    return { slope, intercept };
+}
+
+function calculateCorrelation(x, y) {
+    const n = x.length;
+    const sumX = x.reduce((a, b) => a + b, 0);
+    const sumY = y.reduce((a, b) => a + b, 0);
+    const sumXY = x.reduce((sum, xVal, index) => sum + xVal * y[index], 0);
+    const sumX2 = x.reduce((sum, xVal) => sum + xVal * xVal, 0);
+    const sumY2 = y.reduce((sum, yVal) => sum + yVal * yVal, 0);
+
+    const numerator = n * sumXY - sumX * sumY;
+    const denominator = Math.sqrt((n * sumX2 - sumX * sumX) * (n * sumY2 - sumY * sumY));
+
+    return numerator / denominator;
 }
