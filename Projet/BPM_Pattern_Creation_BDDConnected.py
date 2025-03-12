@@ -2,7 +2,7 @@ import sqlite3
 import matplotlib.pyplot as plt
 import numpy as np
 
-ID_JOUEUR = 3   #Argument
+ID_JOUEUR = 1   #Argument
 
 # Fonction d'extraction des données depuis la base de données
 def PPG_game_extraction():

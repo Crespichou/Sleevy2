@@ -107,22 +107,49 @@ function displayGroupedData(groupLabels, datasets, referenceMean, highestSession
 
     const groupedDatasets = [];
 
-    groupLabels.forEach(label => {
-        groupedDatasets.push({
-            label: label === highestSessionLabel ? "Session actuelle" : "Autres sessions",
-            data: datasets[label],
-            borderColor: label === highestSessionLabel ? 'blue' : 'gray',
-            borderWidth: 2,
-            fill: false,
-            pointRadius: 0,
-            tension: 0.4
-        });
+    // Ajouter la courbe de la session actuelle avec un dégradé
+    const currentSessionData = datasets[highestSessionLabel];
+    const gradientBlue = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientBlue.addColorStop(0, 'rgba(0, 0, 255, 1)'); // Bleu semi-transparent
+    gradientBlue.addColorStop(0.75, 'rgba(0, 0, 255, 0)'); // Transparent
+
+    groupedDatasets.push({
+        label: "Session actuelle",
+        data: currentSessionData,
+        borderColor: 'blue',
+        borderWidth: 2,
+        fill: true,
+        backgroundColor: gradientBlue,
+        pointRadius: 0,
+        tension: 0.4
     });
+
+    // Créer une courbe synthétique pour les autres sessions avec un dégradé
+    const otherSessionsLabels = groupLabels.filter(label => label !== highestSessionLabel);
+    const syntheticCurve = calculateSyntheticCurve(datasets, otherSessionsLabels);
+
+    const gradientGray = ctx.createLinearGradient(0, 0, 0, 400);
+    gradientGray.addColorStop(0, 'rgba(247, 177, 0, 0.8)'); // Gris semi-transparent
+    gradientGray.addColorStop(0.5, 'rgba(247, 177, 0, 0)'); // Transparent
+
+    groupedDatasets.push({
+        label: "Synthèse des autres sessions",
+        data: syntheticCurve,
+        borderColor: 'rgba(247, 177, 0, 0.8)',
+        borderWidth: 2,
+        fill: true,
+        backgroundColor: gradientGray,
+        pointRadius: 0,
+        tension: 0.4
+    });
+
+    // Déterminer la longueur maximale entre la session actuelle et la synthèse des autres sessions
+    const maxLength = Math.max(currentSessionData.length, syntheticCurve.length);
 
     window.myChartPPG = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: Array.from({ length: Math.max(...Object.values(datasets).map(arr => arr.length)) }, (_, i) => i + 1),
+            labels: Array.from({ length: maxLength }, (_, i) => i + 1),
             datasets: groupedDatasets
         },
         options: {
@@ -133,7 +160,9 @@ function displayGroupedData(groupLabels, datasets, referenceMean, highestSession
                     title: {
                         display: true,
                         text: 'Itérations'
-                    }
+                    },
+                    min: 0,
+                    max: maxLength
                 },
                 y: {
                     title: {
@@ -153,6 +182,27 @@ function displayGroupedData(groupLabels, datasets, referenceMean, highestSession
 
     console.log("Graphique du groupe affiché :", window.myChartPPG);
 }
+
+function calculateSyntheticCurve(datasets, otherSessionsLabels) {
+    const maxLength = Math.max(...otherSessionsLabels.map(label => datasets[label].length));
+    const syntheticCurve = Array(maxLength).fill(0);
+
+    for (let i = 0; i < maxLength; i++) {
+        const valuesAtIndex = otherSessionsLabels
+            .map(label => datasets[label][i] || 0)
+            .filter(value => value !== 0);
+
+        if (valuesAtIndex.length > 0) {
+            // Utiliser la moyenne ou la valeur maximale pour synthétiser
+            syntheticCurve[i] = Math.max(...valuesAtIndex); // ou valuesAtIndex.reduce((a, b) => a + b, 0) / valuesAtIndex.length pour la moyenne
+        }
+    }
+
+    return syntheticCurve;
+}
+
+
+
 
 function calculateTrendLine(x, y) {
     const n = x.length;

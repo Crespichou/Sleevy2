@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affichage des Données</title>
+</head>
+<body>
+    <h1>Données PPG</h1>
+    <pre id="data-display"></pre>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            fetch('/graphique_ppg_toutes_sessions')
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Données PPG reçues :", data);
+                    // Afficher les données dans l'élément HTML
+                    document.getElementById('data-display').textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(error => console.error("Erreur lors de la récupération des données :", error));
+        });
+    </script>
+</body>
+</html>
