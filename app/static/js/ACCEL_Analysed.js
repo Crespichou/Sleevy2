@@ -136,12 +136,22 @@ function createAccelChart(valeursAccel, heuresAccel, coupures) {
                         callback: function(value, index) {
                             return index % 1 === 0 ? this.getLabelForValue(value) : '';
                         }
+                    },
+                    grid: {
+                        display: false
                     }
                 },
                 y: {
                     title: {
                         display: true,
                         text: 'Amplitude de mouvement'
+                    },
+                    grid:{
+                        display: true,
+                        color: 'rgba(0, 0, 0, 0.1)',
+                        lineWidth: 1,
+                        borderDash: [10, 15],
+                        drawTicks: false
                     }
                 }
             }

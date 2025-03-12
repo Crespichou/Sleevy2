@@ -191,8 +191,6 @@ def graphique_ppg_emg():
     print(joueur_id)
     if not joueur_id:
         return jsonify({"error": "Aucun joueur connecté."}), 400
-    
-    time.sleep(5)
 
     max_session = db.session.query(Session.session_id).filter_by(idjoueur=joueur_id).order_by(Session.session_id.desc()).first()
     if not max_session:
@@ -212,7 +210,7 @@ def graphique_ppg_emg():
     if not accel_data:
         return jsonify({"error": "Aucune donnée Accel trouvée pour cette session."}), 404
     accel_values = [{"valeur": accel[0], "heure": accel[1]} for accel in accel_data]
-
+    
     return jsonify({
         "ppg_values": ppg_values,
         "emg_values": emg_values,
@@ -321,6 +319,6 @@ def start(idjoueur):
 @app.route('/stoprec')
 def stoprec():
     stop_event.set()
-    time.sleep(1)
+    time.sleep(5)
     return redirect(url_for('joueurs'))
 

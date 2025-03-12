@@ -8,7 +8,7 @@ ID_JOUEUR = 3 #Argument
 def PPG_game_extraction():
     try:
         #connexion = sqlite3.connect(r"C:\Users\cresp\OneDrive\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")  # Lien tablette Antoine
-        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\Sleevy_App\instance\sleevy.db")
+        connexion = sqlite3.connect(r"C:\Users\cresp\Documents\Sleevy\Sleevy2\instance\sleevy.db")
         print("Connexion réussie.")
         
         curseur = connexion.cursor()
