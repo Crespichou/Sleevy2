@@ -159,7 +159,6 @@ main {
     flex : 1.2;
     border-radius: 15px;
     margin-left: 20px;
-
 }
 
 .sub-container h2 {
@@ -273,23 +272,23 @@ canvas {
 
 
 .text-container{
-    background-color: white;
+    background-color: rgb(255, 255, 255);
     border-radius: 5px;
     margin-right : 20px;
-    padding: 10px;
-    margin-top: 20px;
+    margin-top: -15px;
+
 }
 
 .gauge-container {
   text-align: center;
-  margin-right: 20px;
   margin-top: 50px;
+  width: 350px;
 }
 
 .gauge {
-    padding: 6px;
+    padding: 5px;
     border-radius: 30px;
-    background: rgba(131, 145, 145, 0.2);
+    background: rgba(134, 182, 182, 0.2);
     box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25),
       0 1px rgba(255, 255, 255, 0.08);
     overflow: hidden;
@@ -299,10 +298,6 @@ canvas {
 .gauge div {
   height: 18px;
   border-radius: 30px;
-  background-image: linear-gradient(
-    to bottom,
-    rgba(255, 255, 255, 0.767)
-  );
   transition: 0.4s linear;
   transition-property: width, background-color;
 }
@@ -323,7 +318,6 @@ canvas {
   color: #000000;
   font-family: "Meta";
 }
-
 
 .green-container, .red-container {
     font-family: "Meta";
@@ -534,4 +528,26 @@ canvas {
     border-radius: 2px;
 }
 
-  
+.warn-results-container{
+    height: 200px;
+    width: 250px;
+    display: flex;
+    flex-direction: column; /* Dispose les éléments enfants en colonne */
+    align-items: center; /* Centre les éléments horizontalement */
+    margin-top: 10px;
+}
+
+.bottom-info-container{
+    display: flex;
+    flex-direction: column; /* Dispose les éléments enfants en colonne */
+    align-items: center; /* Centre les éléments horizontalement */
+}
+
+#warn-image {
+    width: 100px; /* ou toute autre taille souhaitée */
+    height: auto;
+}
+
+#warn-text{
+    font-size: 1em; /* Taille de la police */
+}

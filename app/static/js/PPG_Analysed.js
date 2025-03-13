@@ -26,7 +26,7 @@ function processAndDisplayData(data) {
     });
 
     const variabilities = calculateVariabilities(datasets, referenceMean);
-    const tolerance = 0.2 * Object.values(variabilities).reduce((a, b) => a + b, 0) / Object.values(variabilities).length;
+    const tolerance = 0.1 * Object.values(variabilities).reduce((a, b) => a + b, 0) / Object.values(variabilities).length;
     const groups = groupDatasetsByVariability(variabilities, tolerance);
 
     console.log("Groupes formés :", groups);
@@ -314,10 +314,12 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         if (currentSlope === averageSlope) {
             correlationPercentage = 50;
         } else if (currentSlope >= referenceSlope && currentSlope <= averageSlope) {
+            //const slopeRange = averageSlope - referenceSlope;
+            //const relativePosition = (currentSlope * 100) / slopeRange
+            //correlationPercentage = 50 * (relativePosition/100);
             const slopeRange = averageSlope - referenceSlope;
-            const relativePosition = (currentSlope * 100) / slopeRange
-            //const relativePosition = (currentSlope - referenceSlope) / slopeRange;
-            correlationPercentage = 50 * (relativePosition/100);
+            const relativePosition = (currentSlope - referenceSlope) / slopeRange;
+            correlationPercentage = 50 * relativePosition;
         } else if (currentSlope > averageSlope) {
             const difference = currentSlope - averageSlope;
             const relativePosition = (difference / (averageSlope - referenceSlope)) * 100;

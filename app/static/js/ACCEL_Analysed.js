@@ -19,6 +19,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const endTime = heuresAccel[heuresAccel.length - 1];
                 const sessionDurationMinutes = (endTime - startTime) / 1000 / 60;
 
+                // Arrondir maxCoupures à l'entier le plus proche
+                const maxCoupures = Math.round(sessionDurationMinutes);
+
                 // Calculer la moyenne des valeurs d'accélération
                 const moyenneAccel = valeursAccel.reduce((sum, value) => sum + value, 0) / valeursAccel.length;
                 console.log('Moyenne Accel :', moyenneAccel);
@@ -49,16 +52,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 const gauge = document.getElementById('gauge');
                 const gaugeLabel = document.getElementById('gauge-label');
-                const maxCoupures = sessionDurationMinutes;
                 const percentage = (coupures.length / maxCoupures) * 100;
 
                 let color;
                 if (percentage <= 25) {
-                    color = '#d6f4f4';
+                    color = 'rgb(148, 255, 67)';
                 } else if (percentage <= 50) {
-                    color = 'rgb(248, 250, 162)';
+                    color = 'rgb(249, 255, 86)';
                 } else if (percentage <= 85) {
-                    color = 'rgb(253, 188, 96)';
+                    color = 'rgb(255, 173, 58)';
                 } else {
                     color = 'red';
                 }
@@ -66,14 +68,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 gauge.innerHTML = `<div style="width: ${Math.min(percentage, 100)}%; background-color: ${color};"></div>`;
                 gaugeLabel.textContent = `Nombre de mouvements parasites : ${coupures.length}`;
 
-                const textContainer = document.querySelector('.text-container');
-                coupures.forEach((coupure, index) => {
-                    const p = document.createElement('p');
-                    p.textContent = `- N°${index + 1} : de ${coupure.start.toTimeString().substring(0, 8)} à ${coupure.end.toTimeString().substring(0, 8)}`;
-                    textContainer.appendChild(p);
-                });
-
                 createAccelChart(valeursAccel, heuresAccel.map(date => date.toTimeString().substring(0, 8)), coupures);
+
+                // Mettre à jour le warn-results-container
+                const warnImage = document.getElementById('warn-image');
+                const warnText = document.getElementById('warn-text');
+                if (coupures.length > maxCoupures / 2) {
+                    warnImage.src = "/static/images/warning.png"; // Remplacez par le chemin de votre image
+                    warnText.textContent = "Attention, beaucoup de mouvements parasites";
+                } else {
+                    warnImage.src = "/static/images/valid.png"; // Remplacez par le chemin de votre image
+                    warnText.textContent = `${coupures.length}/${maxCoupures}`;
+                }
             } else {
                 console.error('Aucune donnée Accel trouvée.');
             }
@@ -90,18 +96,23 @@ function createAccelChart(valeursAccel, heuresAccel, coupures) {
         type: 'box',
         xMin: heuresAccel.findIndex(time => time === coupure.start.toTimeString().substring(0, 8)),
         xMax: heuresAccel.findIndex(time => time === coupure.end.toTimeString().substring(0, 8)),
-        backgroundColor: 'rgba(255, 111, 111, 0.2)',
-        borderWidth: 0
+        backgroundColor: 'rgba(247, 181, 0, 0.25)',
+        borderWidth: 0,
+        label: {
+            content: `- N°${index + 1} : de ${coupure.start.toTimeString().substring(0, 8)} à ${coupure.end.toTimeString().substring(0, 8)}`,
+            enabled: true,
+            position: 'start'
+        }
     }));
 
-    new Chart(ctxAccel, {
+    const chart = new Chart(ctxAccel, {
         type: 'line',
         data: {
             labels: heuresAccel,
             datasets: [{
                 label: 'Mouvements verticaux de votre bras',
                 data: valeursAccel,
-                borderColor: 'rgb(21, 0, 253)',
+                borderColor: 'rgb(105, 208, 208)',
                 borderWidth: 2,
                 fill: false,
                 pointRadius: 0
@@ -155,6 +166,32 @@ function createAccelChart(valeursAccel, heuresAccel, coupures) {
                     }
                 }
             }
+        }
+    });
+
+    // Initialiser le texte par défaut
+    const textContainer = document.querySelector('.text-container');
+    textContainer.innerHTML = '<p>Passez la souris sur une zone orange pour voir les détails des mouvements parasites.</p>';
+
+    // Ajouter un écouteur d'événements pour le survol de la souris
+    ctxAccel.canvas.addEventListener('mousemove', function(event) {
+        const mouseX = event.offsetX;
+        const mouseY = event.offsetY;
+
+        // Trouver l'annotation la plus proche
+        const nearestAnnotation = annotations.find(annotation => {
+            const xMin = chart.scales.x.getPixelForValue(annotation.xMin);
+            const xMax = chart.scales.x.getPixelForValue(annotation.xMax);
+            return mouseX >= xMin && mouseX <= xMax;
+        });
+
+        if (nearestAnnotation) {
+            const coupure = coupures[annotations.indexOf(nearestAnnotation)];
+            const durationSeconds = Math.round((coupure.end - coupure.start) / 1000);
+            textContainer.innerHTML = `<p>Il s'agit de votre mouvement parasite numéro ${annotations.indexOf(nearestAnnotation) + 1}. Il démarre à ${coupure.start.toTimeString().substring(0, 8)} et se termine à ${coupure.end.toTimeString().substring(0, 8)}. Il dure au total ${durationSeconds} secondes.</p>`;
+        } else {
+            // Réinitialiser le texte par défaut si la souris n'est pas sur une annotation
+            textContainer.innerHTML = '<p>Passez la souris sur une zone orange pour voir les détails des mouvements parasites.</p>';
         }
     });
 }
