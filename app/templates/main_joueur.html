@@ -9,8 +9,29 @@
 </head>
 
 <body class="gradient-background">
+    <div class="side-bar-container">
+        <div class="side-bar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/mascotte.png') }}" alt="Mascotte">
+            </div>
+            <div class="button-container">
+                <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
+                    <button type="submit" class="button" id="button3">
+                        <img src="{{ url_for('static', filename='images/house.png') }}" alt="Exit">
+                    </button>
+                </form>
+                <button class="button" id="button2" onclick="window.location.href='/joueurs';" >
+                    <img src="{{ url_for('static', filename='images/back.png') }}" alt="Setting">
+                </button>
+                <button class="button" id="button3" onclick="window.location.href='/portal_joueur';" >
+                    <img src="{{ url_for('static', filename='images/logout.png') }}" alt="Exit">
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="huge-container">
     <main>
-        <!-- Conteneur Flex pour aligner Bienvenue + Logout -->
         <div class="header-container">
             <div class="title">Bienvenue {{ player.pseudo }}</div>
             <div class="logout-container">
@@ -19,11 +40,10 @@
                 </form>
             </div>
         </div>
-        <div class="fine-line"></div>
     </main>
 
     <!-- Conteneur pour aligner les boutons -->
-    <div class="button-container">
+    <div class="button-container2">
         <div class="input-data">
             <div class="inner"></div>
             <form action="{{ url_for('start', idjoueur=player.idjoueur) }}" method="get">
@@ -46,11 +66,8 @@
         </div>
     </div>
 
-    <!-- Fine line sous les boutons -->
-    <div class="fine-line3"></div>
-
     <div class="square">
-        <main>
+        <div class="container1">
             <div class="section-title">Dernière Partie :
                 <span class="tooltip">🛈
                     <span class="tooltip-text">
@@ -59,12 +76,18 @@
                     </span>
                 </span>
             </div>
-            <canvas id="myChartPPG" width="500" height="250"></canvas>
-            <canvas id="myChartEMG" width="500" height="250"></canvas>
-            <canvas id="myChartAccel" width="500" height="250"></canvas>
-        </main>
-
-        <div class="vertical-line"></div>
+            <div class="graph-container">
+                <div class="graph-container-ppg">
+                    <canvas id="myChartPPG" width="500" height="250"></canvas>
+                </div>
+                <div class="graph-container-emg">
+                    <canvas id="myChartEMG" width="500" height="250"></canvas>
+                </div>
+                <div class="graph-container-accel">
+                    <canvas id="myChartAccel" width="500" height="250"></canvas>
+                </div>
+            </div>
+        </div>
 
         <div class="container">
             <div class="section-title">Historique :</div>
@@ -95,6 +118,7 @@
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
 
     <!-- Chargement du script Chart.js personnalisé -->
