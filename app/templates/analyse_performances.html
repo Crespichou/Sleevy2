@@ -65,30 +65,49 @@
                 </div>
                 </div>
                 <div class="info-container">
-                    <h3>Pourcentage de variations entre votre session la plus récente et votre rythme cardiaque au repos :</h3>
+                    <h3>Informations sur les graphiques :</h3>
                             <div class="Bgraph-info-container">
-                                <p> Le pourcentage affiché ci-dessous quantifie les variations entre le rythme cardiaque de votre session la plus récente et votre rythme cardiaque au repos.</p>
-                                <p> Plus le pourcentage est élevé, plus votre rythme à varié comparé à votre rythme cardiaque au repos.</p>
-                                <p id="correlation-percentage"></p>
-                                <div role="progressbar"></div>
-                                <p> Un pourcentage de corrélation élevé indique que vous avez subit beaucoup de variations de votre rythme cardiaque lors de votre dernière session.</p>
+                                <p> Les variations du rythme cardiaque de votre session actuelle sont représentées par un pourcentage.</p>
+                                <p> Plus le pourcentage est élevé et plus votre rythme à varié comparé à votre rythme cardiaque au repos.</p>
+                                <div class="skill">
+                                    <div class="outer">
+                                      <div class="inner">
+                                        <div id="number">65%</div>
+                                      </div>
+                                    </div>
+                                    <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="160px" height="160px">
+                                      <defs>
+                                        <linearGradient id="GradientColor">
+                                          <stop offset="0%" stop-color="#DA22FF" />
+                                          <stop offset="100%" stop-color="#9733EE" />
+                                        </linearGradient>
+                                      </defs>
+                                      <circle class="circle" cx="80" cy="80" r="70" stroke-linecap="round"/>
+                                    </svg>
+                                  </div>                                  
+                                <p> Un pourcentage de élevé indique que vous avez subit beaucoup de variations lors de votre dernière session.</p>
                             </div>
                             <div class="legend-container">
-                                <div class="legend-item">
-                                    <div class="color-box" style="background-color: rgb(2, 205, 2);"></div>
-                                    <span>Corrélation élevée : Peu de variations</span>
+                                <div class="arrow-container">
+                                    <div class="truc"></div>
                                 </div>
-                                <div class="legend-item">
-                                    <div class="color-box" style="background-color: yellow;"></div>
-                                    <span>Corrélation moyenne : Quelques variations</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="color-box" style="background-color: orange;"></div>
-                                    <span>Corrélation faible : Beaucoup de variations</span>
-                                </div>
-                                <div class="legend-item">
-                                    <div class="color-box" style="background-color: red;"></div>
-                                    <span>Aucune corrélation : Session très mouvementée</span>
+                                <div class="legend-placement">
+                                    <div class="legend-item">
+                                        <div class="color-box" style="background-color: red;"></div>
+                                        <span>100% - Pourcentage maximal : Session très mouvementée</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="color-box" style="background-color: red;"></div>
+                                        <span>75% - Porcentage élevé : Beaucoup de variations</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="color-box" style="background-color: red;"></div>
+                                        <span>50% Pourcentage moyen : Variations dans votre moyenne</span>
+                                    </div>
+                                    <div class="legend-item">
+                                        <div class="color-box" style="background-color: red;"></div>
+                                        <span>0% - Aucun pourcentage : Aucune variations</span>
+                                    </div>
                                 </div>
                             </div>
                 </div>

@@ -232,7 +232,7 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     secondaryDatasets.push({
         label: "Rythme cardiaque au repos",
         data: referenceVariability,
-        borderColor: 'rgba(2, 48, 2, 0.69)',
+        borderColor: 'rgb(255, 140, 0)',
         borderWidth: 2,
         fill: false,
         pointRadius: 0,
@@ -250,7 +250,7 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     secondaryDatasets.push({
         label: "Tendance du rythme cardiaque au repos",
         data: trendLineData,
-        borderColor: 'rgba(2, 48, 2, 0.69)',
+        borderColor: 'rgb(255, 140, 0)',
         borderWidth: 2,
         fill: false,
         pointRadius: 0,
@@ -263,47 +263,15 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     const currentSessionTrendLine = calculateTrendLine(currentSessionXValues, currentSessionData);
     const currentSessionTrendData = Array.from({ length: maxLength }, (_, i) => currentSessionTrendLine.slope * (i + 1) + currentSessionTrendLine.intercept);
 
-    //secondaryDatasets.push({
-        //label: "Tendance de la session actuelle",
-        //data: currentSessionTrendData,
-        //borderColor: 'blue',
-        //borderWidth: 2,
-        //fill: false,
-        //pointRadius: 0,
-        //tension: 0.4
-    //});
-
     // Vérifier si des courbes d'autres sessions existent
     const otherSessionsLabels = groupLabels.filter(label => label !== highestSessionLabel);
     if (otherSessionsLabels.length > 0) {
         // Calculer la moyenne des courbes "autres sessions"
         const averageCurve = calculateAverageCurve(cumulativeVariabilities, otherSessionsLabels);
 
-        //secondaryDatasets.push({
-            //label: "Moyenne des autres sessions",
-            //data: averageCurve,
-            //borderColor: 'purple',
-            //borderWidth: 2,
-            //fill: false,
-            //pointRadius: 0,
-            //tension: 0.4
-        //});
-
         // Calculer la ligne de tendance pour la moyenne des autres sessions
         const averageCurveXValues = Array.from({ length: averageCurve.length }, (_, i) => i + 1);
         const averageCurveTrendLine = calculateTrendLine(averageCurveXValues, averageCurve);
-        const averageCurveTrendData = Array.from({ length: maxLength }, (_, i) => averageCurveTrendLine.slope * (i + 1) + averageCurveTrendLine.intercept);
-
-        //secondaryDatasets.push({
-            //label: "Tendance de la moyenne des autres sessions",
-            //data: averageCurveTrendData,
-            //borderColor: 'purple',
-            //borderWidth: 2,
-            //borderDash: [5, 5], // Ligne en pointillés pour la tendance
-            //fill: false,
-            //pointRadius: 0,
-            //tension: 0.4
-        //});
 
         // Calculer le pourcentage basé sur les coefficients directeurs
         const currentSlope = currentSessionTrendLine.slope;
@@ -314,9 +282,6 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         if (currentSlope === averageSlope) {
             correlationPercentage = 50;
         } else if (currentSlope >= referenceSlope && currentSlope <= averageSlope) {
-            //const slopeRange = averageSlope - referenceSlope;
-            //const relativePosition = (currentSlope * 100) / slopeRange
-            //correlationPercentage = 50 * (relativePosition/100);
             const slopeRange = averageSlope - referenceSlope;
             const relativePosition = (currentSlope - referenceSlope) / slopeRange;
             correlationPercentage = 50 * relativePosition;
@@ -326,39 +291,44 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
             const additionalPercentage = 50 * (relativePosition / 100);
             correlationPercentage = 50 + additionalPercentage;
         } else {
-            // Si le coefficient directeur est en dehors de l'intervalle, fixer le pourcentage à 0% ou 100%
             correlationPercentage = currentSlope < referenceSlope ? 0 : 100;
         }
 
-
         console.log("Nouveau pourcentage de corrélation :", correlationPercentage.toFixed(2) + "%");
 
-        // Mettre à jour la variable CSS pour le pourcentage
-        const progressBar = document.querySelector('[role="progressbar"]');
-        progressBar.style.setProperty('--value', correlationPercentage.toFixed(2));
-        progressBar.setAttribute('data-label', `${correlationPercentage.toFixed(2)}%`);
+        // Mettre à jour la valeur du pourcentage affiché
+        const numberElement = document.getElementById('number');
+        numberElement.textContent = `${correlationPercentage.toFixed(2)}%`;
+
+        // Calculer et appliquer stroke-dashoffset
+        const circle = document.querySelector('.circle');
+        const circumference = 2 * Math.PI * 70; // 2 * PI * rayon
+        const offset = circumference - (correlationPercentage / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+        circle.style.strokeDasharray = circumference;
+
     } else {
         // Si aucune courbe d'autres sessions n'existe, calculer le pourcentage avec les deux coefficients restants
         const currentSlope = currentSessionTrendLine.slope;
         const referenceSlope = slopeTrendLine;
 
         let correlationPercentage = (Math.max(currentSlope, referenceSlope) / Math.min(currentSlope, referenceSlope));
-
-        // Décaler la virgule vers la gauche en divisant par 10
         correlationPercentage = correlationPercentage / 10;
-
-        // Convertir en pourcentage
         correlationPercentage = correlationPercentage * 100;
-
-        // Arrondir au centième le plus proche
         correlationPercentage = Math.round(correlationPercentage * 100) / 100;
 
         console.log("Pourcentage de corrélation basé sur les coefficients directeurs restants :", correlationPercentage + "%");
 
-        // Mettre à jour la variable CSS pour le pourcentage
-        const progressBar = document.querySelector('[role="progressbar"]');
-        progressBar.style.setProperty('--value', correlationPercentage);
-        progressBar.setAttribute('data-label', `${correlationPercentage}%`);
+        // Mettre à jour la valeur du pourcentage affiché
+        const numberElement = document.getElementById('number');
+        numberElement.textContent = `${correlationPercentage}%`;
+
+        // Calculer et appliquer stroke-dashoffset
+        const circle = document.querySelector('.circle');
+        const circumference = 2 * Math.PI * 70; // 2 * PI * rayon
+        const offset = circumference - (correlationPercentage / 100) * circumference;
+        circle.style.strokeDashoffset = offset;
+        circle.style.strokeDasharray = circumference;
     }
 
     window.myChartPPG2 = new Chart(ctx2, {
