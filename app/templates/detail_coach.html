@@ -9,6 +9,28 @@
 </head>
 
 <body class="gradient-background">
+    <div class="side-bar-container">
+        <div class="side-bar">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='images/mascotte.png') }}" alt="Mascotte">
+            </div>
+            <div class="button-container">
+                <form action="{{ url_for('logout') }}" method="POST" class="logout-form">
+                    <button type="submit" class="button" id="button3">
+                        <img src="{{ url_for('static', filename='images/house.png') }}" alt="Exit">
+                    </button>
+                </form>
+                <button class="button" id="button2" onclick="window.location.href='/coaches';" >
+                    <img src="{{ url_for('static', filename='images/back.png') }}" alt="Setting">
+                </button>
+                <button class="button" id="button3" onclick="window.location.href='/portal_coach';" >
+                    <img src="{{ url_for('static', filename='images/logout.png') }}" alt="Exit">
+                </button>
+            </div>
+        </div>
+    </div>
+
+<div class="huge-container-detailed">
     <div class="header-container">
         <div class="title">Détails de la Session </div>
         <div class="logout-container">
@@ -17,16 +39,32 @@
             </form>
         </div>
     </div>
+
     
     <div class="fine-line3"></div>
     <div class="square">
-        <main>
-            <div class="section-title">Analyse de la session :</div>
-            <canvas id="myChartPPG" width="500" height="250"></canvas>
-            <canvas id="myChartEMG" width="500" height="250"></canvas>
-            <canvas id="myChartAccel" width="500" height="250"></canvas>
-        </main>
+        <div class="container-detailed">
+            <div class="section-title">Analyse de la session  :
+                <span class="tooltip">🛈
+                    <span class="tooltip-text">
+                        <p>Vous pouvez visualiser les données brutes de la partie que vous avez sélectionnée.</p>
+                    </span>
+                </span>
+            </div>
+            <div class="graph-container">
+                <div class="graph-container-ppg">
+                    <canvas id="myChartPPG" width="500" height="250"></canvas>
+                </div>
+                <div class="graph-container-emg">
+                    <canvas id="myChartEMG" width="500" height="250"></canvas>
+                </div>
+                <div class="graph-container-accel">
+                    <canvas id="myChartAccel" width="500" height="250"></canvas>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

@@ -29,6 +29,11 @@ body, html {
   width: calc(100% - 90px); /* Adjust based on sidebar width */
 }
 
+.huge-container-detailed {
+  margin-left: 110px; /* Adjust based on sidebar width */
+  width: calc(100% - 90px); /* Adjust based on sidebar width */
+}
+
 /* Sidebar */
 .side-bar {
   width: 70px;
@@ -67,7 +72,8 @@ body, html {
 
 /* Bouton Logout */
 .logout-container form {
-  margin: 0;
+  margin-right : 30px;
+
 }
 
 .logout-button {
@@ -127,6 +133,12 @@ body, html {
   display : flex;
   flex-direction: column;
   flex: 1; /* Le conteneur des graphiques occupe 2 parts */
+}
+
+.container-detailed{
+  display : flex;
+  flex-direction: column;
+  flex: 0.85; /* Le conteneur des graphiques occupe 2 parts */
 }
 
 /* Conteneur pour les boutons */
