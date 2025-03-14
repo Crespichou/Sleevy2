@@ -8,6 +8,7 @@ from threading import Event
 from Projet.Event import stop_event
 import sqlite3
 from datetime import datetime
+import serial.tools.list_ports
 
 
 def create_session(ID_JOUEUR):
@@ -139,8 +140,9 @@ def update_endtime(session_id):
 
 
 # Paramètres pour la collecte EMG
-ser = serial.Serial('COM3', 9600) 
+#ser = serial.Serial('COM3', 9600) 
 emg_values = []
+
 
 # Paramètres pour la collecte PPG
 DEVICE_ADDRESS_PPG = "A0:9E:1A:E0:BC:4D"
@@ -152,14 +154,28 @@ DEVICE_ADDRESS_ACCEL = "00:0C:BF:18:7C:2D"
 ACCELEROMETER_CHARACTERISTIC_UUID = "49535343-1e4d-4bd9-ba61-23c647249616"
 accel_values = []
 
-"""Fonction de récolte EMG"""
+# Vérifiez si le port COM3 est disponible
+#A enlever si anciennes versions
+def is_port_available(port_name):
+    available_ports = [port.device for port in serial.tools.list_ports.comports()]
+    return port_name in available_ports ##
+
+# Fonction de récolte EMG
 def emg(stop_event):
+    ser = None #a enlever si anciennes versions
     try:
-        if not ser.is_open:
-            ser.open()
+        #if not ser.is_open :
+            #ser.open() 
+        
+        #A enlever si anciennes versions
+        if is_port_available('COM3'):
+            ser = serial.Serial('COM3', 9600)
+        else:
+            print("Le port COM3 n'est pas disponible. La collecte EMG sera désactivée.")
+            return ##
 
         while not stop_event.is_set():
-            if ser.is_open:
+            if ser and ser.is_open:
                 raw_data = ser.readline().strip()
                 if raw_data:
                     try:
@@ -176,7 +192,7 @@ def emg(stop_event):
     except KeyboardInterrupt:
         print("\nArrêt du programme EMG.")
     finally:
-        if ser.is_open:
+        if ser and ser.is_open:
             ser.close()
 
 
