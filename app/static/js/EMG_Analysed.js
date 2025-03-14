@@ -94,7 +94,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     const datasets = [{
         label: 'Valeurs EMG',
         data: emgValues,
-        borderColor: 'rgb(21, 0, 253)',
+        borderColor: 'rgb(105, 208, 208, 0.9)',
         borderWidth: 1,
         fill: false,
         pointRadius: 0
@@ -111,7 +111,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         const xVals = Array.from({ length: segment.segment.length }, (_, i) => segment.start + i);
         const yVals = segment.segment.map((val, i) => val + pente * (i));
 
-        const color = pente >= 0 ? 'green' : 'red';
+        const color = pente >= 0 ? 'rgb(47, 217, 143)' : 'rgb(255, 138, 138)';
         const labelText = `Pente : ${pente.toFixed(2)}`;
 
         // Ajouter les informations aux tableaux de détails
@@ -128,10 +128,10 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
                 classification = 'Diminution inquiétante';
             }
         }
-        if (color === 'green') {
+        if (color === 'rgb(47, 217, 143)') {
             greenDetails.push(`${heureDebut} - ${heureFin}`);
             greenCount++;
-        } else if (color === 'red') {
+        } else if (color === 'rgb(255, 138, 138)') {
             redDetails.push(`${classification} : ${heureDebut} - ${heureFin} `);
             redCount++;
         }
@@ -151,7 +151,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             type: 'box',
             xMin: segment.start,
             xMax: segment.end,
-            backgroundColor: color === 'green' ? 'rgba(0, 255, 0, 0.05)' : 'rgba(255, 136, 136, 0.08)',
+            backgroundColor: color === 'rgb(47, 217, 143)' ? 'rgba(181, 253, 181, 0)' : 'rgba(252, 201, 201, 0)',
             borderWidth: 0
         });
 
@@ -160,7 +160,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             type: 'line',
             scaleID: 'x',
             value: segment.start,
-            borderColor: 'rgb(106, 106, 106)',
+            borderColor: 'rgb(253, 160, 0)',
             borderWidth: 1,
             borderDash: [5, 5], 
             label: {

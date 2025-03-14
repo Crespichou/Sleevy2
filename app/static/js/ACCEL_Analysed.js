@@ -58,9 +58,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (percentage <= 25) {
                     color = 'rgb(148, 255, 67)';
                 } else if (percentage <= 50) {
-                    color = 'rgb(249, 255, 86)';
+                    color = 'rgb(255, 204, 86)';
                 } else if (percentage <= 85) {
-                    color = 'rgb(255, 173, 58)';
+                    color = 'rgb(255, 97, 58)';
                 } else {
                     color = 'red';
                 }
@@ -75,10 +75,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 const warnText = document.getElementById('warn-text');
                 if (coupures.length > maxCoupures / 2) {
                     warnImage.src = "/static/images/warning.png"; // Remplacez par le chemin de votre image
-                    warnText.textContent = "Attention, beaucoup de mouvements parasites";
+                    warnText.textContent = "Attention, beaucoup de mouvements parasites. Vous avez été déconcentré.";
                 } else {
                     warnImage.src = "/static/images/valid.png"; // Remplacez par le chemin de votre image
-                    warnText.textContent = `${coupures.length}/${maxCoupures}`;
+                    warnText.textContent = `Vous avez effectué très peu de mouvements parasites. Vous étiez concentré.`;
                 }
             } else {
                 console.error('Aucune donnée Accel trouvée.');
