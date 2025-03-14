@@ -8,7 +8,6 @@ from threading import Event
 from Projet.Event import stop_event
 import sqlite3
 from datetime import datetime
-import serial.tools.list_ports
 
 
 def create_session(ID_JOUEUR):
