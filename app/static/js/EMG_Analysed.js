@@ -9,18 +9,33 @@ document.addEventListener('DOMContentLoaded', function() {
                 // Extraire les valeurs et les heures EMG
                 let valeursEmg = emgValues.map(item => item.valeur);
                 let heuresEmg = emgValues.map(item => {
-                let heure = item.heure; // Format "YYYY-MM-DD HH:MM:SS"
-                let date = new Date(heure); // Convertir en objet Date pour les comparaisons
-                date.setHours(date.getHours() - 1); // Réduire l'heure d'une heure
+                    let heure = item.heure; // Format "YYYY-MM-DD HH:MM:SS"
+                    let date = new Date(heure); // Convertir en objet Date pour les comparaisons
+                    date.setHours(date.getHours() - 1); // Réduire l'heure d'une heure
                     return date; // Retourner la nouvelle heure ajustée
                 });
 
+                // Calculer la moyenne de la série
+                const moyenneSerie = calculateMean(valeursEmg);
+                console.log('Moyenne de la série :', moyenneSerie);
+
+                // Déterminer le point le plus haut de la série
+                const pointPlusHaut = Math.max(...valeursEmg);
+                console.log('Point le plus haut de la série :', pointPlusHaut);
+
+                // Diviser le point le plus haut par la moyenne
+                const resultat = pointPlusHaut - moyenneSerie;
+                console.log('Résultat (Point le plus haut - Moyenne) :', resultat);
+
+                const final = resultat / 100;
+                console.log('Indince à rentrer :', final);
+
                 // Détection des points brutaux
-                const pointsBrutaux = detectBrutalPoints(valeursEmg, 70, 0.45);
+                const pointsBrutaux = detectBrutalPoints(valeursEmg, 20, final); //Adapter en fonction de la plage de variations des valeurs emg
                 console.log('Points Brutaux :', pointsBrutaux);
 
                 // Division des valeurs EMG en segments
-                const segments = divideByPoints(valeursEmg, pointsBrutaux);
+                const segments = divideByPoints(valeursEmg, pointsBrutaux, heuresEmg);
                 console.log('Segments :', segments);
 
                 // Trier les segments par ordre croissant d'heure de début
@@ -37,6 +52,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 });
 
+// Fonction pour calculer la moyenne
+function calculateMean(values) {
+    const sum = values.reduce((acc, val) => acc + val, 0);
+    return sum / values.length;
+}
+
 // Fonction pour calculer la pente
 function calculateSlope(values) {
     const x = Array.from({ length: values.length }, (_, i) => i);
@@ -49,7 +70,7 @@ function calculateSlope(values) {
 }
 
 // Fonction pour détecter les points brutaux
-function detectBrutalPoints(emgValues, groupSize = 50, seuilDiff = 0.5) {
+function detectBrutalPoints(emgValues, groupSize = 20, seuilDiff = 0.5) {
     const points = [];
     const moyenneMobile = emgValues.map((_, i) => {
         const start = Math.max(0, i - groupSize + 1);
@@ -76,14 +97,32 @@ function detectBrutalPoints(emgValues, groupSize = 50, seuilDiff = 0.5) {
 }
 
 // Fonction pour diviser les valeurs EMG en segments
-function divideByPoints(emgValues, pointsBrutaux) {
+function divideByPoints(emgValues, pointsBrutaux, heuresEmg) {
     const segments = [];
     let startIdx = 0;
     pointsBrutaux.forEach(point => {
-        segments.push({ start: startIdx, end: point, segment: emgValues.slice(startIdx, point) });
-        startIdx = point;
+        const endIdx = point;
+        const segment = emgValues.slice(startIdx, endIdx);
+        const startTime = heuresEmg[startIdx];
+        const endTime = heuresEmg[endIdx];
+        const duration = (endTime - startTime) / 1000 / 60; // Durée en minutes
+
+        if (duration > 1) {
+            segments.push({ start: startIdx, end: endIdx, segment });
+        }
+        startIdx = endIdx;
     });
-    segments.push({ start: startIdx, end: emgValues.length, segment: emgValues.slice(startIdx) });
+
+    // Vérifier le dernier segment
+    const lastSegment = emgValues.slice(startIdx);
+    const lastStartTime = heuresEmg[startIdx];
+    const lastEndTime = heuresEmg[heuresEmg.length - 1];
+    const lastDuration = (lastEndTime - lastStartTime) / 1000 / 60; // Durée en minutes
+
+    if (lastDuration > 1) {
+        segments.push({ start: startIdx, end: emgValues.length, segment: lastSegment });
+    }
+
     return segments;
 }
 
@@ -162,7 +201,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             value: segment.start,
             borderColor: 'rgb(253, 160, 0)',
             borderWidth: 1,
-            borderDash: [5, 5], 
+            borderDash: [5, 5],
             label: {
                 enabled: false,
                 content: 'Début',
@@ -174,9 +213,9 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             type: 'line',
             scaleID: 'x',
             value: segment.end,
-            borderColor: 'rgb(231, 255, 124)',
+            borderColor: 'rgb(253, 160, 0)',
             borderWidth: 1,
-            borderDash: [5, 5], 
+            borderDash: [5, 5],
             label: {
                 enabled: false,
                 content: 'Fin',

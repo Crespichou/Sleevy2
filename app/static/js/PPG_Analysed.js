@@ -26,7 +26,7 @@ function processAndDisplayData(data) {
     });
 
     const variabilities = calculateVariabilities(datasets, referenceMean);
-    const tolerance = 0.1 * Object.values(variabilities).reduce((a, b) => a + b, 0) / Object.values(variabilities).length;
+    const tolerance = 0.15 * Object.values(variabilities).reduce((a, b) => a + b, 0) / Object.values(variabilities).length;
     const groups = groupDatasetsByVariability(variabilities, tolerance);
 
     console.log("Groupes formés :", groups);
@@ -243,6 +243,9 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     const xValues = Array.from({ length: referenceVariability.length }, (_, i) => i + 1);
     const { slope: slopeTrendLine, intercept } = calculateTrendLine(xValues, referenceVariability);
 
+    // Afficher le coefficient directeur de la tendance du rythme cardiaque au repos
+    console.log("Coefficient directeur de la tendance du rythme cardiaque au repos :", slopeTrendLine);
+
     // Étendre la ligne de tendance pour couvrir la même plage que les autres courbes
     const maxLength = Math.max(...Object.values(cumulativeVariabilities).map(arr => arr.length));
     const trendLineData = Array.from({ length: maxLength }, (_, i) => slopeTrendLine * (i + 1) + intercept);
@@ -261,6 +264,10 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
     const currentSessionData = cumulativeVariabilities[highestSessionLabel];
     const currentSessionXValues = Array.from({ length: currentSessionData.length }, (_, i) => i + 1);
     const currentSessionTrendLine = calculateTrendLine(currentSessionXValues, currentSessionData);
+
+    // Afficher le coefficient directeur de la tendance de la session actuelle
+    console.log("Coefficient directeur de la tendance de la session actuelle :", currentSessionTrendLine.slope);
+
     const currentSessionTrendData = Array.from({ length: maxLength }, (_, i) => currentSessionTrendLine.slope * (i + 1) + currentSessionTrendLine.intercept);
 
     // Vérifier si des courbes d'autres sessions existent
@@ -272,6 +279,9 @@ function displaySecondaryData(groupLabels, cumulativeVariabilities, highestSessi
         // Calculer la ligne de tendance pour la moyenne des autres sessions
         const averageCurveXValues = Array.from({ length: averageCurve.length }, (_, i) => i + 1);
         const averageCurveTrendLine = calculateTrendLine(averageCurveXValues, averageCurve);
+
+        // Afficher le coefficient directeur de la tendance de la moyenne des autres sessions
+        console.log("Coefficient directeur de la tendance de la moyenne des autres sessions :", averageCurveTrendLine.slope);
 
         // Calculer le pourcentage basé sur les coefficients directeurs
         const currentSlope = currentSessionTrendLine.slope;

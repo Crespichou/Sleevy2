@@ -26,7 +26,7 @@ def EMG_game_extraction(ID_JOUEUR):
         valeurs_emg = [row[0] for row in curseur.fetchall()]
         connexion.close()
 
-        points_brutaux = detection_brutale(valeurs_emg, group_size=70, seuil_diff=0.45)
+        points_brutaux = detection_brutale(valeurs_emg, group_size=70, seuil_diff=0.6)
 
         return {
             dernier_session_id: {
@@ -50,7 +50,7 @@ def calculer_pente(valeurs):
         pente = 0
     return pente
 
-def detection_brutale(valeurs_emg, group_size=50, seuil_diff=0.5):
+def detection_brutale(valeurs_emg, group_size=20, seuil_diff=0.6):
     """
     Détecte les points brutaux dans les données EMG en utilisant une moyenne mobile.
     utile pour déterminer quand le joueur est mort ou que sont intensité musculaire varie. 
@@ -59,16 +59,16 @@ def detection_brutale(valeurs_emg, group_size=50, seuil_diff=0.5):
     moyenne_mobile = np.convolve(valeurs_emg, np.ones(group_size) / group_size, mode="valid")
     i = 0
     while i < len(moyenne_mobile) - 30:
-        valeurs_premiere_periode = moyenne_mobile[i:i + 20]
+        valeurs_premiere_periode = moyenne_mobile[i:i + 30]
         pente_premiere = calculer_pente(valeurs_premiere_periode)
-        valeurs_seconde_periode = moyenne_mobile[i + 20:i + 40]
+        valeurs_seconde_periode = moyenne_mobile[i + 30:i + 60]
         pente_seconde = calculer_pente(valeurs_seconde_periode)
 
         if np.abs(pente_premiere - pente_seconde) < seuil_diff:
-            i += 20
+            i += 30
         else:
-            points.append(i + 20)
-            i += 20
+            points.append(i + 30)
+            i += 30
     return points
 
 def diviser_par_points(valeurs_emg, points_brutaux):
@@ -84,7 +84,7 @@ def diviser_par_points(valeurs_emg, points_brutaux):
     segments.append((start_idx, len(valeurs_emg), valeurs_emg[start_idx:]))
     return segments
 
-def plot_emg_with_detections(valeurs_emg, points_brutaux, segments, group_size=40):
+def plot_emg_with_detections(valeurs_emg, points_brutaux, segments, group_size=20):
     """
     Trace les valeurs EMG et met en évidence les segments avec une pente négative.
     Met en évidence les diminitions d'intensité.
