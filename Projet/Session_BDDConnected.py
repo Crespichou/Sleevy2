@@ -255,6 +255,13 @@ def main_accel(stop_event):
 
 
 def main(ID_JOUEUR):
+    global emg_values, ppg_values, accel_values
+
+    # Réinitialisation des listes avant chaque nouvelle session
+    emg_values = []
+    ppg_values = []
+    accel_values = []
+    
     session_id = create_session(ID_JOUEUR)
     if session_id is None:
         print("Erreur lors de la création de la session. Arrêt du programme.")
@@ -272,13 +279,13 @@ def main(ID_JOUEUR):
 
     
     stop_event.wait()
+
     update_endtime(session_id)
     
     emg_thread.join()
     ppg_thread.join()
     accel_thread.join()
     
-    update_endtime(session_id)
     
     save_ppg_data(session_id, ppg_values, ID_JOUEUR)
     save_emg_data(session_id, emg_values, ID_JOUEUR)
@@ -287,9 +294,9 @@ def main(ID_JOUEUR):
     
 
     print(f"Simulation terminée. Session ID : {session_id}")
-    #print(f"Valeurs EMG collectées : {emg_values}")
-    #print(f"Valeurs PPG collectées : {ppg_values}")
-    #print(f"Valeurs Accel collectées : {accel_values}")
+    print(f"Valeurs EMG collectées : {emg_values}")
+    print(f"Valeurs PPG collectées : {ppg_values}")
+    print(f"Valeurs Accel collectées : {accel_values}")
 
 if __name__ == "__main__":
     ID_JOUEUR = 3

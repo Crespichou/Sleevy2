@@ -28,10 +28,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 console.log('Résultat (Point le plus haut - Moyenne) :', resultat);
 
                 const final = resultat / 100;
-                console.log('Indince à rentrer :', final);
+                console.log('Indice à rentrer :', final);
 
                 // Détection des points brutaux
-                const pointsBrutaux = detectBrutalPoints(valeursEmg, 20, final); //Adapter en fonction de la plage de variations des valeurs emg
+                const pointsBrutaux = detectBrutalPoints(valeursEmg, 20, final); // Adapter en fonction de la plage de variations des valeurs emg
                 console.log('Points Brutaux :', pointsBrutaux);
 
                 // Division des valeurs EMG en segments
@@ -67,6 +67,20 @@ function calculateSlope(values) {
     } else {
         return 0;
     }
+}
+
+// Fonction pour calculer la courbe de tendance (régression linéaire)
+function calculateTrendLine(values) {
+    const n = values.length;
+    const sumX = (n - 1) * n / 2; // Somme des indices
+    const sumY = values.reduce((acc, val) => acc + val, 0);
+    const sumXY = values.reduce((acc, val, i) => acc + i * val, 0);
+    const sumX2 = (n - 1) * n * (2 * n - 1) / 6; // Somme des carrés des indices
+
+    const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
+    const intercept = (sumY - slope * sumX) / n;
+
+    return { slope, intercept };
 }
 
 // Fonction pour détecter les points brutaux
@@ -141,37 +155,36 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
 
     let greenCount = 0;
     let redCount = 0;
-    const greenDetails = [];  // Tableau pour les détails des segments verts
-    const redDetails = [];    // Tableau pour les détails des segments rouges
+    const greenDetails = [];
+    const redDetails = [];
     const annotations = [];
 
     segments.forEach(segment => {
-        const pente = calculateSlope(segment.segment);
-        const xVals = Array.from({ length: segment.segment.length }, (_, i) => segment.start + i);
-        const yVals = segment.segment.map((val, i) => val + pente * (i));
+        // Ajuster les valeurs du segment pour accentuer les variations
+        const penteGlobale = calculateSlope(segment.segment);
+        const adjustedSegment = segment.segment.map((val, i) => val + penteGlobale * i);
 
-        const color = pente >= 0 ? 'rgb(47, 217, 143)' : 'rgb(255, 138, 138)';
-        const labelText = `Pente : ${pente.toFixed(2)}`;
+        // Calculer la courbe de tendance
+        const { slope, intercept } = calculateTrendLine(adjustedSegment);
+        console.log(`Courbe de tendance pour le segment ${segment.start}-${segment.end}: y = ${slope.toFixed(2)}x + ${intercept.toFixed(2)}`);
+
+        // Attribuer la couleur en fonction du coefficient directeur
+        const color = slope >= 0 ? 'rgb(47, 217, 143)' : 'rgb(255, 138, 138)';
+
+        const xVals = Array.from({ length: segment.segment.length }, (_, i) => segment.start + i);
+        const yVals = adjustedSegment;
+
+        const labelText = `Pente moyenne : ${slope.toFixed(2)}`;
 
         // Ajouter les informations aux tableaux de détails
         const heureDebut = heuresEmg[segment.start];
         const heureFin = heuresEmg[segment.end];
 
-        let classification = '';
-        if (pente < -0.01) {
-            if (pente >= -0.03) {
-                classification = 'Diminution légère';
-            } else if (pente >= -0.06) {
-                classification = 'Diminution forte';
-            } else {
-                classification = 'Diminution inquiétante';
-            }
-        }
         if (color === 'rgb(47, 217, 143)') {
             greenDetails.push(`${heureDebut} - ${heureFin}`);
             greenCount++;
-        } else if (color === 'rgb(255, 138, 138)') {
-            redDetails.push(`${classification} : ${heureDebut} - ${heureFin} `);
+        } else {
+            redDetails.push(`${heureDebut} - ${heureFin}`);
             redCount++;
         }
 
@@ -199,7 +212,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             type: 'line',
             scaleID: 'x',
             value: segment.start,
-            borderColor: 'rgb(253, 160, 0)',
+            borderColor: 'rgba(253, 160, 0, 0)',
             borderWidth: 1,
             borderDash: [5, 5],
             label: {
@@ -213,7 +226,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
             type: 'line',
             scaleID: 'x',
             value: segment.end,
-            borderColor: 'rgb(253, 160, 0)',
+            borderColor: 'rgba(253, 160, 0, 0.01)',
             borderWidth: 1,
             borderDash: [5, 5],
             label: {
@@ -228,7 +241,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     new Chart(ctx, {
         type: 'line',
         data: {
-            labels: Array.from({ length: emgValues.length }, (_, i) => i), // Utiliser les indices pour les labels
+            labels: Array.from({ length: emgValues.length }, (_, i) => i),
             datasets: datasets
         },
         options: {
@@ -290,7 +303,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
 
     if (redCount > 0) {
         redContainer.classList.add('show');
-        redContainer.innerHTML = `Nombre  de diminution: ${redCount}<br><br>Détails : <br>${redDetails.join('<br>')}`;
+        redContainer.innerHTML = `Nombre de diminution: ${redCount}<br><br>Détails : <br>${redDetails.join('<br>')}`;
     } else {
         redContainer.classList.remove('show');
     }
@@ -301,5 +314,4 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     } else {
         blankContainer.classList.remove('show');
     }
-
 }

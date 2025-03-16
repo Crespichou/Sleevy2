@@ -26,7 +26,7 @@ function processAndDisplayData(data) {
     });
 
     const variabilities = calculateVariabilities(datasets, referenceMean);
-    const tolerance = 0.15 * Object.values(variabilities).reduce((a, b) => a + b, 0) / Object.values(variabilities).length;
+    const tolerance = 0.2 * Object.values(variabilities).reduce((a, b) => a + b, 0) / Object.values(variabilities).length;
     const groups = groupDatasetsByVariability(variabilities, tolerance);
 
     console.log("Groupes formés :", groups);
