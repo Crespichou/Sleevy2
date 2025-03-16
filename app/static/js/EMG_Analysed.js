@@ -121,7 +121,7 @@ function divideByPoints(emgValues, pointsBrutaux, heuresEmg) {
         const endTime = heuresEmg[endIdx];
         const duration = (endTime - startTime) / 1000 / 60; // Durée en minutes
 
-        if (duration > 1) {
+        if (duration > 0.3) {
             segments.push({ start: startIdx, end: endIdx, segment });
         }
         startIdx = endIdx;
@@ -160,24 +160,27 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
     const annotations = [];
 
     segments.forEach(segment => {
+        // Ignorer les 50 premières valeurs du segment
+        const adjustedSegment = segment.segment.slice(50);
+
         // Ajuster les valeurs du segment pour accentuer les variations
-        const penteGlobale = calculateSlope(segment.segment);
-        const adjustedSegment = segment.segment.map((val, i) => val + penteGlobale * i);
+        const penteGlobale = calculateSlope(adjustedSegment);
+        const finalAdjustedSegment = adjustedSegment.map((val, i) => val + penteGlobale * i);
 
         // Calculer la courbe de tendance
-        const { slope, intercept } = calculateTrendLine(adjustedSegment);
+        const { slope, intercept } = calculateTrendLine(finalAdjustedSegment);
         console.log(`Courbe de tendance pour le segment ${segment.start}-${segment.end}: y = ${slope.toFixed(2)}x + ${intercept.toFixed(2)}`);
 
         // Attribuer la couleur en fonction du coefficient directeur
         const color = slope >= 0 ? 'rgb(47, 217, 143)' : 'rgb(255, 138, 138)';
 
-        const xVals = Array.from({ length: segment.segment.length }, (_, i) => segment.start + i);
-        const yVals = adjustedSegment;
+        const xVals = Array.from({ length: adjustedSegment.length }, (_, i) => segment.start + i + 50);
+        const yVals = finalAdjustedSegment;
 
         const labelText = `Pente moyenne : ${slope.toFixed(2)}`;
 
         // Ajouter les informations aux tableaux de détails
-        const heureDebut = heuresEmg[segment.start];
+        const heureDebut = heuresEmg[segment.start + 50];
         const heureFin = heuresEmg[segment.end];
 
         if (color === 'rgb(47, 217, 143)') {
@@ -201,7 +204,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         // Ajouter une annotation pour colorier l'intervalle
         annotations.push({
             type: 'box',
-            xMin: segment.start,
+            xMin: segment.start + 50,
             xMax: segment.end,
             backgroundColor: color === 'rgb(47, 217, 143)' ? 'rgba(181, 253, 181, 0)' : 'rgba(252, 201, 201, 0)',
             borderWidth: 0
@@ -211,7 +214,7 @@ function createEMGChart(emgValues, heuresEmg, pointsBrutaux, segments) {
         annotations.push({
             type: 'line',
             scaleID: 'x',
-            value: segment.start,
+            value: segment.start + 50,
             borderColor: 'rgba(253, 160, 0, 0)',
             borderWidth: 1,
             borderDash: [5, 5],
