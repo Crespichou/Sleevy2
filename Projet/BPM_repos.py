@@ -2,7 +2,7 @@ import asyncio
 import threading
 from bleak import BleakClient
 from threading import Event
-from Projet.Event import monitor_stop_event
+from Projet.Event import stop_event
 import sqlite3
 from datetime import datetime
 
@@ -57,13 +57,14 @@ def main_ppg(stop_event):
     except Exception as e:
         print(f"Erreur dans la boucle asyncio PPG : {e}")
 
-def main(ID_JOUEUR) :
-    stop_event = Event()
-
+def main2(ID_JOUEUR) :
+    global ppg_values
+    ppg_values = []
+    
     ppg_thread = threading.Thread(target=main_ppg, args=(stop_event,))
     ppg_thread.start()
 
-    monitor_stop_event(stop_event)
+    stop_event.wait()
 
     ppg_thread.join()
 
@@ -73,4 +74,4 @@ def main(ID_JOUEUR) :
 
 if __name__ == "__main__":
     ID_JOUEUR = 4
-    main(ID_JOUEUR) 
+    main2(ID_JOUEUR) 

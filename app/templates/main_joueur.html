@@ -49,8 +49,8 @@
             <form action="{{ url_for('start', idjoueur=player.idjoueur) }}" method="get">
                 <input type="submit" class="submit" value="Lancer l'enregistrement">
             </form>
-            
         </div>
+
         <div class="input-data">
             <div class="inner"></div>
             <form id="stop-recording-form" action="{{ url_for('stoprec', idjoueur=player.idjoueur) }}" method="get">
@@ -58,6 +58,13 @@
             </form>
         </div>
 
+        <div class="input-data">
+            <div class="inner"></div>
+            <form action="{{ url_for('start2', idjoueur=player.idjoueur) }}" method="get">
+                <input type="submit" class="submit" value="Etalonnage">
+            </form>
+        </div>
+        
         <div class="performances-analyse">
             <div class="inner"></div>
             <form action="{{ url_for('analyse_performance') }}" method="GET">

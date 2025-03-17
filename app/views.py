@@ -6,6 +6,7 @@ from threading import Thread
 import base64
 from datetime import datetime, timedelta
 from Projet.Session_BDDConnected import main
+from Projet.BPM_repos import main2
 from Projet.Event import stop_event
 from sqlalchemy import desc
 from PIL import Image
@@ -314,6 +315,12 @@ def detail_joueur(session_id):
 def start(idjoueur):
     stop_event.clear()
     main(idjoueur)
+    return redirect(url_for('joueurs'))
+
+@app.route('/start2/<int:idjoueur>', methods=['GET'])
+def start2(idjoueur):
+    stop_event.clear()
+    main2(idjoueur) 
     return redirect(url_for('joueurs'))
 
 @app.route('/stoprec')
